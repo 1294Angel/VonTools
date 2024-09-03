@@ -68,11 +68,13 @@ class MySettings(PropertyGroup):
         maxlen=1024,
         ) # type: ignore
 
-    ExistingBoneConstraints_enum: EnumProperty(
+    my_enum: EnumProperty(
         name = "",
         description = "",   
         items = [],
     ) # type: ignore
+
+
 
 # ------------------------------------------------------------------------
 #    Dynamic Enum Population
@@ -113,6 +115,13 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
 
     spaceoptions = ['LOCAL', 'WORLD', 'POSE', 'LOCAL_WITH_PARENT', 'LOCAL_OWNER_ORIENT', 'CUSTOM']
 
+    ExistingBoneConstraints_enum : EnumProperty(
+        name = "Target Space",
+        description = "Select An Option",   
+        items = spaceoptions,
+    )     # type: ignore
+
+
     TargetSpace_enum : EnumProperty(
         name = "Target Space",
         description = "Select An Option",   
@@ -137,28 +146,13 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
         layout.prop(self, "OwnerSpace_enum")
 
     def execute(self, context):
-        boneconstraints = ['All',]
-        spaceoptions = ['LOCAL', 'WORLD', 'POSE', 'LOCAL_WITH_PARENT', 'LOCAL_OWNER_ORIENT', 'CUSTOM']
 
-        boneconstraints = von_buttoncontrols.getboneconstraints(von_buttoncontrols.getselectedbones())
-        text = self.text
-        selectedbones = von_buttoncontrols.getselectedbones()
+        
 
-        armaturename = bpy.context.selected_objects
-        constrainttotarget_enumint = int(re.sub('\D', '', self.ExistingBoneConstraints_enum))
-        targetspace_enumint = int(re.sub('\D', '', self.ExistingBoneConstraints_enum))
-        targetspace_enumint = targetspace_enumint - 1
-        ownerspace_enumint = int(re.sub('\D', '', self.ExistingBoneConstraints_enum))
-        ownerspace_enumint = ownerspace_enumint - 1
-        constrainttotarget = boneconstraints[constrainttotarget_enumint]
-        targetspace = spaceoptions[targetspace_enumint]
-        ownerspace = spaceoptions[ownerspace_enumint]
-
-        von_buttoncontrols.setboneconstraintspace(armaturename, selectedbones, constrainttotarget, targetspace, ownerspace)
         return {'FINISHED'}
 
 
-class VonPanel_RiggingTools__Submenu_BoneSearch(bpy.types.Operator):
+class VonPanel_RiggingTools__Submenu_ColorizeRig(bpy.types.Operator):
     bl_idname = "von.colorizerig"
     bl_label = "Colorize Rig"
     def execute(self, context):
@@ -184,7 +178,7 @@ class Von_Dropdown_AddCustomBoneshape(bpy.types.Operator):
             print(f"List of strings = {listofstrings}")
             sendtoenum.append(listofstrings)
 
-    filetoloadselection_enum : bpy.props.EnumProperty(
+    filetoloadselection_enum : EnumProperty(
         name = "FileSelectionToLoad",
         description = "Select An Option",   
         items = sendtoenum,
@@ -328,7 +322,8 @@ classes = (
     VonPanel_RiggingTools__Button_SaveNewControl,
     Von_Dropdown_AddCustomBoneshape,
     VonPanel_AnimationTools,
-    VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace
+    VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace,
+    VonPanel_RiggingTools__Submenu_ColorizeRig
 )
 
 def von_menupopup_register():
@@ -338,6 +333,8 @@ def von_menupopup_register():
         register_class(cls)
 
     bpy.types.Scene.my_tool = PointerProperty(type=MySettings)
+
+    
     VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace.ExistingBoneConstraints_enum = EnumProperty(
         items=setupboneconstraints_enumerator,
     )
