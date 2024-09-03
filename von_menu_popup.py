@@ -114,19 +114,18 @@ class VonPanel_RiggingTools__Submenu_BoneSearch(bpy.types.Operator):
 class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operator):
     bl_idname = "von.masssetboneconstraintspace"
     bl_label = "Mass Set Constraint Space"
-    description = "Description"
-    spacemodes = [("1", "LOCAL", description), ("2", "WORLD", description), ("3", "CUSTOM", description), ("4", "POSE", description), ("5", "LOCAL_WITH_PARENT", description), ("6", "LOCAL_OWNER_ORIENT", description)]
 
     targetspace_enum: EnumProperty(
         name = "Target Space - ",
         description = "The Setting Target Space will be set to",   
-        items = spacemodes,
+        items = [("1", "LOCAL", "Description"), ("2", "WORLD", "Description"), ("3", "CUSTOM", "Description"), ("4", "POSE", "Description"), ("5", "LOCAL_WITH_PARENT", "Description"), ("6", "LOCAL_OWNER_ORIENT", "Description")]
+
     ) # type: ignore
 
     ownerspace_enum: EnumProperty(
         name = "Owner Space - ",
         description = "The Setting Owner Space will be set to",   
-        items = spacemodes,
+        items = [("1", "LOCAL", "Description"), ("2", "WORLD", "Description"), ("3", "CUSTOM", "Description"), ("4", "POSE", "Description"), ("5", "LOCAL_WITH_PARENT", "Description"), ("6", "LOCAL_OWNER_ORIENT", "Description")]
     ) # type: ignore
 
 
@@ -136,6 +135,9 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
 
         enum = mytool.ExistingBoneConstraints_enum
         enum = enum - 1
+
+        print("Enum is")
+        print(enum)
 
 
     
