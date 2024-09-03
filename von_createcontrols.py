@@ -168,7 +168,7 @@ def movetocollection(NameOfCollection,object_name):
 
 
 # ------------------------------------------------------------------------
-#    Create Multiuse Functions
+#    Create Multiuse Functions #Functional
 # ------------------------------------------------------------------------
 
 def getobjectdata(controldata):
@@ -214,7 +214,7 @@ def organisetocontrolscollection(createdobjectname):
     collectiontomoveto.objects.link(object)
 
 # ------------------------------------------------------------------------
-#    Create Weight Hammer Functions
+#    Create Weight Hammer Functions 
 # ------------------------------------------------------------------------
 
 def getnearbyvertexinfo(selectedvertex):

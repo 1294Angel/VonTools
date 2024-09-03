@@ -6,7 +6,7 @@ from .von_createcontrols import *
 #____________________________________________________________________________________________
 #____________________________________________________________________________________________
 #____________________________________________________________________________________________ 
-#for object mode
+#for object mode #Functional
 def poll(compstr):
     active_object = bpy.context.mode
     if active_object == compstr:
@@ -17,7 +17,7 @@ def poll(compstr):
         bool = False
         print(active_object + " --- " + "False")
         return bool
-
+#Functional only when taking in context
 def getselectedbones(context):
     bonelist = []
     bones = context.selected_pose_bones_from_active_object
@@ -25,7 +25,8 @@ def getselectedbones(context):
         print(i.name)
         bonelist.append(i.name)
     return bonelist  
-    
+
+#Functional
 def colorizerig(context):
     if poll("POSE") == True:
         lst_bonenames = getselectedbones(context)
@@ -53,7 +54,8 @@ def colorizerig(context):
                 print("Error-04-ColorizeRig-NameNotIdentifying")
     else:
         print("Error-3-ColorizeRig-PollNotEqual")
-            
+
+#Functional
 def searchforbone(selected_armature, temp_bonetofind):
     if poll("POSE") == True:
         bpy.ops.pose.select_all(action='DESELECT')
@@ -63,7 +65,7 @@ def searchforbone(selected_armature, temp_bonetofind):
         bpy.data.objects[str(selected_armature)].data.bones[temp_bonetofind].select=True
     else:
         print("Error-4-SearchForBone-PollNotEqual")
-
+#Functional
 def getexistingfilesindirectories(basedirectorytosearch):
     
     FileDirectory = str(basedirectorytosearch)+"//"+"controls"
