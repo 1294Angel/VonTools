@@ -81,6 +81,7 @@ class MySettings(PropertyGroup):
         update = von_buttoncontrols.getselectedbonesforenum
     ) # type: ignore
 
+
 # ------------------------------------------------------------------------
 #    Dynamic Enum Population
 # ------------------------------------------------------------------------
@@ -109,9 +110,15 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
     bl_idname = "von.masssetboneconstraintspace"
     bl_label = "Mass Set Constraint Space"
 
+    scene = context.scene
+    mytool=scene.my_tool
+    
+    enum = mytool.ExistingBoneConstraints_enum
 
     def execute(self, context):
-        print("Yay??")
+        scene = context.scene
+        mytool=scene.my_tool
+        print(mytool.ExistingBoneConstraints_enum)
         return {'FINISHED'}
     
     def invoke(self, context, event):
@@ -123,7 +130,7 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
         scene = context.scene
         mytool=scene.my_tool
 
-        layout.prop(mytool.ExistingBoneConstraints_enum)
+        layout.prop(mytool, "ExistingBoneConstraints_enum")
 
         
 

@@ -1,46 +1,67 @@
-ENUM_STRING_CACHE = {}
-def intern_enum_items_strings(items):
-    def intern_string(s):
-        if isinstance(s, str):
-            ENUM_STRING_CACHE.setdefault(s, s)
-            s = ENUM_STRING_CACHE[s]
-        return s
-
-    return [
-        tuple([intern_string(s) for s in item])
-        for item in items
-    ]
-
-
-
-
-bpy.types.Mesh.my_shapekey = bpy.props.EnumProperty( # type: ignore
-    name="My Shapekey",
-    description="Select a shapekey",
-    items=my_shapekey_enum_items_callback, # type: ignore
-)
-
-
-
-class CamShapeMaticPanel(bpy.types.Panel): # type: ignore
+import bpy # type: ignore
+ 
+from bpy.types import Panel, Operator, PropertyGroup # type: ignore
+from bpy.props import EnumProperty, PointerProperty, StringProperty # type: ignore
+ 
+ 
+class MyProperties(PropertyGroup):
+    
+    my_enum : EnumProperty(
+        name= "Enumerator / Dropdown",
+        description= "sample text",
+        items= [('OP1', "Append", ""),
+                ('OP2', "Remove", "")
+        ]
+    ) # type: ignore
+    new_item : StringProperty() # type: ignore
+    my_list = []
+ 
+ 
+class ADDONNAME_PT_main_panel(Panel):
+    bl_label = "Main Panel"
+    bl_idname = "ADDONNAME_PT_main_panel"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = 'CamShpMtc'
-    bl_label = "CamShapeMatic"
-    bl_idname = "camshapematic.panel"
-
+    bl_category = "New Tab"
+ 
     def draw(self, context):
         layout = self.layout
-
-        # draw my_shapekey for the current object
-        # only if it's a mesh with shapekeys though
-        if (
-            context and
-            context.object and
-            context.object.type == 'MESH' and
-            context.object.data.shape_keys
-        ):
-            layout.prop(context.object.data, "my_shapekey")
-
-
-bpy.utils.register_class(CamShapeMaticPanel) # type: ignore
+        scene = context.scene
+        mytool = scene.my_tool
+        
+        layout.prop(mytool, "my_enum", expand = True)
+        layout.prop(mytool, "new_item")
+        layout.operator("addonname.myop_operator")
+ 
+ 
+class ADDONNAME_OT_my_op(Operator):
+    bl_label = "Submit"
+    bl_idname = "addonname.myop_operator"
+    
+    def execute(self, context):
+        scene = context.scene
+        mytool = scene.my_tool
+        list = mytool.my_list
+        enum = mytool.my_enum
+        new_item = mytool.new_item
+        
+        print(enum)
+    
+ 
+ 
+ 
+classes = [MyProperties, ADDONNAME_PT_main_panel, ADDONNAME_OT_my_op]
+ 
+def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+        
+    bpy.types.Scene.my_tool = PointerProperty(type= MyProperties)
+ 
+def unregister():
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
+    del bpy.types.Scene.my_tool
+ 
+if __name__ == "__main__":
+    register()
