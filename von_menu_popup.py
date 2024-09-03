@@ -118,20 +118,20 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
     ExistingBoneConstraints_enum : EnumProperty(
         name = "Target Space",
         description = "Select An Option",   
-        items = spaceoptions,
+        items = ['LOCAL', 'WORLD', 'POSE', 'LOCAL_WITH_PARENT', 'LOCAL_OWNER_ORIENT', 'CUSTOM'],
     )     # type: ignore
 
 
     TargetSpace_enum : EnumProperty(
         name = "Target Space",
         description = "Select An Option",   
-        items = spaceoptions,
+        items = ['LOCAL', 'WORLD', 'POSE', 'LOCAL_WITH_PARENT', 'LOCAL_OWNER_ORIENT', 'CUSTOM'],
     )     # type: ignore
 
     OwnerSpace_enum : EnumProperty(
         name = "Owner Space",
         description = "Select An Option",   
-        items = spaceoptions,
+        items = ['LOCAL', 'WORLD', 'POSE', 'LOCAL_WITH_PARENT', 'LOCAL_OWNER_ORIENT', 'CUSTOM'],
     )     # type: ignore
 
     def invoke(self, context, event):
@@ -142,8 +142,6 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
     def draw(self, context):
         layout = self.layout
         layout.prop(self, "ExistingBoneConstraints_enum")
-        layout.prop(self, "TargetSpace_enum")
-        layout.prop(self, "OwnerSpace_enum")
 
     def execute(self, context):
         for i in range(3):
