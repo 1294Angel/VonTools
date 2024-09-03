@@ -338,7 +338,7 @@ def von_menupopup_register():
         register_class(cls)
 
     bpy.types.Scene.my_tool = PointerProperty(type=MySettings)
-    VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace.constrainttotarget_enumint = EnumProperty(
+    VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace.ExistingBoneConstraints_enum = EnumProperty(
         items=setupboneconstraints_enumerator,
     )
 
