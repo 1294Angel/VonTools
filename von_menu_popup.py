@@ -109,7 +109,7 @@ class VonPanel_RiggingTools__Submenu_BoneSearch(bpy.types.Operator):
 class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operator):
     bl_idname = "von.masssetboneconstraintspace"
     bl_label = "Mass Set Constraint Space"
-
+ 
     def execute(self, context):
         scene = context.scene
         mytool=scene.my_tool

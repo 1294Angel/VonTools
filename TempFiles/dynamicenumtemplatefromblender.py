@@ -89,7 +89,7 @@ class PreviewsExamplePanel(bpy.types.Panel):
 # however in this example we only store "main"
 preview_collections = {}
 
-
+ 
 def register():
     from bpy.types import WindowManager # type: ignore
     from bpy.props import ( # type: ignore
