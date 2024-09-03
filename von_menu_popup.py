@@ -109,6 +109,13 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
     bl_idname = "von.masssetboneconstraintspace"
     bl_label = "Mass Set Constraint Space"
 
+    tempparam: StringProperty(
+        name="FUCKYOU",
+        description="",
+        default="",
+        maxlen=1024,
+        ) # type: ignore
+
     def execute(self, context):
         print("Yay??")
         return {'FINISHED'}
@@ -118,8 +125,7 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
     
     def draw(self, context):
         layout = self.layout
-        layout.prop(my_tool, "filetoloadselection_enum")
-        layout.prop(my_tool, "shouldskeletonise_bool")
+        layout.prop(my_tool.filetoloadselection_enum, "filetoloadselection_enum")
 
 
 class VonPanel_RiggingTools__Submenu_ColorizeRig(bpy.types.Operator):
