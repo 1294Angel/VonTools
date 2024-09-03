@@ -3,9 +3,7 @@
 # ------------------------------------------------------------------------
 
 
-import bpy # type: ignore
-import sys 
-import os
+import bpy, sys, os, re # type: ignore
 from bpy.types import Operator # type: ignore
 from bpy_extras.object_utils import AddObjectHelper # type: ignore
 from bpy.types import Operator # type: ignore
@@ -13,7 +11,6 @@ from bpy_extras.object_utils import object_data_add # type: ignore
 from mathutils import Vector # type: ignore
 from math import radians # type: ignore
 from pathlib import Path
-import re
 from bpy.props import (StringProperty, # type: ignore
                        BoolProperty,
                        IntProperty,
@@ -71,7 +68,7 @@ class MySettings(PropertyGroup):
         maxlen=1024,
         ) # type: ignore
 
-    ExistingBoneConstraints_enum: bpy.props.EnumProperty(
+    ExistingBoneConstraints_enum: EnumProperty(
         name = "",
         description = "",   
         items = [],
