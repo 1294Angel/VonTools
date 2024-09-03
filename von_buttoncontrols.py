@@ -66,7 +66,7 @@ def getboneconstraints(selectedbones):
     if len(constraints) > 0:
         return constraints
 
-def setboneconstraintspace(context, activearmature, selectedbones, constrainttotarget,targetspace,ownerspace):
+def setboneconstraintspace(activearmature, selectedbones, constrainttotarget,targetspace,ownerspace):
 
     #Go through each bone selected
     for i in selectedbones:

@@ -99,7 +99,7 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
     bl_label = "Bone Search"
     
     boneconstraints = ['All',]
-    boneconstraints = von_buttoncontrols.getboneconstraints(von_buttoncontrols.getselectedbones())
+    
 
     spaceoptions = ['LOCAL', 'WORLD', 'POSE', 'LOCAL_WITH_PARENT', 'LOCAL_OWNER_ORIENT', 'CUSTOM']
 
@@ -123,8 +123,8 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
 
     def invoke(self, context, event):
         wm = context.window_manager
-        
-        return wm.invoke_props_dialog(self)
+        boneconstraints = von_buttoncontrols.getboneconstraints(von_buttoncontrols.getselectedbones())
+        return wm.invoke_props_dialog(self), boneconstraints
 
 
     def draw(self, context):
@@ -136,9 +136,11 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
     def execute(self, context):
         boneconstraints = ['All',]
         spaceoptions = ['LOCAL', 'WORLD', 'POSE', 'LOCAL_WITH_PARENT', 'LOCAL_OWNER_ORIENT', 'CUSTOM']
+
         boneconstraints = von_buttoncontrols.getboneconstraints(von_buttoncontrols.getselectedbones())
         text = self.text
         selectedbones = von_buttoncontrols.getselectedbones()
+
         armaturename = bpy.context.selected_objects
         constrainttotarget_enumint = int(re.sub('\D', '', self.ExistingBoneConstraints_enum))
         targetspace_enumint = int(re.sub('\D', '', self.ExistingBoneConstraints_enum))
@@ -148,7 +150,8 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
         constrainttotarget = boneconstraints[constrainttotarget_enumint]
         targetspace = spaceoptions[targetspace_enumint]
         ownerspace = spaceoptions[ownerspace_enumint]
-        von_buttoncontrols.setboneconstraintspace(context, armaturename, selectedbones, constrainttotarget, targetspace, ownerspace)
+
+        von_buttoncontrols.setboneconstraintspace(armaturename, selectedbones, constrainttotarget, targetspace, ownerspace)
         return {'FINISHED'}
 
 
