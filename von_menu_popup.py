@@ -77,7 +77,7 @@ class MySettings(PropertyGroup):
     ExistingBoneConstraints_enum = bpy.props.EnumProperty(
         name = "",
         description = "",
-        items = von_buttoncontrols.getselectedbonesforenum
+        items = [("1", "Fuck", "Shit"), ("2", "NO", "DIE")]
 
     ) # type: ignore
 
