@@ -116,7 +116,7 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
     ExistingBoneConstraints_enum : bpy.props.EnumProperty(
         name = "",
         description = "",
-        items = [("1", "Fuck", "Me"), ("2", "Shit", "The Bed")]
+        items = getselectedbonesforenum(context)
 
     ) # type: ignore
 
