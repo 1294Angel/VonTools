@@ -26,7 +26,7 @@ def getselectedbones(context):
         bonelist.append(i.name)
     return bonelist
 
-def getselectedbonesforenum(context):
+def getselectedbonesforenum(self, context):
     print("Selected bones for enum")
     constrainttypestmp = []
     enumlist = []

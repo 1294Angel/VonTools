@@ -74,20 +74,17 @@ class MySettings(PropertyGroup):
         items = [],
     ) # type: ignore
 
+    ExistingBoneConstraints_enum : bpy.props.EnumProperty(
+        name = "",
+        description = "",
+        items = von_buttoncontrols.getselectedbonesforenum
+
+    ) # type: ignore
 
 
 # ------------------------------------------------------------------------
 #    Dynamic Enum Population
 # ------------------------------------------------------------------------
-
-def setupboneconstraints_enumerator(self, context):
-    boneconstraints = []
-    if context == None:
-        return boneconstraints
-
-    boneconstraints = ['All',]
-    boneconstraints = von_buttoncontrols.getboneconstraints(von_buttoncontrols.getselectedbones())
-    return boneconstraints
 
 # ------------------------------------------------------------------------
 #    Popout Submenu's
@@ -113,12 +110,7 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
     bl_idname = "von.masssetboneconstraintspace"
     bl_label = "Mass Set Constraint Space"
 
-    ExistingBoneConstraints_enum : bpy.props.EnumProperty(
-        name = "",
-        description = "",
-        items = getselectedbonesforenum(context)
-
-    ) # type: ignore
+    ENUM_STRING_CACHE = {}
 
     def invoke(self, context, event):
         wm = context.window_manager
@@ -127,7 +119,8 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
 
     def draw(self, context):
         layout = self.layout
-        layout.prop(self, "ExistingBoneConstraints_enum")
+
+        layout.prop(bpy.context.selected_pose_bones_from_active_object, "ExistingBoneConstraints_enum")
 
     def execute(self, context):
         for i in range(3):
@@ -320,10 +313,6 @@ def von_menupopup_register():
 
     bpy.types.Scene.my_tool = PointerProperty(type=MySettings)
 
-    
-    VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace.ExistingBoneConstraints_enum = EnumProperty(
-        items=setupboneconstraints_enumerator,
-    )
 
 
 def von_menupopup_unregister():
@@ -332,4 +321,3 @@ def von_menupopup_unregister():
         unregister_class(cls)
 
     del bpy.types.Scene.my_tool
-    del bpy.types.Scene.activebone
