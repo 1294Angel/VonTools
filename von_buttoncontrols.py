@@ -86,7 +86,16 @@ def setboneconstraintspace(activearmature, selectedbones, constrainttotarget,tar
         print("i is selected? = " + bpy.context.active_pose_bone.name)
 
         for con in i.constraints:
-            if con.type == constrainttotarget:                
+            if constrainttotarget == "all":
+                print("Contraint To Target is All")
+                #Adjust each constraint on the selected bone (i) to be in Local space (need to adjust to work off of a menu str or enum later)
+                bpy.context.object.pose.bones[bonename].constraints[con.name].target_space = targetspace
+                bpy.context.object.pose.bones[bonename].constraints[con.name].owner_space = ownerspace
+                #confirm all is working
+                print("set target to " + targetspace + " space")
+                print("set owner to " + ownerspace + " space")
+            elif con.type == constrainttotarget: 
+                print ("Constraint To Target is: " + str(constrainttotarget))               
                 #Adjust each constraint on the selected bone (i) to be in Local space (need to adjust to work off of a menu str or enum later)
                 bpy.context.object.pose.bones[bonename].constraints[con.name].target_space = targetspace
                 bpy.context.object.pose.bones[bonename].constraints[con.name].owner_space = ownerspace

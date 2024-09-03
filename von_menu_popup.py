@@ -130,10 +130,21 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
         layout.prop(self, "OwnerSpace_enum")
 
     def execute(self, context):
+        boneconstraints = ['All',]
+        spaceoptions = ['LOCAL', 'WORLD', 'POSE', 'LOCAL_WITH_PARENT', 'LOCAL_OWNER_ORIENT', 'CUSTOM']
+        boneconstraints = von_buttoncontrols.getboneconstraints(von_buttoncontrols.getselectedbones())
         text = self.text
         selectedbones = von_buttoncontrols.getselectedbones()
         armaturename = bpy.context.selected_objects
-        von_buttoncontrols.setboneconstraintspace(armaturename, selectedbones, )
+        constrainttotarget_enumint = int(re.sub('\D', '', self.ExistingBoneConstraints_enum))
+        targetspace_enumint = int(re.sub('\D', '', self.ExistingBoneConstraints_enum))
+        targetspace_enumint = targetspace_enumint - 1
+        ownerspace_enumint = int(re.sub('\D', '', self.ExistingBoneConstraints_enum))
+        ownerspace_enumint = ownerspace_enumint - 1
+        constrainttotarget = boneconstraints[constrainttotarget_enumint]
+        targetspace = spaceoptions[targetspace_enumint]
+        ownerspace = spaceoptions[ownerspace_enumint]
+        von_buttoncontrols.setboneconstraintspace(armaturename, selectedbones, constrainttotarget, targetspace, ownerspace)
         return {'FINISHED'}
 
 
