@@ -108,7 +108,7 @@ class VonPanel_RiggingTools__Submenu_BoneSearch(bpy.types.Operator):
         return context.window_manager.invoke_props_dialog(self)
 
 class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operator):
-    bl_idname = "von.popoutpanelbonesearch"
+    bl_idname = "von.masssetboneconstraintspace"
     bl_label = "Bone Search"
 
     spaceoptions = ['LOCAL', 'WORLD', 'POSE', 'LOCAL_WITH_PARENT', 'LOCAL_OWNER_ORIENT', 'CUSTOM']
@@ -296,6 +296,7 @@ class VonPanel_RiggingTools(VonPanel, bpy.types.Panel):
         layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator("von.addcustomboneshape")
         layout.operator("von.savenewcontrol")
+        layour.operator("von.masssetboneconstraintspace")
 
 
         row.label(text= "Weight Painting", icon= 'CUBE')
