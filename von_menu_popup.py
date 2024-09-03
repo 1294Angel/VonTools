@@ -113,26 +113,12 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
     bl_idname = "von.masssetboneconstraintspace"
     bl_label = "Mass Set Constraint Space"
 
-    spaceoptions = ['LOCAL', 'WORLD', 'POSE', 'LOCAL_WITH_PARENT', 'LOCAL_OWNER_ORIENT', 'CUSTOM']
+    ExistingBoneConstraints_enum : bpy.props.EnumProperty(
+        name = "",
+        description = "",
+        items = [("1", "Fuck", "Me"), ("2", "Shit", "The Bed")]
 
-    ExistingBoneConstraints_enum : EnumProperty(
-        name = "Target Space",
-        description = "Select An Option",   
-        items = ['LOCAL', 'WORLD', 'POSE', 'LOCAL_WITH_PARENT', 'LOCAL_OWNER_ORIENT', 'CUSTOM'],
-    )     # type: ignore
-
-
-    TargetSpace_enum : EnumProperty(
-        name = "Target Space",
-        description = "Select An Option",   
-        items = ['LOCAL', 'WORLD', 'POSE', 'LOCAL_WITH_PARENT', 'LOCAL_OWNER_ORIENT', 'CUSTOM'],
-    )     # type: ignore
-
-    OwnerSpace_enum : EnumProperty(
-        name = "Owner Space",
-        description = "Select An Option",   
-        items = ['LOCAL', 'WORLD', 'POSE', 'LOCAL_WITH_PARENT', 'LOCAL_OWNER_ORIENT', 'CUSTOM'],
-    )     # type: ignore
+    ) # type: ignore
 
     def invoke(self, context, event):
         wm = context.window_manager
