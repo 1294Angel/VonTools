@@ -326,6 +326,7 @@ def von_menupopup_register():
         register_class(cls)
 
     bpy.types.Scene.my_tool = PointerProperty(type=MySettings)
+    bpy.types.Context.my_tool = PointerProperty(type=MySettings)
 
 def von_menupopup_unregister():
     from bpy.utils import unregister_class # type: ignore
@@ -333,3 +334,4 @@ def von_menupopup_unregister():
         unregister_class(cls)
 
     del bpy.types.Scene.my_tool
+    del bpy.types.Context.mytool
