@@ -32,6 +32,26 @@ def colorizerig():
         for armature in [ob for ob in bpy.data.objects if ob.type == 'ARMATURE']:
             for bone in armature.bones.values():
                 lst_bonenames.append(bone.name)
+                bpy.types.BoneColor.palette['THEME01']
+        print(lst_bonenames)
+        for i in lst_bonenames:
+            name = i.name
+            if name.endswith("_L"):
+                print("L ---")
+                print(name)
+                bpy.context.object.data.bones[name].color.palette = 'THEME02'
+
+
+            if name.endswith("_R"):
+                print("R ---")
+                print(name)
+                bpy.context.object.data.bones[name].color.palette = 'THEME03'
+
+            else:
+                print("Else --")
+                print(name)
+                bpy.context.object.data.bones[name].color.palette = 'THEME13'
+
     else:
         print("Error-3-ColorizeRig-PollNotEqual")
             
