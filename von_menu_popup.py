@@ -111,7 +111,7 @@ class VonPanel_RiggingTools__Submenu_BoneSearch(bpy.types.Operator):
 
 class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operator):
     bl_idname = "von.masssetboneconstraintspace"
-    bl_label = "Bone Search"
+    bl_label = "Mass Set Constraint Space"
 
     spaceoptions = ['LOCAL', 'WORLD', 'POSE', 'LOCAL_WITH_PARENT', 'LOCAL_OWNER_ORIENT', 'CUSTOM']
 
@@ -146,9 +146,11 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
         layout.prop(self, "OwnerSpace_enum")
 
     def execute(self, context):
-
-        
-
+        for i in range(3):
+            print("-")
+        print("MASS SET BONE CONSTRAINT SPACE WORKING")
+        for i in range(3):
+            print("-")
         return {'FINISHED'}
 
 
