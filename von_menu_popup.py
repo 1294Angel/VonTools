@@ -110,8 +110,6 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
     bl_idname = "von.masssetboneconstraintspace"
     bl_label = "Mass Set Constraint Space"
 
-    ENUM_STRING_CACHE = {}
-
     def invoke(self, context, event):
         wm = context.window_manager
         return wm.invoke_props_dialog(self)
@@ -119,19 +117,15 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene
-        mytool = scene.my_tool
-
-        layout.prop(mytool, "ExistingBoneConstraints_enum")
+        
 
 
     def execute(self, context):
-        for i in range(3):
-            print("-")
-        print("MASS SET BONE CONSTRAINT SPACE WORKING")
-        for i in range(3):
-            print("-")
-        return {'FINISHED'}
+        scene = context.scene
+        mytool=scene.my_tool
+
+        if mytool.ExistingBoneConstraints_enum == 1:
+            print(mytool.ExistingBoneConstraints_enum)
 
 
 class VonPanel_RiggingTools__Submenu_ColorizeRig(bpy.types.Operator):
@@ -272,7 +266,7 @@ class VonPanel_RiggingTools(VonPanel, bpy.types.Panel):
         layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator("von.addcustomboneshape")
         layout.operator("von.savenewcontrol")
-        layout.operator("von.masssetboneconstraintspace")
+        layout.prop(mytool, "ExistingBoneConstraints_enum")
         
 
 
