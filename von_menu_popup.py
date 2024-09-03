@@ -146,7 +146,6 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
         
         print(constraintchosen)
 
-        constraintchosen = constraintchosen - 1
         targetspacechosen = int(self.targetspace_enum)
         targetspacechosen = targetspacechosen - 1
         ownerspacechosen = int(self.ownerspace_enum)
@@ -162,12 +161,12 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
 
         print("")
         print("ConstraintChosen")
-        print(constraints[constraintchosen])
+        print(constraintchosen)
         print("")
         print("targetspace")
-        print(spaces[targetspacechosen])
+        print(targetspacechosen)
         print("ownerspace")
-        print(spaces[ownerspacechosen])
+        print(ownerspacechosen)
         print("")
 
 
