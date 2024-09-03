@@ -102,7 +102,7 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
     bl_label = "Bone Search"
     
     boneconstraints = ['All',]
-    boneconstraints = von_buttoncontrols.getboneconstraints(von_buttoncontrols.getselectedbones)
+    boneconstraints = von_buttoncontrols.getboneconstraints(von_buttoncontrols.getselectedbones())
 
     spaceoptions = ['LOCAL', 'WORLD', 'POSE', 'LOCAL_WITH_PARENT', 'LOCAL_OWNER_ORIENT', 'CUSTOM']
 

@@ -18,9 +18,8 @@ def poll(compstr):
         print(active_object + " --- " + "False")
         return bool
 
-def getselectedbones(context):
+def getselectedbones():
     bonelist = []
-    context=bpy.context
     bones = context.selected_pose_bones_from_active_object
     for i in bones:
         print(i.name)
