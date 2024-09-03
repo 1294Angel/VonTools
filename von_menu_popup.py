@@ -74,11 +74,10 @@ class MySettings(PropertyGroup):
         items = [],
     ) # type: ignore
 
-    ExistingBoneConstraints_enum = bpy.props.EnumProperty(
+    ExistingBoneConstraints_enum : bpy.props.EnumProperty(
         name = "",
         description = "",
         items = getselectedbonesforenum
-
     ) # type: ignore
 
 
@@ -110,25 +109,17 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
     bl_idname = "von.masssetboneconstraintspace"
     bl_label = "Mass Set Constraint Space"
 
+    def execute(self, context):
+        print("Yay??")
+        return {'FINISHED'}
+    
     def invoke(self, context, event):
-        wm = context.window_manager
-        return wm.invoke_props_dialog(self)
-
-
+        return context.window_manager.invoke_props_dialog(self)
+    
     def draw(self, context):
         layout = self.layout
-        scene = context.scene
-        mytool=scene.my_tool
-
-        layout.prop(mytool, "ExistingBoneConstraints_enum")
-
-
-    def execute(self, context):
-        scene = context.scene
-        mytool=scene.my_tool
-
-        if mytool.ExistingBoneConstraints_enum == 1:
-            print(mytool.ExistingBoneConstraints_enum)
+        layout.prop(my_tool, "filetoloadselection_enum")
+        layout.prop(my_tool, "shouldskeletonise_bool")
 
 
 class VonPanel_RiggingTools__Submenu_ColorizeRig(bpy.types.Operator):
@@ -210,7 +201,12 @@ class VonPanel_RiggingTools__Submenu_CreateControl(bpy.types.Operator):
     bl_idname = "von.loadcustomcontrol"
     bl_label = "Load Custom Control"
     
-    text : bpy.props.StringProperty(name="Enter Text", default="") # type: ignore
+    text : bpy.props.StringProperty(
+        name="Enter Text", 
+        default=""
+        ) # type: ignore
+
+
     def execute(self, context):
         text = self.text
         von_createcontrols.create_mesh_from_json_data(False,text)
