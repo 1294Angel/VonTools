@@ -77,9 +77,9 @@ class MySettings(PropertyGroup):
     ExistingBoneConstraints_enum : bpy.props.EnumProperty(
         name = "",
         description = "",
-        items = getselectedbonesforenum
+        items = [("1", "Test One", "Working?"), ("2", "Test Two", "Fuck You")],
+        update = von_buttoncontrols.getselectedbonesforenum
     ) # type: ignore
-
 
 # ------------------------------------------------------------------------
 #    Dynamic Enum Population
@@ -109,23 +109,22 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
     bl_idname = "von.masssetboneconstraintspace"
     bl_label = "Mass Set Constraint Space"
 
-    tempparam: StringProperty(
-        name="FUCKYOU",
-        description="",
-        default="",
-        maxlen=1024,
-        ) # type: ignore
-
     def execute(self, context):
         print("Yay??")
         return {'FINISHED'}
     
     def invoke(self, context, event):
-        return context.window_manager.invoke_props_dialog(self)
+        wm = context.window_manager
+        return wm.invoke_props_dialog(self)
     
     def draw(self, context):
         layout = self.layout
-        layout.prop(my_tool.filetoloadselection_enum, "filetoloadselection_enum")
+        scene = context.scene
+        mytool=scene.my_tool
+
+        
+
+        
 
 
 class VonPanel_RiggingTools__Submenu_ColorizeRig(bpy.types.Operator):
