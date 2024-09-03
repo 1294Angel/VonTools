@@ -20,7 +20,6 @@ def poll(compstr):
 
 def getselectedbones():
     context=bpy.context
-    pbone = context.active_pose_bone
     bones = context.selected_pose_bones_from_active_object
     return bones    
     
@@ -54,7 +53,6 @@ def getexistingfilesindirectories(basedirectorytosearch):
 def getboneconstraints(selectedbones):
     constraints = []
     context=bpy.context
-    pbone = context.active_pose_bone
     for i in selectedbones:
 
         for con in i.constraints:
@@ -68,7 +66,6 @@ def getboneconstraints(selectedbones):
 
 def setboneconstraintspace(activearmature, selectedbones, constrainttotarget,targetspace,ownerspace):
     context=bpy.context
-    pbone = context.active_pose_bone
 
     #Go through each bone selected
     for i in selectedbones:

@@ -14,7 +14,7 @@ ADDON_FOLDER_PATH = os.path.dirname(__file__)
 bl_info = {
     "name": "Vona's Blender Tools",
     "author": "Vona",
-    "version": (0, 1, 0),
+    "version": (0, 1, 1),
     "blender": (4, 2, 1),
     "location": "Where the user can find it",
     "description": "Gold Version of Vona's addon that adds tools to expand blenders toolset.",
