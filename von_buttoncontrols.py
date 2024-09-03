@@ -19,9 +19,13 @@ def poll(compstr):
         return bool
 
 def getselectedbones():
+    bonelist = []
     context=bpy.context
     bones = context.selected_pose_bones_from_active_object
-    return bones    
+    for i in bones:
+        print(i.name)
+        bonelist.append(i.name)
+    return bonelist  
     
 def colorizerig():
     if poll("POSE") == True:
