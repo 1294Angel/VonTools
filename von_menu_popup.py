@@ -117,7 +117,10 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
 
     def draw(self, context):
         layout = self.layout
-        
+        scene = context.scene
+        mytool=scene.my_tool
+
+        layout.prop(mytool, "ExistingBoneConstraints_enum")
 
 
     def execute(self, context):
@@ -266,7 +269,7 @@ class VonPanel_RiggingTools(VonPanel, bpy.types.Panel):
         layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator("von.addcustomboneshape")
         layout.operator("von.savenewcontrol")
-        layout.prop(mytool, "ExistingBoneConstraints_enum")
+        layout.operator("von.masssetboneconstraintspace")
         
 
 
