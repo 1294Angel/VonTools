@@ -109,6 +109,7 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
     bl_idname = "von.masssetboneconstraintspace"
     bl_label = "Mass Set Constraint Space"
 
+
     def execute(self, context):
         print("Yay??")
         return {'FINISHED'}
@@ -121,6 +122,8 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
         layout = self.layout
         scene = context.scene
         mytool=scene.my_tool
+
+        layout.prop(mytool.ExistingBoneConstraints_enum)
 
         
 
