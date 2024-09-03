@@ -23,7 +23,7 @@ def getselectedbones(context):
     bones = bpy.context.selected_pose_bones_from_active_object
     for i in bones:
         print(i.name)
-        bonelist.append(i.name)
+        bonelist.append(i)
     return bonelist
 
 def getselectedbonesforenum(self, context):
