@@ -296,7 +296,8 @@ class VonPanel_RiggingTools(VonPanel, bpy.types.Panel):
         layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator("von.addcustomboneshape")
         layout.operator("von.savenewcontrol")
-        layour.operator("von.masssetboneconstraintspace")
+        layout.operator("von.masssetboneconstraintspace")
+        
 
 
         row.label(text= "Weight Painting", icon= 'CUBE')
