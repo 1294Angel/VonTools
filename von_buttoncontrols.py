@@ -56,7 +56,6 @@ def getexistingfilesindirectories(basedirectorytosearch):
 #This will be used to populate the Enum
 def getboneconstraints(selectedbones):
     constraints = []
-    context=bpy.context
     for i in selectedbones:
 
         for con in i.constraints:
@@ -69,7 +68,6 @@ def getboneconstraints(selectedbones):
         return constraints
 
 def setboneconstraintspace(context, activearmature, selectedbones, constrainttotarget,targetspace,ownerspace):
-    context=bpy.context
 
     #Go through each bone selected
     for i in selectedbones:
