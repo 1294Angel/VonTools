@@ -71,6 +71,12 @@ class MySettings(PropertyGroup):
         maxlen=1024,
         ) # type: ignore
 
+    ExistingBoneConstraints_enum: bpy.props.EnumProperty(
+        name = "",
+        description = "",   
+        items = [],
+    ) # type: ignore
+
 # ------------------------------------------------------------------------
 #    Popout Submenu's
 # ------------------------------------------------------------------------
@@ -96,7 +102,7 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
     bl_label = "Bone Search"
     
     boneconstraints = ['All',]
-    boneconstraints = von_buttoncontrols.getboneconstraints(von_buttoncontrols.getselectedbones())
+    boneconstraints = von_buttoncontrols.getboneconstraints(von_buttoncontrols.getselectedbones(context))
 
     spaceoptions = ['LOCAL', 'WORLD', 'POSE', 'LOCAL_WITH_PARENT', 'LOCAL_OWNER_ORIENT', 'CUSTOM']
 
@@ -120,6 +126,7 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
 
     def invoke(self, context, event):
         wm = context.window_manager
+        
         return wm.invoke_props_dialog(self)
 
 
@@ -326,7 +333,6 @@ def von_menupopup_register():
         register_class(cls)
 
     bpy.types.Scene.my_tool = PointerProperty(type=MySettings)
-    bpy.types.Scene.my_prop = bpy.props.StringProperty(default="default value")
 
 def von_menupopup_unregister():
     from bpy.utils import unregister_class # type: ignore
@@ -334,4 +340,4 @@ def von_menupopup_unregister():
         unregister_class(cls)
 
     del bpy.types.Scene.my_tool
-    del bpy.types.Scene.my_prop
+    del bpy.types.Scene.activebone
