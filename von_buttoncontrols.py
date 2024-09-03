@@ -28,30 +28,29 @@ def getselectedbones():
     
 def colorizerig():
     if poll("POSE") == True:
-        lst_bonenames = []
-        for armature in [ob for ob in bpy.data.objects if ob.type == 'ARMATURE']:
-            for bone in armature.bones.values():
-                lst_bonenames.append(bone.name)
-                bpy.types.BoneColor.palette['THEME01']
+        lst_bonenames = getselectedbones()
         print(lst_bonenames)
         for i in lst_bonenames:
-            name = i.name
-            if name.endswith("_L"):
-                print("L ---")
-                print(name)
-                bpy.context.object.data.bones[name].color.palette = 'THEME02'
-
-
-            if name.endswith("_R"):
-                print("R ---")
-                print(name)
-                bpy.context.object.data.bones[name].color.palette = 'THEME03'
-
-            else:
+            if i.endswith("_L") and i.endswith ("_R") != True:
                 print("Else --")
-                print(name)
-                bpy.context.object.data.bones[name].color.palette = 'THEME13'
+                print(i)
+                bpy.context.object.data.bones[i].color.palette = 'THEME13'
+                bpy.context.object.pose.bones[i].color.palette = 'THEME13'
+            if i.endswith("_L"):
+                print("L ---")
+                print(i)
+                bpy.context.object.data.bones[i].color.palette = 'THEME02'
+                bpy.context.object.pose.bones[i].color.palette = 'THEME02'
 
+
+            if i.endswith("_R"):
+                print("R ---")
+                print(i)
+                bpy.context.object.data.bones[i].color.palette = 'THEME03'
+                bpy.context.object.pose.bones[i].color.palette = 'THEME03'
+            
+            else:
+                print("Error-04-ColorizeRig-NameNotIdentifying")
     else:
         print("Error-3-ColorizeRig-PollNotEqual")
             
