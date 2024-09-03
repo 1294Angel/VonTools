@@ -162,7 +162,7 @@ class VonPanel_RiggingTools__Submenu_BoneSearch(bpy.types.Operator):
     bl_idname = "von.colorizerig"
     bl_label = "Colorize Rig"
     def execute(self, context):
-        von_buttoncontrols.colorizerig()
+        von_buttoncontrols.colorizerig(context)
         return {'FINISHED'}
     def invoke(self, context, event):   
         return context.window_manager.invoke_props_dialog(self)

@@ -18,7 +18,7 @@ def poll(compstr):
         print(active_object + " --- " + "False")
         return bool
 
-def getselectedbones():
+def getselectedbones(context):
     bonelist = []
     bones = context.selected_pose_bones_from_active_object
     for i in bones:
@@ -26,9 +26,9 @@ def getselectedbones():
         bonelist.append(i.name)
     return bonelist  
     
-def colorizerig():
+def colorizerig(context):
     if poll("POSE") == True:
-        lst_bonenames = getselectedbones()
+        lst_bonenames = getselectedbones(context)
         print(lst_bonenames)
         for i in lst_bonenames:
             if i.endswith("_L") and i.endswith ("_R") != True:
