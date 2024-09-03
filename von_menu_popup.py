@@ -122,7 +122,7 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
         scene = context.scene
         mytool = scene.my_tool
 
-        layout.prop(mytool, "ExistingBoneConstraints_enum", text="")
+        layout.prop(mytool, "ExistingBoneConstraints_enum")
 
 
     def execute(self, context):
