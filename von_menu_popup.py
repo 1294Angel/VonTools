@@ -144,7 +144,7 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
         constrainttotarget = boneconstraints[constrainttotarget_enumint]
         targetspace = spaceoptions[targetspace_enumint]
         ownerspace = spaceoptions[ownerspace_enumint]
-        von_buttoncontrols.setboneconstraintspace(armaturename, selectedbones, constrainttotarget, targetspace, ownerspace)
+        von_buttoncontrols.setboneconstraintspace(context, armaturename, selectedbones, constrainttotarget, targetspace, ownerspace)
         return {'FINISHED'}
 
 
