@@ -31,6 +31,10 @@ def getselectedbonesforenum(self, context):
     constrainttypestmp = []
     enumlist = []
     print(enumlist)
+
+    addtoenum = tuple(("0","All","Target All Detected Constraints"))
+    enumlist.append(addtoenum)
+
     constrainttypestmp = getboneconstraints(getselectedbones(context))
     
     index = 0
