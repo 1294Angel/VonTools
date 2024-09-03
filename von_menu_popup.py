@@ -74,7 +74,7 @@ class MySettings(PropertyGroup):
         items = [],
     ) # type: ignore
 
-    ExistingBoneConstraints_enum : bpy.props.EnumProperty(
+    ExistingBoneConstraints_enum = bpy.props.EnumProperty(
         name = "",
         description = "",
         items = von_buttoncontrols.getselectedbonesforenum
@@ -119,8 +119,11 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
 
     def draw(self, context):
         layout = self.layout
+        scene = context.scene
+        mytool = scene.my_tool
 
-        layout.prop(bpy.context.selected_pose_bones_from_active_object, "ExistingBoneConstraints_enum")
+        layout.prop(mytool, "ExistingBoneConstraints_enum", text="")
+
 
     def execute(self, context):
         for i in range(3):
