@@ -20,11 +20,36 @@ def poll(compstr):
 #Functional only when taking in context
 def getselectedbones(context):
     bonelist = []
-    bones = context.selected_pose_bones_from_active_object
+    bones = bpy.context.selected_pose_bones_from_active_object
     for i in bones:
         print(i.name)
         bonelist.append(i.name)
-    return bonelist  
+    return bonelist
+
+def getselectedbonesforenum():
+    print("Selected bones for enum")
+    constrainttypestmp = []
+    enumlist = []
+    print(enumlist)
+    constrainttypestmp = getboneconstraints(getselectedbones())
+    
+    index = 0
+    for i in constrainttypestmp:
+        toadd = ()
+        
+        index = index + 1
+        indexstr = str(index)
+        
+        i = str(i)
+        
+        description = "Click to alter context of these constraints on selected bones"
+        
+        addtoenum = tuple((indexstr, i, description))
+        enumlist.append(addtoenum)
+        print(enumlist)
+    return enumlist
+    
+        
 
 #Functional
 def colorizerig(context):
