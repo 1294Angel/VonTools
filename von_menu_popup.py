@@ -33,11 +33,19 @@ imp.reload(von_buttoncontrols)
 imp.reload(von_createcontrols)
 from .von_buttoncontrols import *
 from .von_createcontrols import *
+
+# ------------------------------------------------------------------------
+#    Dynamic Enum Population
+# ------------------------------------------------------------------------
+def updateexistingboneconstraintsenum(self, context):
+    print("Update Enum!!!")
+    von_buttoncontrols.getselectedbonesforenum(self, context)
+
 # ------------------------------------------------------------------------
 #    Scene Properties
 # ------------------------------------------------------------------------
 
-class MySettings(PropertyGroup, self, context):
+class MySettings(PropertyGroup):
 
     my_bool : BoolProperty(
         name="Enable or Disable",
@@ -77,14 +85,11 @@ class MySettings(PropertyGroup, self, context):
     ExistingBoneConstraints_enum : bpy.props.EnumProperty(
         name = "",
         description = "",
-        items = von_buttoncontrols.getselectedbonesforenum(self, context),
-        update = von_buttoncontrols.getselectedbonesforenum(self, context)
+        items = von_buttoncontrols.getselectedbonesforenum,
+        update = updateexistingboneconstraintsenum
     ) # type: ignore
 
 
-# ------------------------------------------------------------------------
-#    Dynamic Enum Population
-# ------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------
 #    Popout Submenu's
