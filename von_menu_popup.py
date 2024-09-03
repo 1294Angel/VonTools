@@ -37,7 +37,7 @@ from .von_createcontrols import *
 #    Scene Properties
 # ------------------------------------------------------------------------
 
-class MySettings(PropertyGroup):
+class MySettings(PropertyGroup, self, context):
 
     my_bool : BoolProperty(
         name="Enable or Disable",
