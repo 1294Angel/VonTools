@@ -75,6 +75,19 @@ class MySettings(PropertyGroup):
     ) # type: ignore
 
 # ------------------------------------------------------------------------
+#    Dynamic Enum Population
+# ------------------------------------------------------------------------
+
+def setupboneconstraints_enumerator(self, context):
+    boneconstraints = []
+    if context == None:
+        return boneconstraints
+
+    boneconstraints = ['All',]
+    boneconstraints = von_buttoncontrols.getboneconstraints(von_buttoncontrols.getselectedbones())
+    return boneconstraints
+
+# ------------------------------------------------------------------------
 #    Popout Submenu's
 # ------------------------------------------------------------------------
 
@@ -97,34 +110,24 @@ class VonPanel_RiggingTools__Submenu_BoneSearch(bpy.types.Operator):
 class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operator):
     bl_idname = "von.popoutpanelbonesearch"
     bl_label = "Bone Search"
-    
-    boneconstraints = ['All',]
-    
 
     spaceoptions = ['LOCAL', 'WORLD', 'POSE', 'LOCAL_WITH_PARENT', 'LOCAL_OWNER_ORIENT', 'CUSTOM']
-
-    ExistingBoneConstraints_enum : EnumProperty(
-        name = "Existing Bone Constraints",
-        description = "Select An Option",   
-        items = boneconstraints,
-    )     # type: ignore
 
     TargetSpace_enum : EnumProperty(
         name = "Target Space",
         description = "Select An Option",   
-        items = ExistingBoneConstraints_enum,
+        items = spaceoptions,
     )     # type: ignore
 
     OwnerSpace_enum : EnumProperty(
         name = "Owner Space",
         description = "Select An Option",   
-        items = ExistingBoneConstraints_enum,
+        items = spaceoptions,
     )     # type: ignore
 
     def invoke(self, context, event):
         wm = context.window_manager
-        boneconstraints = von_buttoncontrols.getboneconstraints(von_buttoncontrols.getselectedbones())
-        return wm.invoke_props_dialog(self), boneconstraints
+        return wm.invoke_props_dialog(self)
 
 
     def draw(self, context):
@@ -333,6 +336,10 @@ def von_menupopup_register():
         register_class(cls)
 
     bpy.types.Scene.my_tool = PointerProperty(type=MySettings)
+    VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace.constrainttotarget_enumint = EnumProperty(
+        items=setupboneconstraints_enumerator,
+    )
+
 
 def von_menupopup_unregister():
     from bpy.utils import unregister_class # type: ignore
