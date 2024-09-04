@@ -340,6 +340,7 @@ class VonPanel_AnimationTools(VonPanel, bpy.types.Panel):
         layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator("von.colorizerig")
 
+
 classes = (
     MySettings,
     VonPanel_PrimaryPanel,
