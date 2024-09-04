@@ -118,6 +118,10 @@ def getboneconstraints(selectedbones):
 
 def setboneconstraintspace(activearmature, selectedbones, constrainttotarget,targetspace,ownerspace):
 
+    spaceconsole(5)
+    print(f"Active Armature = {activearmature}  -- Selected Bones = {selectedbones}  -- Constraint To Target = {constrainttotarget}  -- Targetspace = {targetspace}  -- Ownerspace = {ownerspace}")
+
+
     #Go through each bone selected
     for i in selectedbones:
         #Set the current bone's name
