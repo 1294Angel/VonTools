@@ -138,45 +138,16 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
         constraints = getselectedbonesforenum(self, context)
         selectedbones = getselectedbones(context)
 
-        print(constraints)
-
-        print("")
-        print("")
-        print("")
-        
-        print("Spaces ")
-        print(spacebruhs)
-        print("")
-
         constraintchosen = int(mytool.ExistingBoneConstraints_enum)
-        print("")
-        print("")
-        print("")
-        
-        print(constraintchosen)
-
         targetspacechosen = int(self.targetspace_enum)
         targetspacechosen = targetspacechosen - 1
         ownerspacechosen = int(self.ownerspace_enum)
         ownerspacechosen = ownerspacechosen - 1
-
-        
-        print(targetspacechosen)
-        print(ownerspacechosen)
-
         ownerspace = spacebruhs[0]
         targetspace = spacebruhs[0]
         constraint = constraints[0][1]
 
-        print("")
-        print("ConstraintChosen")
-        print(constraint)
-        print("")
-        print("targetspace")
-        print(targetspace)
-        print("ownerspace")
-        print(ownerspace)
-        print("")
+        setboneconstraintspace(activearmature, selectedbones, constraint, targetspace, ownerspace)
 
 
 
