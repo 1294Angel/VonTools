@@ -149,6 +149,8 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
 
         setboneconstraintspace(activearmature, selectedbones, constraint, targetspace, ownerspace)
 
+        return {'FINISHED'}
+
 
 
         
