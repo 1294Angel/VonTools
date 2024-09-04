@@ -130,15 +130,19 @@ def setboneconstraintspace(activearmature, selectedbones, constrainttotarget,tar
 
         #The desired Bone
         boneToSelect = bpy.data.objects[activearmature].pose.bones[bonename].bone
+        spaceconsole(2)
+        print(f"Bone to select = {boneToSelect}")
         #Set as active 
         bpy.context.object.data.bones.active = boneToSelect
         #Select in viewport
         boneToSelect.select = True
+        spaceconsole(1)
         print("i = " + i.name)
         print("i is selected? = " + bpy.context.active_pose_bone.name)
 
         for con in i.constraints:
-            if constrainttotarget == "all":
+            bpy.context.object.data.bones.active = boneToSelect
+            if constrainttotarget == "all" or "All":
                 print("Contraint To Target is All")
                 #Adjust each constraint on the selected bone (i) to be in Local space (need to adjust to work off of a menu str or enum later)
                 bpy.context.object.pose.bones[bonename].constraints[con.name].target_space = targetspace
