@@ -38,7 +38,6 @@ from .von_createcontrols import *
 #    Dynamic Enum Population
 # ------------------------------------------------------------------------
 def updateexistingboneconstraintsenum(self, context):
-    print("Update Enum!!!")
     von_buttoncontrols.getselectedbonesforenum(self, context)
 
 # ------------------------------------------------------------------------
@@ -138,8 +137,6 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
         constraints = getselectedbonesforenum(self, context)
         selectedbones = getselectedbones(context)
 
-
-
         constraintchosen = int(mytool.ExistingBoneConstraints_enum)
         targetspacechosen = int(self.targetspace_enum)
         targetspacechosen = targetspacechosen - 1
@@ -198,8 +195,6 @@ class Von_Dropdown_AddCustomBoneshape(bpy.types.Operator):
             temp_total_string = f"'{str(temp_total)}'"
             #idescription = f"Click To Create {i} As An Avalible Boneshape"
             listofstrings = tuple((temp_total_string, os.path.splitext(os.path.basename(i))[0], i))
-            print(os.path.splitext(os.path.basename(i))[0])
-            print(f"List of strings = {listofstrings}")
             sendtoenum.append(listofstrings)
 
     filetoloadselection_enum : EnumProperty(
