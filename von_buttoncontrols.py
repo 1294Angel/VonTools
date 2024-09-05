@@ -60,15 +60,24 @@ def colorizerig(context):
             lst_bonenames.append(bname)
         
         for i in lst_bonenames:
-            if i.endswith("_L") and i.endswith ("_R") != True:
+
+            iendswithL = False
+            iendswithR = False
+            i = i.upper()
+
+            if i.endswith("_L") or i.endswith(".L") == True:
+                iendswithL = True
+            
+            if i.endswith("_R") or i.endswith(".R") == True:
+                iendswithR = True
+
+            if iendswithL and iendswithR != True:
                 bpy.context.object.data.bones[i].color.palette = 'THEME13'
                 bpy.context.object.pose.bones[i].color.palette = 'THEME13'
-            if i.endswith("_L"):
+            if iendswithL:
                 bpy.context.object.data.bones[i].color.palette = 'THEME02'
                 bpy.context.object.pose.bones[i].color.palette = 'THEME02'
-
-
-            if i.endswith("_R"):
+            if iendswithR:
                 bpy.context.object.data.bones[i].color.palette = 'THEME03'
                 bpy.context.object.pose.bones[i].color.palette = 'THEME03'
 
