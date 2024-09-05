@@ -52,7 +52,7 @@ def getselectedbonesforenum(self, context):
 
 #Functional
 def colorizerig(context):
-    if poll("POSE") == True:
+    if poll("POSE") or poll("EDIT") == True:
         lst_bones = getselectedbones(context)
         lst_bonenames = []
         for i in lst_bones:
