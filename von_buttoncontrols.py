@@ -112,7 +112,7 @@ def getboneconstraints(selectedbones):
 
 def checkboneconstrainttarget(bonelist):
     activearmature = bpy.context.selected_objects[0].name
-    selectedbones = getselectedbones()
+    selectedbones = bonelist
 
     for i in selectedbones:
             #Set the current bone's name
