@@ -41,7 +41,7 @@ def updateexistingboneconstraintsenum(self, context):
     von_buttoncontrols.getselectedbonesforenum(self, context)
 
 def updatetargetspaceenumlist(self, context):
-    factor = checkboneconstrainttarget(von_buttoncontrols.getselectedbones(context))
+    factor = von_buttoncontrols.checkboneconstrainttarget(von_buttoncontrols.getselectedbones(context))
     enumlist = []
     if factor == "ARMATURE":
         enumlist = [("1", "LOCAL", "Description"), ("2", "WORLD", "Description"), ("3", "CUSTOM", "Description"), ("4", "POSE", "Description"), ("5", "LOCAL_WITH_PARENT", "Description"), ("6", "LOCAL_OWNER_ORIENT", "Description")]
@@ -99,7 +99,7 @@ class MySettings(PropertyGroup):
     targetspace_enum: EnumProperty(
         name = "Target Space - ",
         description = "The Setting Target Space will be set to",   
-        items = [],
+        items = updatetargetspaceenumlist,
         update = updatetargetspaceenumlist
     ) # type: ignore
 
