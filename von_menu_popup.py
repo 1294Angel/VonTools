@@ -41,6 +41,8 @@ def updateexistingboneconstraintsenum(self, context):
     von_buttoncontrols.getselectedbonesforenum(self, context)
 
 def updatetargetspaceenumlist(self, context):
+    von_createcontrols.spaceconsole(5)
+    print("UPDATING")
     factor = von_buttoncontrols.checkboneconstrainttarget(von_buttoncontrols.getselectedbones(context))
     enumlist = []
     if factor == "ARMATURE":
@@ -150,8 +152,9 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
 
         constraintchosen = int(mytool.ExistingBoneConstraints_enum)
         targetspacechosen = int(mytool.targetspace_enum)
-        targetspacechosen = targetspacechosen - 1
         ownerspacechosen = int(self.ownerspace_enum)
+
+        targetspacechosen = targetspacechosen - 1
         ownerspacechosen = ownerspacechosen - 1
         ownerspace = spacebruhs[ownerspacechosen]
         targetspace = spacebruhs[targetspacechosen]
