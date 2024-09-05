@@ -131,6 +131,9 @@ def checkboneconstrainttarget(bonelist):
 
             for con in i.constraints:
                 target = con.target
+                if target == None:
+                    return "ARMATURE"
+            
                 objtarget = target.type
                 
                 print(objtarget)
