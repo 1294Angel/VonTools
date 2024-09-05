@@ -119,12 +119,11 @@ def checkboneconstrainttarget(bonelist):
                 print(con.name)
                 target = con.target
                 objtarget = target.type
-                print(f"Target is = {target}")
+                print(f"Target is = {objtarget}")
+
                 if target == None:
                     print(f"NONE -- {objtarget}")
                     return "NOTARMATURE"
-            
-                objtarget = target.type
                 if objtarget == "ARMATURE":
                     print(f"ARMATURE -- {objtarget}")
                     return objtarget
