@@ -52,7 +52,7 @@ def getselectedbonesforenum(self, context):
 
 #Functional
 def colorizerig(context):
-    if poll("POSE") or poll("EDIT") == True:
+    if poll("POSE") == True:
         lst_bones = getselectedbones(context)
         lst_bonenames = []
         for i in lst_bones:
@@ -63,12 +63,12 @@ def colorizerig(context):
 
             iendswithL = False
             iendswithR = False
-            i = i.upper()
+            iupper = i.upper()
 
-            if i.endswith("_L") or i.endswith(".L") == True:
+            if iupper.endswith("_L") or iupper.endswith(".L") == True:
                 iendswithL = True
             
-            if i.endswith("_R") or i.endswith(".R") == True:
+            if iupper.endswith("_R") or iupper.endswith(".R") == True:
                 iendswithR = True
 
             if iendswithL and iendswithR != True:
