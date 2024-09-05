@@ -221,9 +221,20 @@ def getnearbyvertexinfo(selectedvertex):
     #relies on KDTree Utilities - https://docs.blender.org/api/current/mathutils.kdtree.html
     obj = context.object
 
-    mesh = obj.data
+    """mesh = obj.data
     size = len(mesh.vertices)
-    kd = mathutils.kdtree.KDTree(size)
+    kd = mathutils.kdtree.KDTree(size)"""
+
+    mesh = bpy.context.view_layer.objects.active.data  # object must be a mesh and in EditMode
+
+    bm = bmesh.from_edit_mesh(mesh)
+    for vert in bm.verts:
+        vl=[]
+        for l in vert.link_edges:
+            vl.append(l.other_vert(vert).index)
+        print("Vertex[", vert.index, "]:")
+        print("\tco: ", vert.co)
+        print("\tlinks: ", vl)
 
 
 
