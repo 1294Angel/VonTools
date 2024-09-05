@@ -53,7 +53,12 @@ def getselectedbonesforenum(self, context):
 #Functional
 def colorizerig(context):
     if poll("POSE") == True:
-        lst_bonenames = getselectedbones(context)
+        lst_bones = getselectedbones(context)
+        lst_bonenames = []
+        for i in lst_bones:
+            bname = i.name
+            lst_bonenames.append(bname)
+        
         for i in lst_bonenames:
             if i.endswith("_L") and i.endswith ("_R") != True:
                 bpy.context.object.data.bones[i].color.palette = 'THEME13'
