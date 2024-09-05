@@ -118,6 +118,7 @@ def checkboneconstrainttarget(bonelist):
             for con in i.constraints:
                 print(con.name)
                 target = con.target
+                objtarget = target.type
                 print(f"Target is = {target}")
                 if target == None:
                     print(f"NONE -- {objtarget}")
