@@ -315,7 +315,7 @@ class VonPanel_RiggingTools(VonPanel, bpy.types.Panel):
         layout.operator("von.addcustomboneshape")
         layout.operator("von.savenewcontrol")
         layout.operator("von.masssetboneconstraintspace")
-        
+        layout.operator("von.colorizerig")
 
 
         row.label(text= "Weight Painting", icon= 'CUBE')
@@ -335,7 +335,7 @@ class VonPanel_AnimationTools(VonPanel, bpy.types.Panel):
 
         #Bone Search
         layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator("von.colorizerig")
+        #layout.operator("von.colorizerig")
 
 classes = (
     MySettings,
