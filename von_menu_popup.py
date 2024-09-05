@@ -40,6 +40,14 @@ from .von_createcontrols import *
 def updateexistingboneconstraintsenum(self, context):
     von_buttoncontrols.getselectedbonesforenum(self, context)
 
+def updatetargetspaceenumlist(self, context):
+    factor = checkboneconstrainttarget(von_buttoncontrols.getselectedbones(context))
+    enumlist = []
+    if factor == "ARMATURE":
+        enumlist = [("1", "LOCAL", "Description"), ("2", "WORLD", "Description"), ("3", "CUSTOM", "Description"), ("4", "POSE", "Description"), ("5", "LOCAL_WITH_PARENT", "Description"), ("6", "LOCAL_OWNER_ORIENT", "Description")]
+    if factor != "ARMATURE":
+        enumlist = [("1", "LOCAL", "Description"), ("2", "WORLD", "Description"), ("3", "CUSTOM", "Description")]
+
 # ------------------------------------------------------------------------
 #    Scene Properties
 # ------------------------------------------------------------------------
@@ -88,7 +96,12 @@ class MySettings(PropertyGroup):
         update = updateexistingboneconstraintsenum
     ) # type: ignore
 
-
+    targetspace_enum: EnumProperty(
+        name = "Target Space - ",
+        description = "The Setting Target Space will be set to",   
+        items = [],
+        update = updatetargetspaceenumlist
+    ) # type: ignore
 
 # ------------------------------------------------------------------------
 #    Popout Submenu's
@@ -113,13 +126,6 @@ class VonPanel_RiggingTools__Submenu_BoneSearch(bpy.types.Operator):
 class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operator):
     bl_idname = "von.masssetboneconstraintspace"
     bl_label = "Mass Set Constraint Space"
-
-    targetspace_enum: EnumProperty(
-        name = "Target Space - ",
-        description = "The Setting Target Space will be set to",   
-        items = [("1", "LOCAL", "Description"), ("2", "WORLD", "Description"), ("3", "CUSTOM", "Description"), ("4", "POSE", "Description"), ("5", "LOCAL_WITH_PARENT", "Description"), ("6", "LOCAL_OWNER_ORIENT", "Description")]
-
-    ) # type: ignore
 
     ownerspace_enum: EnumProperty(
         name = "Owner Space - ",
