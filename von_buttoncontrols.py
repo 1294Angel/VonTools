@@ -115,22 +115,11 @@ def checkboneconstrainttarget(bonelist):
     selectedbones = bonelist
 
     for i in selectedbones:
-            #Set the current bone's name
-            bonename = i.name
-
-            #The desired Bone
-            boneToSelect = bpy.data.objects[activearmature].pose.bones[bonename].bone
-            #Set as active 
-            bpy.context.object.data.bones.active = boneToSelect
-            #Select in viewport
-            boneToSelect.select = True
-            
-            #Check if target of constraint is armature object or other
-            
-
-
+            print(i.name)
             for con in i.constraints:
+                print(con.name)
                 target = con.target
+                print(f"Target is = {target}")
                 if target == None:
                     return "ARMATURE"
             
