@@ -53,6 +53,9 @@ def updatetargetspaceenumlist(self, context):
         print("NOT ARMATURE")
         enumlist = [("1", "LOCAL", "Description"), ("2", "WORLD", "Description"), ("3", "CUSTOM", "Description")]
         return enumlist
+    if factor == None:
+        print("NONEVALUE")
+        return[("-1000", "NONEVALUE, REPORT ERROR")]
     
 
 # ------------------------------------------------------------------------
