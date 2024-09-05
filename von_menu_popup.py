@@ -106,7 +106,7 @@ class MySettings(PropertyGroup):
     targetspace_enum: EnumProperty(
         name = "Target Space - ",
         description = "The Setting Target Space will be set to",   
-        items = [("10000","You Shouldn't Be Seeing This", "No Seriously Report This")],
+        items = updatetargetspaceenumlist,
         update = updatetargetspaceenumlist
     ) # type: ignore
 
