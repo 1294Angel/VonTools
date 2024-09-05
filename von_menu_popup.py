@@ -44,10 +44,14 @@ def updatetargetspaceenumlist(self, context):
     factor = von_buttoncontrols.checkboneconstrainttarget(von_buttoncontrols.getselectedbones(context))
     enumlist = []
     if factor == "ARMATURE":
+        print("ARMATURE")
         enumlist = [("1", "LOCAL", "Description"), ("2", "WORLD", "Description"), ("3", "CUSTOM", "Description"), ("4", "POSE", "Description"), ("5", "LOCAL_WITH_PARENT", "Description"), ("6", "LOCAL_OWNER_ORIENT", "Description")]
+        return enumlist
     if factor != "ARMATURE":
+        print("NOT ARMATURE")
         enumlist = [("1", "LOCAL", "Description"), ("2", "WORLD", "Description"), ("3", "CUSTOM", "Description")]
-    return enumlist
+        return enumlist
+    
 
 # ------------------------------------------------------------------------
 #    Scene Properties
