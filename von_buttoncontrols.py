@@ -121,11 +121,17 @@ def checkboneconstrainttarget(bonelist):
                 target = con.target
                 print(f"Target is = {target}")
                 if target == None:
+                    print(f"NONE -- {objtarget}")
                     return "ARMATURE"
             
                 objtarget = target.type
-                
-                print(objtarget)
+                if objtarget == "ARMATURE":
+                    print(f"ARMATURE -- {objtarget}")
+                    return objtarget
+                if objtarget != "ARMATURE":
+                    print(f"NOT ARMATURE -- {objtarget}")
+                    return "NOTARMATURE"
+
 
 def setboneconstraintspace(activearmature, selectedbones, constrainttotarget,targetspace,ownerspace):
 
