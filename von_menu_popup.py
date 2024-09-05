@@ -54,7 +54,7 @@ def updatetargetspaceenumlist(self, context):
         print("ARMATURE")
         enumlist = [("1", "LOCAL", "Description"), ("2", "WORLD", "Description"), ("3", "CUSTOM", "Description"), ("4", "POSE", "Description"), ("5", "LOCAL_WITH_PARENT", "Description"), ("6", "LOCAL_OWNER_ORIENT", "Description")]
         return enumlist
-    if factor != "ARMATURE":
+    if factor == "NOTARMATURE":
         print("NOT ARMATURE")
         enumlist = [("1", "LOCAL", "Description"), ("2", "WORLD", "Description"), ("3", "CUSTOM", "Description")]
         return enumlist

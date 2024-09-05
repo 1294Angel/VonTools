@@ -110,19 +110,18 @@ def getboneconstraints(selectedbones):
     if len(constraints) > 0:
         return constraints
 
+#Mostly Functional -- Needs to be expanded to update enum based on the selection option of another enum
 def checkboneconstrainttarget(bonelist):
     selectedbones = bonelist
 
     for i in selectedbones:
-            print(i.name)
-            print(i.constraints)
             for con in i.constraints:
                 print(con.name)
                 target = con.target
                 print(f"Target is = {target}")
                 if target == None:
                     print(f"NONE -- {objtarget}")
-                    return "ARMATURE"
+                    return "NOTARMATURE"
             
                 objtarget = target.type
                 if objtarget == "ARMATURE":
