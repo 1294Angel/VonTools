@@ -38,8 +38,27 @@ from .von_createcontrols import *
 #    Dynamic Enum Population
 # ------------------------------------------------------------------------
 def updateexistingboneconstraintsenum(self, context):
-    print("Update Enum!!!")
     von_buttoncontrols.getselectedbonesforenum(self, context)
+
+def updatetargetspaceenumlist(self, context):
+    von_createcontrols.spaceconsole(5)
+    print("UPDATING")
+    factor = von_buttoncontrols.checkboneconstrainttarget(von_buttoncontrols.getselectedbones(context))
+    enumlist = []
+    print(f"Factor - {factor}")
+
+    if factor == None:
+        print("NONEVALUE")
+        return[("-1000", "NONEVALUE, REPORT ERROR")]
+    if factor == "ARMATURE":
+        print("ARMATURE")
+        enumlist = [("1", "LOCAL", "Description"), ("2", "WORLD", "Description"), ("3", "CUSTOM", "Description"), ("4", "POSE", "Description"), ("5", "LOCAL_WITH_PARENT", "Description"), ("6", "LOCAL_OWNER_ORIENT", "Description")]
+        return enumlist
+    if factor == "NOTARMATURE":
+        print("NOT ARMATURE")
+        enumlist = [("1", "LOCAL", "Description"), ("2", "WORLD", "Description"), ("3", "CUSTOM", "Description")]
+        return enumlist
+    
 
 # ------------------------------------------------------------------------
 #    Scene Properties
@@ -89,7 +108,12 @@ class MySettings(PropertyGroup):
         update = updateexistingboneconstraintsenum
     ) # type: ignore
 
-
+    targetspace_enum: EnumProperty(
+        name = "Target Space - ",
+        description = "The Setting Target Space will be set to",   
+        items = updatetargetspaceenumlist,
+        update = updatetargetspaceenumlist
+    ) # type: ignore
 
 # ------------------------------------------------------------------------
 #    Popout Submenu's
@@ -115,20 +139,13 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
     bl_idname = "von.masssetboneconstraintspace"
     bl_label = "Mass Set Constraint Space"
 
-    targetspace_enum: EnumProperty(
-        name = "Target Space - ",
-        description = "The Setting Target Space will be set to",   
-        items = [("1", "LOCAL", "Description"), ("2", "WORLD", "Description"), ("3", "CUSTOM", "Description"), ("4", "POSE", "Description"), ("5", "LOCAL_WITH_PARENT", "Description"), ("6", "LOCAL_OWNER_ORIENT", "Description")]
-
-    ) # type: ignore
-
     ownerspace_enum: EnumProperty(
         name = "Owner Space - ",
         description = "The Setting Owner Space will be set to",   
-        items = [("1", "LOCAL", "Description"), ("2", "WORLD", "Description"), ("3", "CUSTOM", "Description"), ("4", "POSE", "Description"), ("5", "LOCAL_WITH_PARENT", "Description"), ("6", "LOCAL_OWNER_ORIENT", "Description")]
+        items = [("1", "LOCAL", "Description"), ("2", "WORLD", "Description"), ("3", "CUSTOM", "Description"), ("4", "POSE", "Description"), ("5", "LOCAL_WITH_PARENT", "Description")]
     ) # type: ignore
 
-
+ 
     def execute(self, context):
         scene = context.scene
         mytool=scene.my_tool
@@ -139,9 +156,10 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
         selectedbones = getselectedbones(context)
 
         constraintchosen = int(mytool.ExistingBoneConstraints_enum)
-        targetspacechosen = int(self.targetspace_enum)
-        targetspacechosen = targetspacechosen - 1
+        targetspacechosen = int(mytool.targetspace_enum)
         ownerspacechosen = int(self.ownerspace_enum)
+
+        targetspacechosen = targetspacechosen - 1
         ownerspacechosen = ownerspacechosen - 1
         ownerspace = spacebruhs[ownerspacechosen]
         targetspace = spacebruhs[targetspacechosen]
@@ -167,7 +185,7 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
         mytool=scene.my_tool
         enum = mytool.ExistingBoneConstraints_enum
         layout.prop(mytool, "ExistingBoneConstraints_enum")
-        layout.prop(self, "targetspace_enum")
+        layout.prop(mytool, "targetspace_enum")
         layout.prop(self, "ownerspace_enum")
         
 
@@ -196,8 +214,6 @@ class Von_Dropdown_AddCustomBoneshape(bpy.types.Operator):
             temp_total_string = f"'{str(temp_total)}'"
             #idescription = f"Click To Create {i} As An Avalible Boneshape"
             listofstrings = tuple((temp_total_string, os.path.splitext(os.path.basename(i))[0], i))
-            print(os.path.splitext(os.path.basename(i))[0])
-            print(f"List of strings = {listofstrings}")
             sendtoenum.append(listofstrings)
 
     filetoloadselection_enum : EnumProperty(
@@ -318,7 +334,7 @@ class VonPanel_RiggingTools(VonPanel, bpy.types.Panel):
         layout.operator("von.addcustomboneshape")
         layout.operator("von.savenewcontrol")
         layout.operator("von.masssetboneconstraintspace")
-        
+        layout.operator("von.colorizerig")
 
 
         row.label(text= "Weight Painting", icon= 'CUBE')
@@ -338,7 +354,7 @@ class VonPanel_AnimationTools(VonPanel, bpy.types.Panel):
 
         #Bone Search
         layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator("von.colorizerig")
+        #layout.operator("von.colorizerig")
 
 
 classes = (
