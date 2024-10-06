@@ -222,55 +222,52 @@ def getnearbyvertecies_dict():
     vertexconnections = {}
 
     vertexconnections.clear()
-
+    
+    selected_verts = [v for v in mesh.vertices if v.select]
+    
     bm = bmesh.from_edit_mesh(mesh)
+    
     for vert in bm.verts:
-        vl=[]
-        for l in vert.link_edges:
-            vl.append(l.other_vert(vert))
+        vl = []
         
-        vertexconnections[vert.index] = vl
-
+        for i in selected_verts:
+            if i.index == vert.index:
+                for l in vert.link_edges:
+                    vl.append(l.other_vert(vert))
+                vertexconnections[vert.index] = vl
+                
+            elif i.index != vert.index:
+                print("NOT FOUND")
+            
+            
+    print("")
     return vertexconnections
 
-def getnearbyvertexweights_dict(vertexdictionary, activeobject):
-    #get selected vertex
-    selectedvertexindex = -10
-    obj=bpy.context.object
-    if obj.mode == 'EDIT':
-        bm=bmesh.from_edit_mesh(obj.data)
-        for v in bm.verts:
-            if v.select:
-                selectedvertexindex = v.index
-    for i in vertexdictionary(selectedvertexindex):
-        i.w
-
-
-def getallvertices_vertexgroups():
+#Returns Dictionary Of Vert Weights and Groups Searchable By Vert
+def getallvertices_vertexgroups(feedverts):
 
     ob = bpy.context.object
     assert ob is not None and ob.type == 'MESH', "active object invalid"
+
     # ensure we got the latest assignments and weights
     ob.update_from_editmode()
-    me = ob.data
-    # get bMesh representation
-    bm = bmesh.from_edit_mesh(me)
     # create vertex group lookup dictionary for names
     vgroup_names = {vgroup.index: vgroup.name for vgroup in ob.vertex_groups}
-    print("Vgroup Names")
-    print(vgroup_names)
     # create dictionary of vertex group assignments per vertex
-    vgroups = {v.index: [vgroup_names[g.group] for g in v.groups] for v in me.vertices}
-
+    vgroups = {}
+    for v in feedverts:
+        addtodict = ()
+        for g in v.groups:
+            tmpaddtodict = []
+            groupname = vgroup_names[g.group]
+            vertexweight = g.weight
+            tmpaddtodict = tuple([(groupname, vertexweight)])
+            addtodict = addtodict + tmpaddtodict
+            
+            
+        vgroups.update({v.index: addtodict})
+    
     return vgroups
-"""
-    #create list of vert indicies
-    vertices = [v for v in bm.verts if (v.select and not v.hide)]
-
-    # test: print list of vertex group names vertex 0 is in
-    for i in vertices:
-        print(i.index)
-        print(vgroups[i.index])"""
 
 
 
