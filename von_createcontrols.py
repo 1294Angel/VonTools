@@ -215,19 +215,125 @@ def organisetocontrolscollection(createdobjectname):
 
 # ------------------------------------------------------------------------
 #    Create Weight Hammer Functions 
-# ------------------------------------------------------------------------
+# ------------------------------
+#Gets Connected Vertecies
+def getnearbyvertecies_dict():
+    mesh = bpy.context.view_layer.objects.active.data  # object must be a mesh and in EditMode
 
-def getnearbyvertexinfo(selectedvertex):
-    #relies on KDTree Utilities - https://docs.blender.org/api/current/mathutils.kdtree.html
-    obj = context.object
+    vertexconnections = {}
 
+    vertexconnections.clear()
+    
+    selected_verts = [v for v in mesh.vertices if v.select]
+    
+    bm = bmesh.from_edit_mesh(mesh)
+    
+    for vert in bm.verts:
+        vl = []
+        
+        for i in selected_verts:
+            if i.index == vert.index:
+                for l in vert.link_edges:
+                    tmpvl = (l.other_vert(vert))
+                    vl.append(tmpvl.index)
+                vertexconnections[vert.index] = vl
+    return vertexconnections
+
+#Returns Dictionary Of Vert Weights and Groups Searchable By Vert
+def getallvertices_vertexgroups():
+    mesh = bpy.context.view_layer.objects.active.data
+    ob = bpy.context.object
+    assert ob is not None and ob.type == 'MESH', "active object invalid"
+    ob.update_from_editmode()
+    
+    #Get Selected Verts And Object Data
+    selected_verts = [v for v in mesh.vertices if v.select]
+    me = ob.data
+    # create vertex group lookup dictionary for names
+    vgroup_names = {vgroup.index: vgroup.name for vgroup in ob.vertex_groups}
+
+    #get actionable vertecies
+    feedverts = getnearbyvertecies_dict()
+    
+    # create dictionary of vertex group assignments per vertex
+    vgroups = {}
+    for v in me.vertices:
+        addtodict = ()
+        for sel in selected_verts:
+            for x in feedverts[sel.index]:
+
+                if v.index == x:
+                    for g in v.groups:
+                        tmpaddtodict = []
+                        groupname = vgroup_names[g.group]
+                        vertexweight = g.weight
+                        tmpaddtodict = tuple([(groupname, vertexweight)])
+                        addtodict = addtodict + tmpaddtodict
+                    vgroups.update({v.index: addtodict})
+    print("Returning vgroups")
+    #returns a dictionary in this format --> {vertex index : ((vertexgroup name, vertex weight),(vertexgroup name, vertex weight),ect  )}
+    return vgroups
+
+
+#RUN THIS ONE, ALL THE REST ARE INSIDE IT!!
+def averagevertexweights():
+    weightdict = getallvertices_vertexgroups()
+    vertexgroups = []
+    weights = []
+    
+    for i in weightdict:
+        #1,2,4
+        dictionary = weightdict[i]
+        for item in dictionary:
+            vertgroupname = item[0]
+            #Each Vertexgroupname
+
+            if vertgroupname in vertexgroups:
+                print("fuck no")
+                
+            elif vertgroupname not in vertexgroups:
+                vertexgroups.append(vertgroupname)
+    #returns a list of vertex groups on the vertecies -- HAS NO DOUBLES
+    #Use this to then search through the verticies of selected items to average out each vertexgroup
+    
+    for group in vertexgroups:
+        weightslist = []
+        for i in weightdict:
+            dictionary = weightdict[i]
+            for item in dictionary:
+                if item[0] == group:
+                    print("FOUND GROUP")
+                    print(group)
+                    tmpweighttoadd = item[1]
+                    print(item[1])
+                    weightslist.append(tmpweighttoadd)
+        averagedvertexweight = 0
+        iterations = 0
+        for it in weightslist:
+            iterations = iterations + 1
+            averagedvertexweight = averagedvertexweight + it
+        averagedvertexweight = averagedvertexweight / iterations
+        assignvertexweights(group,averagedvertexweight)
+
+#Assigns Weights (And checks the vertex groups actually exist)
+def assignvertexweights(vertex_group_name, vertex_weight):
+    obj = bpy.context.active_object
     mesh = obj.data
-    size = len(mesh.vertices)
-    kd = mathutils.kdtree.KDTree(size)
+    if obj and obj.mode == 'EDIT':
+        bpy.ops.object.mode_set(mode='OBJECT')
 
+        # Create or get the vertex group
+        if vertex_group_name not in obj.vertex_groups:
+            vertex_group = obj.vertex_groups.new(name=vertex_group_name)
+        else:
+            vertex_group = obj.vertex_groups[vertex_group_name]
+        # Assign the selected vertices to the vertex group
+        for vert in mesh.vertices:
+            if vert.select:  # Check if the vertex is selected
+                vertex_group.add([vert.index], vertex_weight, 'REPLACE')
 
-
+        bpy.ops.object.mode_set(mode='EDIT')
 
 # ------------------------------------------------------------------------
 #    Test Controls
-# ------------------------------------------------------------------------
+# -----------------------------------------------------------------------

@@ -292,6 +292,14 @@ class VonPanel_RiggingTools__Button_SaveNewControl(bpy.types.Operator):
     def invoke(self, context, event):
         return context.window_manager.invoke_props_dialog(self)
 
+class VonPanel_RiggingTools__WeightHammer(bpy.types.Operator):
+    bl_idname = "von.weighthammer"
+    bl_label = "Weight Hammer"
+    
+    def execute(self, context):
+        von_createcontrols.averagevertexweights()
+        return {'FINISHED'}
+
 # ------------------------------------------------------------------------
 #    Menu Setup
 # ------------------------------------------------------------------------
@@ -302,7 +310,7 @@ class VonPanel:
     bl_category = 'VonTools'
     bl_options = {"DEFAULT_CLOSED"}
 
-class VonPanel_PrimaryPanel(VonPanel, bpy.types.Panel):
+class VonPanel_PT_PrimaryPanel(VonPanel, bpy.types.Panel):
     bl_idname = "von.vontools"
     bl_label= "Von Tools"
 
@@ -310,7 +318,7 @@ class VonPanel_PrimaryPanel(VonPanel, bpy.types.Panel):
         layout = self.layout
         layout.label(text= "Vontools For All Your Rigging Needs")
 
-class VonPanel_RiggingTools(VonPanel, bpy.types.Panel):
+class VonPanel_PT_RiggingTools(VonPanel, bpy.types.Panel):
     bl_parent_id = "von.vontools"
     bl_label = "Rigging Tools"
 
@@ -335,11 +343,12 @@ class VonPanel_RiggingTools(VonPanel, bpy.types.Panel):
         layout.operator("von.savenewcontrol")
         layout.operator("von.masssetboneconstraintspace")
         layout.operator("von.colorizerig")
+        layout.operator("von.weighthammer")
 
 
         row.label(text= "Weight Painting", icon= 'CUBE')
 
-class VonPanel_AnimationTools(VonPanel, bpy.types.Panel):
+class VonPanel_PT_AnimationTools(VonPanel, bpy.types.Panel):
     bl_parent_id = "von.vontools"
     bl_label = "Animation Tools"
 
@@ -359,15 +368,16 @@ class VonPanel_AnimationTools(VonPanel, bpy.types.Panel):
 
 classes = (
     MySettings,
-    VonPanel_PrimaryPanel,
-    VonPanel_RiggingTools,
+    VonPanel_PT_PrimaryPanel,
+    VonPanel_PT_RiggingTools,
     VonPanel_RiggingTools__Submenu_BoneSearch,
     VonPanel_RiggingTools__Submenu_CreateControl,
     VonPanel_RiggingTools__Button_SaveNewControl,
     Von_Dropdown_AddCustomBoneshape,
-    VonPanel_AnimationTools,
+    VonPanel_PT_AnimationTools,
     VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace,
-    VonPanel_RiggingTools__Submenu_ColorizeRig
+    VonPanel_RiggingTools__Submenu_ColorizeRig,
+    VonPanel_RiggingTools__WeightHammer
 )
 
 def von_menupopup_register():
