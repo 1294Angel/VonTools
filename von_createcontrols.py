@@ -233,19 +233,11 @@ def getnearbyvertecies_dict():
         for i in selected_verts:
             if i.index == vert.index:
                 for l in vert.link_edges:
-                    print("-")
                     tmpvl = (l.other_vert(vert))
-                    print(tmpvl.index)
                     vl.append(tmpvl.index)
-                    print(vl)
                 vertexconnections[vert.index] = vl
-                print("FOUND")
                 
             elif i.index != vert.index:
-                print("NOT FOUND")
-            
-            
-    print("")
     return vertexconnections
 
 #Returns Dictionary Of Vert Weights and Groups Searchable By Vert
@@ -255,28 +247,18 @@ def getallvertices_vertexgroups():
     assert ob is not None and ob.type == 'MESH', "active object invalid"
     ob.update_from_editmode()
     
-    
+    #Get Selected Verts And Object Data
     selected_verts = [v for v in mesh.vertices if v.select]
-    for i in selected_verts:
-        print("selected verts")
-        print(i.index)
-    
     me = ob.data
     # create vertex group lookup dictionary for names
     vgroup_names = {vgroup.index: vgroup.name for vgroup in ob.vertex_groups}
 
-
     #get actionable vertecies
     feedverts = getnearbyvertecies_dict()
-    print("FeedVerts")
-    print(feedverts)
     
-
     # create dictionary of vertex group assignments per vertex
-    print("")
     vgroups = {}
     for v in me.vertices:
-        print("-----------------")
         addtodict = ()
         for sel in selected_verts:
             for x in feedverts[3]:
