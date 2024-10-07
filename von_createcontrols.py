@@ -313,6 +313,7 @@ def averagevertexweights():
             iterations = iterations + 1
             averagedvertexweight = averagedvertexweight + it
         averagedvertexweight = averagedvertexweight / iterations
+        print(f"Group Assigning = {group} Averaged Vertex Weight - {averagedvertexweight}")
         assignvertexweights(group,averagedvertexweight)
 
 def clear_vertex_weights():
