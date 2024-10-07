@@ -273,6 +273,8 @@ def getallvertices_vertexgroups():
     #returns a dictionary in this format --> {vertex index : ((vertexgroup name, vertex weight),(vertexgroup name, vertex weight),ect  )}
     return vgroups
 
+
+#RUN THIS ONE, ALL THE REST ARE INSIDE IT!!
 def averagevertexweights():
     weightdict = getallvertices_vertexgroups()
     vertexgroups = []
@@ -292,6 +294,50 @@ def averagevertexweights():
                 vertexgroups.append(vertgroupname)
     #returns a list of vertex groups on the vertecies -- HAS NO DOUBLES
     #Use this to then search through the verticies of selected items to average out each vertexgroup
+    
+    for group in vertexgroups:
+        weightslist = []
+        for i in weightdict:
+            dictionary = weightdict[i]
+            for item in dictionary:
+                if item[0] == group:
+                    print("FOUND GROUP")
+                    print(group)
+                    tmpweighttoadd = item[1]
+                    print(item[1])
+                    weightslist.append(tmpweighttoadd)
+        averagedvertexweight = 0
+        iterations = 0
+        for it in weightslist:
+            iterations = iterations + 1
+            averagedvertexweight = averagedvertexweight + it
+        averagedvertexweight = averagedvertexweight / iterations
+        assignvertexweights(group,averagedvertexweight)
+
+
+def assignvertexweights(vertex_group_name, vertex_weight):
+    obj = bpy.context.active_object
+    mesh = obj.data
+    if obj and obj.mode == 'EDIT':
+        bpy.ops.object.mode_set(mode='OBJECT')
+
+        # Create or get the vertex group
+        if vertex_group_name not in obj.vertex_groups:
+            vertex_group = obj.vertex_groups.new(name=vertex_group_name)
+        else:
+            vertex_group = obj.vertex_groups[vertex_group_name]
+        # Assign the selected vertices to the vertex group
+        for vert in mesh.vertices:
+            if vert.select:  # Check if the vertex is selected
+                vertex_group.add([vert.index], vertex_weight, 'REPLACE')
+
+        bpy.ops.object.mode_set(mode='EDIT')
+        
+            
+
+
+
+
 
         """
             for i in range len(vertexgroups):
