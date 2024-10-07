@@ -216,6 +216,7 @@ def organisetocontrolscollection(createdobjectname):
 # ------------------------------------------------------------------------
 #    Create Weight Hammer Functions 
 # ------------------------------
+#Gets Connected Vertecies
 def getnearbyvertecies_dict():
     mesh = bpy.context.view_layer.objects.active.data  # object must be a mesh and in EditMode
 
@@ -314,7 +315,7 @@ def averagevertexweights():
         averagedvertexweight = averagedvertexweight / iterations
         assignvertexweights(group,averagedvertexweight)
 
-
+#Assigns Weights (And checks the vertex groups actually exist)
 def assignvertexweights(vertex_group_name, vertex_weight):
     obj = bpy.context.active_object
     mesh = obj.data

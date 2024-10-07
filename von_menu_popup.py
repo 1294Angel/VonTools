@@ -292,6 +292,16 @@ class VonPanel_RiggingTools__Button_SaveNewControl(bpy.types.Operator):
     def invoke(self, context, event):
         return context.window_manager.invoke_props_dialog(self)
 
+class VonPanel_RiggingTools__WeightHammer(bpy.types.Operator):
+    bl_idname = "von.weighthammer"
+    bl_label = "Weight Hammer"
+    
+    def execute(self, context):
+        von_createcontrols.averagevertexweights()
+        return {'FINISHED'}
+    def invoke(self, context, event):
+        return context.window_manager.invoke_props_dialog(self)
+
 # ------------------------------------------------------------------------
 #    Menu Setup
 # ------------------------------------------------------------------------
@@ -335,6 +345,7 @@ class VonPanel_PT_RiggingTools(VonPanel, bpy.types.Panel):
         layout.operator("von.savenewcontrol")
         layout.operator("von.masssetboneconstraintspace")
         layout.operator("von.colorizerig")
+        layout.operator("von.weighthammer")
 
 
         row.label(text= "Weight Painting", icon= 'CUBE')
