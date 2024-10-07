@@ -337,7 +337,6 @@ def assignvertexweights(vertex_group_name, vertex_weight):
     
 
     if obj and obj.mode == 'EDIT':
-        clear_vertex_weights()
         bpy.ops.object.mode_set(mode='OBJECT')
 
         # Create or get the vertex group
