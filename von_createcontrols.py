@@ -236,8 +236,6 @@ def getnearbyvertecies_dict():
                     tmpvl = (l.other_vert(vert))
                     vl.append(tmpvl.index)
                 vertexconnections[vert.index] = vl
-                
-            elif i.index != vert.index:
     return vertexconnections
 
 #Returns Dictionary Of Vert Weights and Groups Searchable By Vert
