@@ -299,8 +299,6 @@ class VonPanel_RiggingTools__WeightHammer(bpy.types.Operator):
     def execute(self, context):
         von_createcontrols.averagevertexweights()
         return {'FINISHED'}
-    def invoke(self, context, event):
-        return context.window_manager.invoke_props_dialog(self)
 
 # ------------------------------------------------------------------------
 #    Menu Setup
