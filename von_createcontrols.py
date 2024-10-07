@@ -333,7 +333,11 @@ def clear_vertex_weights():
 def assignvertexweights(vertex_group_name, vertex_weight):
     obj = bpy.context.active_object
     mesh = obj.data
+
+    
+
     if obj and obj.mode == 'EDIT':
+        clear_vertex_weights()
         bpy.ops.object.mode_set(mode='OBJECT')
 
         # Create or get the vertex group
@@ -344,7 +348,6 @@ def assignvertexweights(vertex_group_name, vertex_weight):
         # Assign the selected vertices to the vertex group
         for vert in mesh.vertices:
             if vert.select:  # Check if the vertex is selected
-                clear_vertex_weights()
                 vertex_group.add([vert.index], vertex_weight, 'REPLACE')
 
         bpy.ops.object.mode_set(mode='EDIT')
