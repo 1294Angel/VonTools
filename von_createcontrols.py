@@ -313,12 +313,30 @@ def averagevertexweights():
             iterations = iterations + 1
             averagedvertexweight = averagedvertexweight + it
         averagedvertexweight = averagedvertexweight / iterations
+        print(f"Group Assigning = {group} Averaged Vertex Weight - {averagedvertexweight}")
         assignvertexweights(group,averagedvertexweight)
+
+def clear_vertex_weights():
+    obj = bpy.context.active_object
+    if obj.mode != 'EDIT':
+        bpy.ops.object.mode_set(mode='EDIT')
+    bpy.ops.object.mode_set(mode='OBJECT')
+    mesh = obj.data
+    cleared_count = 0
+    for v_index in range(len(mesh.vertices)):
+        if mesh.vertices[v_index].select:
+            for vgroup in obj.vertex_groups:
+                obj.vertex_groups[vgroup.index].remove([v_index])
+                cleared_count += 1
+    bpy.ops.object.mode_set(mode='EDIT')
 
 #Assigns Weights (And checks the vertex groups actually exist)
 def assignvertexweights(vertex_group_name, vertex_weight):
     obj = bpy.context.active_object
     mesh = obj.data
+
+    
+
     if obj and obj.mode == 'EDIT':
         bpy.ops.object.mode_set(mode='OBJECT')
 
