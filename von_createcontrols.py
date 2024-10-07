@@ -333,26 +333,6 @@ def assignvertexweights(vertex_group_name, vertex_weight):
                 vertex_group.add([vert.index], vertex_weight, 'REPLACE')
 
         bpy.ops.object.mode_set(mode='EDIT')
-        
-            
-
-
-
-
-
-        """
-            for i in range len(vertexgroups):
-                if vertexweightgroup == vertexgroups[i]:
-                    listofcollectedgroups = listofcollectedgroups + vertexgroups[i](Weight)
-                    itterations = itteration + 1
-                
-            basically you need to go through every vertex
-            then check whether or not it is a vertex that we want to act upon (One of the neighbouring verticies)
-            then go through the list of vertexgroups gathered earlier and for each one in the list gather all of the weights on each of the neighbouring verticies for that vertexgroup
-                eg - Go through vert indexes (1,2,4) and check for group 1 and find that the weights are (1,0.9,1) - Then multiply these together and divide by the number of weights multiplied together
-            """
-        
-    print(vertexgroups)
 
 # ------------------------------------------------------------------------
 #    Test Controls

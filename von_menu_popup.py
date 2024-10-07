@@ -377,7 +377,8 @@ classes = (
     Von_Dropdown_AddCustomBoneshape,
     VonPanel_PT_AnimationTools,
     VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace,
-    VonPanel_RiggingTools__Submenu_ColorizeRig
+    VonPanel_RiggingTools__Submenu_ColorizeRig,
+    VonPanel_RiggingTools__WeightHammer
 )
 
 def von_menupopup_register():
