@@ -259,24 +259,53 @@ def getallvertices_vertexgroups():
     for v in me.vertices:
         addtodict = ()
         for sel in selected_verts:
-            for x in feedverts[3]:
-                print(v)
-                print(sel)
-                print(x)
-                if v.index == x.index:
+            for x in feedverts[sel.index]:
+
+                if v.index == x:
                     for g in v.groups:
                         tmpaddtodict = []
                         groupname = vgroup_names[g.group]
                         vertexweight = g.weight
                         tmpaddtodict = tuple([(groupname, vertexweight)])
-                        print("tmpaddtodict")
-                        print(tmpaddtodict)
                         addtodict = addtodict + tmpaddtodict
                     vgroups.update({v.index: addtodict})
     print("Returning vgroups")
+    #returns a dictionary in this format --> {vertex index : ((vertexgroup name, vertex weight),(vertexgroup name, vertex weight),ect  )}
     return vgroups
 
+def averagevertexweights():
+    weightdict = getallvertices_vertexgroups()
+    vertexgroups = []
+    weights = []
+    
+    for i in weightdict:
+        #1,2,4
+        dictionary = weightdict[i]
+        for item in dictionary:
+            vertgroupname = item[0]
+            #Each Vertexgroupname
 
+            if vertgroupname in vertexgroups:
+                print("fuck no")
+                
+            elif vertgroupname not in vertexgroups:
+                vertexgroups.append(vertgroupname)
+    #returns a list of vertex groups on the vertecies -- HAS NO DOUBLES
+    #Use this to then search through the verticies of selected items to average out each vertexgroup
+
+        """
+            for i in range len(vertexgroups):
+                if vertexweightgroup == vertexgroups[i]:
+                    listofcollectedgroups = listofcollectedgroups + vertexgroups[i](Weight)
+                    itterations = itteration + 1
+                
+            basically you need to go through every vertex
+            then check whether or not it is a vertex that we want to act upon (One of the neighbouring verticies)
+            then go through the list of vertexgroups gathered earlier and for each one in the list gather all of the weights on each of the neighbouring verticies for that vertexgroup
+                eg - Go through vert indexes (1,2,4) and check for group 1 and find that the weights are (1,0.9,1) - Then multiply these together and divide by the number of weights multiplied together
+            """
+        
+    print(vertexgroups)
 
 # ------------------------------------------------------------------------
 #    Test Controls
