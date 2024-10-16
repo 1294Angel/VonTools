@@ -300,14 +300,6 @@ class VonPanel_RiggingTools__WeightHammer(bpy.types.Operator):
         von_createcontrols.averagevertexweights()
         return {'FINISHED'}
 
-class VonPanel_RiggingTools__ClearVertexWeights(bpy.types.Operator):
-    bl_idname = "von.clearvertexweights"
-    bl_label = "Clear Vertex Weights"
-
-    def execute(self, context):
-        von_createcontrols.clear_vertex_weights()
-        return {'FINISHED'}
-
 # ------------------------------------------------------------------------
 #    Menu Setup
 # ------------------------------------------------------------------------
@@ -351,9 +343,7 @@ class VonPanel_PT_RiggingTools(VonPanel, bpy.types.Panel):
         layout.operator("von.savenewcontrol")
         layout.operator("von.masssetboneconstraintspace")
         layout.operator("von.colorizerig")
-
         layout.operator("von.weighthammer")
-        layout.operator("von.clearvertexweights")
 
 
         row.label(text= "Weight Painting", icon= 'CUBE')
@@ -387,8 +377,7 @@ classes = (
     VonPanel_PT_AnimationTools,
     VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace,
     VonPanel_RiggingTools__Submenu_ColorizeRig,
-    VonPanel_RiggingTools__WeightHammer,
-    VonPanel_RiggingTools__ClearVertexWeights
+    VonPanel_RiggingTools__WeightHammer
 )
 
 def von_menupopup_register():
