@@ -309,7 +309,7 @@ class VonPanel_VRCTools_SaveBoneNameToDict(bpy.types.Operator):
     bl_label = "Save Bone Name To Dict"
 
     def execute(self, context):
-        von_createcontrols.clear_vertex_weights()
+        von_vrctools.gatherheirarchydata()
         return {'FINISHED'}
 
 # ------------------------------------------------------------------------
@@ -322,7 +322,7 @@ class VonPanel:
     bl_category = 'VonTools'
     bl_options = {"DEFAULT_CLOSED"}
 
-class VonPanel_PT_PrimaryPanel(VonPanel, bpy.types.Panel):
+class VONPANEL_PT_PrimaryPanel(VonPanel, bpy.types.Panel):
     bl_idname = "von.vontools"
     bl_label= "Von Tools"
 
@@ -330,7 +330,7 @@ class VonPanel_PT_PrimaryPanel(VonPanel, bpy.types.Panel):
         layout = self.layout
         layout.label(text= "Vontools For All Your Rigging Needs")
 
-class VonPanel_PT_RiggingTools(VonPanel, bpy.types.Panel):
+class VONPANEL_PT_RiggingTools(VonPanel, bpy.types.Panel):
     bl_parent_id = "von.vontools"
     bl_label = "Rigging Tools"
 
@@ -362,7 +362,7 @@ class VonPanel_PT_RiggingTools(VonPanel, bpy.types.Panel):
 
         row.label(text= "Weight Painting", icon= 'CUBE')
 
-class VonPanel_PT_VRCTools(VonPanel, bpy.types.Panel):
+class VONPANEL_PT_VRCTools(VonPanel, bpy.types.Panel):
     bl_parent_id = "von.vontools"
     bl_label = "VRChat Tools"
 
@@ -378,14 +378,14 @@ class VonPanel_PT_VRCTools(VonPanel, bpy.types.Panel):
 
 classes = (
     MySettings,
-    VonPanel_PT_PrimaryPanel,
-    VonPanel_PT_RiggingTools,
+    VONPANEL_PT_PrimaryPanel,
+    VONPANEL_PT_RiggingTools,
     VonPanel_RiggingTools__Submenu_BoneSearch,
     VonPanel_RiggingTools__Submenu_CreateControl,
     VonPanel_RiggingTools__Button_SaveNewControl,
     Von_Dropdown_AddCustomBoneshape,
     VonPanel_VRCTools_SaveBoneNameToDict,
-    VonPanel_PT_VRCTools,
+    VONPANEL_PT_VRCTools,
     VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace,
     VonPanel_RiggingTools__Submenu_ColorizeRig,
     VonPanel_RiggingTools__WeightHammer,
