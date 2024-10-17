@@ -1,10 +1,16 @@
-import bpy # type: ignore #ignore
+import bpy, os # type: ignore
 from pathlib import Path
 from . import von_createcontrols
 
+
+def get_addon_directory():
+    # Get the directory of the current Python file
+    addon_directory = os.path.dirname(__file__)
+    return addon_directory
+
 def gatherheirarchydata():
-    directory_path = von_createcontrols.getfolderloc()
-    for file in directory_path.iterdir():
-        if file.is_file():  # Check if it is a file
-            print(f"File: {file.name}")  # Process the file (e.g., print its name)
-    
+    directory_path = get_addon_directory()
+    for filename in os.listdir(directory_path):
+        file_path = os.path.join(directory_path, filename)  # Create the full file path
+        if os.path.isfile(file_path):  # Check if it is a file
+            print(f"File: {filename}")  # Process the file (e.g., print its name)
