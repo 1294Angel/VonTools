@@ -28,11 +28,7 @@ from bpy.types import (Panel, # type: ignore
 
 from . import von_buttoncontrols
 from . import von_createcontrols
-import imp
-imp.reload(von_buttoncontrols)
-imp.reload(von_createcontrols)
-from .von_buttoncontrols import *
-from .von_createcontrols import *
+from . import von_vrctools
 
 # ------------------------------------------------------------------------
 #    Dynamic Enum Population
@@ -152,8 +148,8 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
 
         activearmature = bpy.context.selected_objects[0].name
         spacebruhs = ("LOCAL", "WORLD", "CUSTOM","POSE","LOCAL_WITH_PARENT","LOCAL_OWNER_ORIENT")
-        constraints = getselectedbonesforenum(self, context)
-        selectedbones = getselectedbones(context)
+        constraints = von_buttoncontrols.getselectedbonesforenum(self, context)
+        selectedbones = von_buttoncontrols.getselectedbones(context)
 
         constraintchosen = int(mytool.ExistingBoneConstraints_enum)
         targetspacechosen = int(mytool.targetspace_enum)
@@ -165,7 +161,7 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
         targetspace = spacebruhs[targetspacechosen]
         constraint = constraints[constraintchosen][1]
 
-        setboneconstraintspace(activearmature, selectedbones, constraint, targetspace, ownerspace)
+        von_buttoncontrols.setboneconstraintspace(activearmature, selectedbones, constraint, targetspace, ownerspace)
 
         return {'FINISHED'}
 
@@ -308,6 +304,14 @@ class VonPanel_RiggingTools__ClearVertexWeights(bpy.types.Operator):
         von_createcontrols.clear_vertex_weights()
         return {'FINISHED'}
 
+class VonPanel_VRCTools_SaveBoneNameToDict(bpy.types.Operator):
+    bl_idname = "von.vrcsavebonenametodict"
+    bl_label = "Save Bone Name To Dict"
+
+    def execute(self, context):
+        von_createcontrols.clear_vertex_weights()
+        return {'FINISHED'}
+
 # ------------------------------------------------------------------------
 #    Menu Setup
 # ------------------------------------------------------------------------
@@ -360,7 +364,7 @@ class VonPanel_PT_RiggingTools(VonPanel, bpy.types.Panel):
 
 class VonPanel_PT_VRCTools(VonPanel, bpy.types.Panel):
     bl_parent_id = "von.vontools"
-    bl_label = "Animation Tools"
+    bl_label = "VRChat Tools"
 
     def draw(self, context):
         layout = self.layout
@@ -368,13 +372,9 @@ class VonPanel_PT_VRCTools(VonPanel, bpy.types.Panel):
         scene = context.scene
         mytool=scene.my_tool
 
-        row.label(text= "Animation Tools", icon= 'CUBE')
-        #Colorize Rig
-
-        #Bone Search
+        row.label(text= "VRChat Tools", icon= 'CUBE')
+        layout.operator("von.vrcsavebonenametodict")
         layout.operator_context = 'INVOKE_DEFAULT'
-        #layout.operator("von.colorizerig")
-
 
 classes = (
     MySettings,
@@ -384,6 +384,7 @@ classes = (
     VonPanel_RiggingTools__Submenu_CreateControl,
     VonPanel_RiggingTools__Button_SaveNewControl,
     Von_Dropdown_AddCustomBoneshape,
+    VonPanel_VRCTools_SaveBoneNameToDict,
     VonPanel_PT_VRCTools,
     VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace,
     VonPanel_RiggingTools__Submenu_ColorizeRig,
