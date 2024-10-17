@@ -181,10 +181,7 @@ def getfolderloc():
     return(dir)
 
 def get_path_to_folderloc():
-    spaceconsole(10)
     meshdatafile = str(getfolderloc())
-    print()
-    spaceconsole(10)
     return meshdatafile
 
 def organisetocontrolscollection(createdobjectname):

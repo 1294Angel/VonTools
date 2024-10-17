@@ -358,7 +358,7 @@ class VonPanel_PT_RiggingTools(VonPanel, bpy.types.Panel):
 
         row.label(text= "Weight Painting", icon= 'CUBE')
 
-class VonPanel_PT_AnimationTools(VonPanel, bpy.types.Panel):
+class VonPanel_PT_VRCTools(VonPanel, bpy.types.Panel):
     bl_parent_id = "von.vontools"
     bl_label = "Animation Tools"
 
@@ -384,7 +384,7 @@ classes = (
     VonPanel_RiggingTools__Submenu_CreateControl,
     VonPanel_RiggingTools__Button_SaveNewControl,
     Von_Dropdown_AddCustomBoneshape,
-    VonPanel_PT_AnimationTools,
+    VonPanel_PT_VRCTools,
     VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace,
     VonPanel_RiggingTools__Submenu_ColorizeRig,
     VonPanel_RiggingTools__WeightHammer,
