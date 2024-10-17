@@ -10,6 +10,7 @@ def get_addon_directory():
 
 def gatherheirarchydata():
     directory_path = get_addon_directory()
+    print(directory_path    )
     for filename in os.listdir(directory_path):
         file_path = os.path.join(directory_path, filename)  # Create the full file path
         if os.path.isfile(file_path):  # Check if it is a file
