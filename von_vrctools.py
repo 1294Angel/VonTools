@@ -47,7 +47,7 @@ def iterate_over_items(data, bonename):
 
     for unityname, possiblenames in data.items():
         for name in possiblenames:
-            if bonename == name
+            if bonename == name:
                 print(f"Name Matches! : {name}")
     
 
