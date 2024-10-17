@@ -13,4 +13,4 @@ def gatherheirarchydata():
     for filename in os.listdir(directory_path):
         file_path = os.path.join(directory_path, filename)  # Create the full file path
         if os.path.isfile(file_path):  # Check if it is a file
-            print(f"File: {filename}")  # Process the file (e.g., print its name)
+            print(f"File: {filename}")  # Process the file (e.g., print its name)sdawsd
