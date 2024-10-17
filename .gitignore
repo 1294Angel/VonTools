@@ -16,3 +16,5 @@ crash.log
 *.box
 /__pycache__
 TempFiles/temptest.py
+*.blend
+*.blend1
