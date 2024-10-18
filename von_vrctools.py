@@ -45,8 +45,8 @@ def ENUMUPDATE_gatherheirarchydata():
                     if isinstance(data, dict):
                         filessearched = filessearched + 1
                         #This is setup to update the enum
-                        tmptuple = tuple(filessearched,filename,f"This will add the bone name to a key in {filename}")
-                        dictionaryoptions.append()
+                        
+                        dictionaryoptions.append((filessearched, filename, f"Will Add The Selected Bonename Into Your Chosen Key Within {filename}"))
 
                     else:
                         print(f"Skipping file {filename} as it doesn't contain a valid JSON object.")
