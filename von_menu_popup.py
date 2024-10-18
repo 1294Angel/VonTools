@@ -111,6 +111,19 @@ class MySettings(PropertyGroup):
         update = updatetargetspaceenumlist
     ) # type: ignore
 
+    jsondictionaryoptions_enum : bpy.props.EnumProperty(
+        name = "",
+        description = "",
+        items = von_vrctools.ENUMUPDATE_gatherheirarchydata,
+        update = von_vrctools.ENUMUPDATE_gatherheirarchydata
+    ) # type: ignore
+
+    chosendictkeyoptions_enum : bpy.props.EnumProperty(
+    name = "",
+    description = "",
+    items = ["Test 1", "Test 2"]
+    ) # type: ignore
+
 # ------------------------------------------------------------------------
 #    Popout Submenu's
 # ------------------------------------------------------------------------
@@ -307,6 +320,11 @@ class VonPanel_RiggingTools__ClearVertexWeights(bpy.types.Operator):
 class VonPanel_VRCTools_SaveBoneNameToDict(bpy.types.Operator):
     bl_idname = "von.vrcsavebonenametodict"
     bl_label = "Save Bone Name To Dict"
+
+    def draw(self, context):
+        layout = self.layout
+        props = context.scene.MySettings  # Access the property group
+        layout.prop(props, "jsondictionaryoptions_enum")
 
     def execute(self, context):
         if bpy.context.object.type == 'ARMATURE':
