@@ -275,13 +275,12 @@ class Von_Popout_SaveBoneNameToDict(bpy.types.Operator):
         print("EXECUTING ADD TO DICTIONARY")
         return{'FINISHED'}
     def invoke(self, context, event):
+        wm = context.window_manager
         return context.window_manager.invoke_props_dialog(self)
     def draw(self, context):
         layout = self.layout
         scene = context.scene
         mytool=scene.my_tool
-
-        enum = mytool.jsondictionaryoptions_enum
         layout.prop(mytool, "jsondictionaryoptions_enum")
 
 
@@ -392,11 +391,11 @@ class VONPANEL_PT_VRCTools(VonPanel, bpy.types.Panel):
         layout = self.layout
         row = layout.row()
         scene = context.scene
-        mytool=scene.my_tool
 
         row.label(text= "VRChat Tools", icon= 'CUBE')
-        layout.operator("von.vrcsavebonenametodict")
         layout.operator_context = 'INVOKE_DEFAULT'
+        layout.operator("von.vrcsavebonenametodict")
+
 
 classes = (
     MySettings,
