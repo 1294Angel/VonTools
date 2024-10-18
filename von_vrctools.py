@@ -33,8 +33,9 @@ def ENUMUPDATE_gatherheirarchydata():
         #OUTPUT - C:\Users\chris\AppData\Roaming\Blender Foundation\Blender\4.2\scripts\addons\VonTools
 
     dictionaryoptions = []
-
+    filessearched = -1
     for filename in os.listdir(directory_path):
+
         if filename.endswith('.json'):
             filepath = os.path.join(directory_path, filename)
             with open(filepath, 'r') as json_file:
@@ -42,11 +43,10 @@ def ENUMUPDATE_gatherheirarchydata():
                     data = json.load(json_file)
                     #If it's a dict then do X (Idiot Proofing)
                     if isinstance(data, dict):
-                        """
-                        This will go through each individual file, works for me so far - 
-                        I think the best thing to do is create the ability to ADD to the library with ease, and then to work on the merging portion of the script, so this might get duplicated but oh well
-                        """
-                        dictionaryoptions.append(filename)
+                        filessearched = filessearched + 1
+                        #This is setup to update the enum
+                        tmptuple = tuple(filessearched,filename,f"This will add the bone name to a key in {filename}")
+                        dictionaryoptions.append()
 
                     else:
                         print(f"Skipping file {filename} as it doesn't contain a valid JSON object.")
