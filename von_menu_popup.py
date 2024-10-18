@@ -301,8 +301,38 @@ class Von_Popout_SaveBoneNameToDict(bpy.types.Operator):
     bl_label = "Save Bone Name To Dict"
 
     def execute(self,context):
+        scene = context.scene
+        mytool=scene.my_tool
+
         print("EXECUTING ADD TO DICTIONARY")
-        return{'FINISHED'}
+
+        if bpy.context.object and bpy.context.object.type == 'ARMATURE':
+            obj = bpy.context.object
+            string_to_add = obj.data.bones.active
+            string_to_add = string_to_add.name
+
+            directory_path = von_vrctools.get_directory() + "/Libraries/BoneNames"
+            parentenumoption = mytool.jsondictionaryoptions_enum
+            directory_path = os.path.join(directory_path, parentenumoption)
+            key = mytool.jsondictionarykeyoptions_enum
+
+            with open(directory_path, 'r') as file:
+                data = json.load(file)
+
+            enum_items = []
+            if key in data:
+                if isinstance(data[key], list):
+                    # Check if the string is already in the list
+                    if string_to_add not in data[key]:
+                        data[key].append(string_to_add)  # Append the new string if not already present
+                        print(f"Added '{string_to_add}'  to the list under key '{key}'.")
+
+
+            return{'FINISHED'}
+    
+        else:
+            self.report({'WARNING'}, "Ensure An Armature Is Selected")
+            return{'CANCELLED'}
     def invoke(self, context, event):
         wm = context.window_manager
         return context.window_manager.invoke_props_dialog(self)
