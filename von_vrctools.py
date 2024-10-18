@@ -52,7 +52,7 @@ def ENUMUPDATE_gatherheirarchydata():
                         print(f"Skipping file {filename} as it doesn't contain a valid JSON object.")
                 except json.JSONDecodeError as e: # IF ALL FAILS, IDIOT PROOFING NEVER REALLY TRIED THIS BEFORE
                     print(f"Error reading {filename}: {e}")
-    print(f"The Options for the Enum Will be: {dictionaryoptions}")
+    #print(f"The Options for the Enum Will be: {dictionaryoptions}")
     return dictionaryoptions
 
 

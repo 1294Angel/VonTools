@@ -55,8 +55,10 @@ def updatejsonkeyoptions(self, context):
 
     iterations = -1
     for key in data.keys():
+        print(f"Key = {key}")
         iterations = iterations + 1
         enum_items =(key, key, f"Description for {key}")
+    print(f"Enum Items ==============================D {enum_items}")
 
     return enum_items
 
