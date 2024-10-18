@@ -311,7 +311,7 @@ class VonPanel_VRCTools_SaveBoneNameToDict(bpy.types.Operator):
     def execute(self, context):
         if bpy.context.object.type == 'ARMATURE':
             obj = bpy.context.object
-            selbone = active_bone = obj.data.bones.active
+            selbone = obj.data.bones.active
             von_vrctools.gatherheirarchydata(obj,selbone)
         return {'FINISHED'}
 
