@@ -56,10 +56,8 @@ def updatejsonkeyoptions(self, context):
     iterations = -1
     enum_items = []
     for key in data.keys():
-        print(f"Key = {key}")
         iterations = iterations + 1
         enum_items.append((key, key, f"Description for {key}"))
-    print(f"Enum Items ==============================D {enum_items}")
 
     return enum_items
 
@@ -315,6 +313,8 @@ class Von_Popout_SaveBoneNameToDict(bpy.types.Operator):
             parentenumoption = mytool.jsondictionaryoptions_enum
             directory_path = os.path.join(directory_path, parentenumoption)
             key = mytool.jsondictionarykeyoptions_enum
+
+            print(f"string to add = {string_to_add} | parentenumoption = {parentenumoption} | key = {key} ")
 
             with open(directory_path, 'r') as file:
                 data = json.load(file)
