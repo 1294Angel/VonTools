@@ -24,7 +24,7 @@ def get_directory():
     return addon_directory
 
 #Get The Data Out Of Each .json Dictionary In The Library
-def gatherheirarchydata(selectedheirarchy,selectedbones):
+def gatherheirarchydata(context):
     directory_path = get_directory() + "/Libraries/BoneNames"
         #OUTPUT - C:\Users\chris\AppData\Roaming\Blender Foundation\Blender\4.2\scripts\addons\VonTools
 
@@ -36,15 +36,16 @@ def gatherheirarchydata(selectedheirarchy,selectedbones):
                     data = json.load(json_file)
                     #If it's a dict then do X (Idiot Proofing)
                     if isinstance(data, dict):
-                        print(f"SELECTED BONES ===================== {selectedbones}")
-                        iterate_overheirarchydata(data,selectedbones)
+                        iterate_overheirarchydata(data,context)
                     else:
                         print(f"Skipping file {filename} as it doesn't contain a valid JSON object.")
                 except json.JSONDecodeError as e: # IF ALL FAILS, IDIOT PROOFING
                     print(f"Error reading {filename}: {e}")
 
 #What Should Be Done To Each Key/UnityName In The Dictionary
-def iterate_overheirarchydata(data, bone):
+def iterate_overheirarchydata(data,context):
+    obj = bpy.context.object
+    bone = obj.data.bones.active
     for basename in bone:
         basename = basename.name
         print(f"Bonename is {basename}")
