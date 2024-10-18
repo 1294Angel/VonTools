@@ -36,14 +36,14 @@ def gatherheirarchydata(selectedheirarchy):
                     data = json.load(json_file)
                     #If it's a dict then do X (Idiot Proofing)
                     if isinstance(data, dict):
-                        iterate_over_items(data)
+                        iterate_overheirarchydata(data)
                     else:
                         print(f"Skipping file {filename} as it doesn't contain a valid JSON object.")
                 except json.JSONDecodeError as e: # IF ALL FAILS, IDIOT PROOFING
                     print(f"Error reading {filename}: {e}")
 
 #What Should Be Done To Each Key/UnityName In The Dictionary
-def iterate_over_items(data, bonename):
+def iterate_overheirarchydata(data, bonename):
 
     for unityname, possiblenames in data.items():
         for name in possiblenames:
