@@ -456,7 +456,8 @@ class VONPANEL_PT_VRCTools(VonPanel, bpy.types.Panel):
 
         row.label(text= "VRChat Tools", icon= 'CUBE')
         layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator("von.vrcsavebonenametodict")
+        if bpy.context.object and bpy.context.object.type == 'ARMATURE':
+            layout.operator("von.vrcsavebonenametodict")
 
 
 classes = (
