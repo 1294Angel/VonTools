@@ -267,6 +267,24 @@ class Von_Dropdown_AddCustomBoneshape(bpy.types.Operator):
 
         return {'FINISHED'}    
 
+class Von_Popout_SaveBoneNameToDict(bpy.types.Operator):
+    bl_idname = "von.vrcsavebonenametodict"
+    bl_label = "Save Bone Name To Dict"
+
+    def execute(self,context):
+        print("EXECUTING ADD TO DICTIONARY")
+        return{'FINISHED'}
+    def invoke(self, context, event):
+        return context.window_manager.invoke_props_dialog(self)
+    def draw(self, context):
+        layout = self.layout
+        scene = context.scene
+        mytool=scene.my_tool
+
+        enum = mytool.jsondictionaryoptions_enum
+        layout.prop(mytool, "jsondictionaryoptions_enum")
+
+
 # ------------------------------------------------------------------------
 #    Button Setup
 # ------------------------------------------------------------------------
@@ -314,20 +332,7 @@ class VonPanel_RiggingTools__ClearVertexWeights(bpy.types.Operator):
         von_createcontrols.clear_vertex_weights()
         return {'FINISHED'}
 
-class VonPanel_VRCTools_SaveBoneNameToDict(bpy.types.Operator):
-    bl_idname = "von.vrcsavebonenametodict"
-    bl_label = "Save Bone Name To Dict"
 
-    def draw(self, context):
-        layout = self.layout
-        scene = context.scene
-        mytool=scene.my_tool
-
-        enum = mytool.jsondictionaryoptions_enum
-        layout.prop(mytool, "jsondictionaryoptions_enum")
-
-    def execute(self, context):
-        return {'FINISHED'}
 
 # ------------------------------------------------------------------------
 #    Menu Setup
@@ -401,7 +406,7 @@ classes = (
     VonPanel_RiggingTools__Submenu_CreateControl,
     VonPanel_RiggingTools__Button_SaveNewControl,
     Von_Dropdown_AddCustomBoneshape,
-    VonPanel_VRCTools_SaveBoneNameToDict,
+    Von_Popout_SaveBoneNameToDict,
     VONPANEL_PT_VRCTools,
     VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace,
     VonPanel_RiggingTools__Submenu_ColorizeRig,
