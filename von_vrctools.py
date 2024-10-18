@@ -18,6 +18,14 @@ from . import von_createcontrols, von_buttoncontrols
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 """
 
+"""
+REMINDER TO SELF, THE PURPOSE OF THIS SECTION IS TO POSITIVELY IDENTIFY AND RENAME ANY BONES WE CAN, THEN TO PAINT ANY OTHER BONES RED
+
+Currently I am: Opening every file in the folder, searching through the dicts per key and seeing if any of the names match - Then if they do, renaming the bone and colouring it green
+
+I need to: Do exactly that, but in a way that then lets me go back through all the bones that are not green and store those in a seperate armature - Might require a re-write
+"""
+
 #GetFilepath Of Library
 def get_directory():
     addon_directory = os.path.dirname(__file__)
