@@ -28,13 +28,8 @@
     "Spine": [],
     "Chest": [],
     "UpperChest": [],
-    "Neck": [
-        "spine.005",
-        "spine.004"
-    ],
-    "Head": [
-        "spine.006"
-    ],
+    "Neck": [],
+    "Head": [],
     "LeftShoulder": [
         "shoulder.l"
     ],

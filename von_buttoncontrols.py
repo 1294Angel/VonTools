@@ -1,8 +1,6 @@
 #Import all needed
-import bpy # type: ignore
-import os
-from . import von_createcontrols
-from .von_createcontrols import *    
+import bpy, re, os # type: ignore
+from . import von_createcontrols 
 #____________________________________________________________________________________________
 #____________________________________________________________________________________________
 #____________________________________________________________________________________________ 
@@ -47,8 +45,14 @@ def getselectedbonesforenum(self, context):
         addtoenum = tuple((indexstr, i, description))
         enumlist.append(addtoenum)
     return enumlist
-    
-        
+
+#This works in blender itself, PLEASE work when put into an addon - Should be no reason it doesn't as it doesn't rely on context or anything
+def splitstringfromadditionalbones(input_string):
+    if re.search(r'[LR]\d', input_string):
+        return re.split(r'(?<=\w)(?=[._])|(?<=[._])(?=\d)', input_string)[0]
+    if re.search(r'^[\w]+[._]?[LR]$', input_string):
+        return input_string
+    return re.split(r'(?<=\w)(?=[._])', input_string)[0]
 
 #Functional
 def colorizerig(context):
