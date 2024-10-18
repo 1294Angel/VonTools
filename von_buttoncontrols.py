@@ -158,7 +158,8 @@ def setboneconstraintspace(activearmature, selectedbones, constrainttotarget,tar
                 #Adjust each constraint on the selected bone (i) to be in Local space (need to adjust to work off of a menu str or enum later)
                 bpy.context.object.pose.bones[bonename].constraints[con.name].target_space = targetspace
                 bpy.context.object.pose.bones[bonename].constraints[con.name].owner_space = ownerspace
-        
+
+
 #____________________________________________________________________________________________
 #____________________________________________________________________________________________
 #____________________________________________________________________________________________

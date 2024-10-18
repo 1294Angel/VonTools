@@ -24,7 +24,7 @@ def get_directory():
     return addon_directory
 
 #Get The Data Out Of Each .json Dictionary In The Library
-def gatherheirarchydata(selectedheirarchy,selectedbone):
+def gatherheirarchydata(selectedheirarchy,selectedbones):
     directory_path = get_directory() + "/Libraries/BoneNames"
         #OUTPUT - C:\Users\chris\AppData\Roaming\Blender Foundation\Blender\4.2\scripts\addons\VonTools
 
@@ -36,24 +36,27 @@ def gatherheirarchydata(selectedheirarchy,selectedbone):
                     data = json.load(json_file)
                     #If it's a dict then do X (Idiot Proofing)
                     if isinstance(data, dict):
-                        iterate_overheirarchydata(data,selectedbone.name)
+                        iterate_overheirarchydata(data,selectedbones)
                     else:
                         print(f"Skipping file {filename} as it doesn't contain a valid JSON object.")
                 except json.JSONDecodeError as e: # IF ALL FAILS, IDIOT PROOFING
                     print(f"Error reading {filename}: {e}")
 
 #What Should Be Done To Each Key/UnityName In The Dictionary
-def iterate_overheirarchydata(data, bonename):
-    print(f"Bonename is {bonename}")
-    for unityname, possiblenames in data.items():
-        print(unityname)
-        print(possiblenames)
-        for name in possiblenames:
-            if bonename == name:
-                print("")
-                print(f"Name Matches! : {name}")
-                print("")
-    
+def iterate_overheirarchydata(data, bone):
+    for basename in bone:
+        basename = basename.name
+        print(f"Bonename is {basename}")
+        basename = basename.lower()
+        for unityname, possiblenames in data.items():
+            print(unityname)
+            print(possiblenames)
+            for name in possiblenames:
+                if bone == name:
+                    bone.name = unityname
+                elif bone != name:
+                    bpy.context.object.data.bones[basename].color.palette = "THEME14"
+
 
 
 
