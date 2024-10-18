@@ -117,7 +117,7 @@ class MySettings(PropertyGroup):
     jsondictionaryoptions_enum : bpy.props.EnumProperty(
         name = "Json Dict Options - ",
         description = "The Possible Json Dictionaries Edit",
-        items = von_vrctools.ENUMUPDATE_gatherheirarchydata,
+        items = updateexistingjsondictonaries,
         update = updateexistingjsondictonaries
     ) # type: ignore
 
