@@ -45,8 +45,8 @@ def gatherheirarchydata(context):
 #What Should Be Done To Each Key/UnityName In The Dictionary
 def iterate_overheirarchydata(data,context):
     obj = bpy.context.object
-    bone = obj.data.bones.active
-    for basename in bone:
+    bones = obj.data.bones.active
+    for basename in bones.name:
         basename = basename.name
         print(f"Bonename is {basename}")
         basename = basename.lower()
@@ -54,9 +54,9 @@ def iterate_overheirarchydata(data,context):
             print(unityname)
             print(possiblenames)
             for name in possiblenames:
-                if bone == name:
-                    bone.name = unityname
-                elif bone != name:
+                if bones == name:
+                    bones.name = unityname
+                elif bones != name:
                     bpy.context.object.data.bones[basename].color.palette = "THEME14"
 
 
