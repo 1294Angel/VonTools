@@ -43,7 +43,9 @@ def updateexistingjsondictonaries(self, context):
 def updatejsonkeyoptions(self, context):
 
     directory_path = von_vrctools.get_directory() + "/Libraries/BoneNames"
-    filepath = os.path.join(directory_path, self.jsondictionaryoptions_enum)
+    print(self.jsondictionaryoptions_enum)
+    parentenumoption = self.jsondictionaryoptions_enum
+    directory_path = os.path.join(directory_path, parentenumoption)
 
     if not os.path.exists(directory_path):
         raise FileNotFoundError(f"The file {directory_path} does not exist.")
