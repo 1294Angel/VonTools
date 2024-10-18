@@ -21,7 +21,7 @@ def get_directory():
     addon_directory = os.path.dirname(__file__)
     return addon_directory
 
-def gatherheirarchydata():
+def ENUMUPDATE_gatherheirarchydata():
 
     """
     obj = bpy.context.object
@@ -39,7 +39,6 @@ def gatherheirarchydata():
             filepath = os.path.join(directory_path, filename)
             with open(filepath, 'r') as json_file:
                 try:
-                    print(filename)
                     data = json.load(json_file)
                     #If it's a dict then do X (Idiot Proofing)
                     if isinstance(data, dict):
@@ -47,7 +46,7 @@ def gatherheirarchydata():
                         This will go through each individual file, works for me so far - 
                         I think the best thing to do is create the ability to ADD to the library with ease, and then to work on the merging portion of the script, so this might get duplicated but oh well
                         """
-                        dictionaryoptions.append(json_file)
+                        dictionaryoptions.append(filename)
 
                     else:
                         print(f"Skipping file {filename} as it doesn't contain a valid JSON object.")

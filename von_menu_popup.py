@@ -310,7 +310,7 @@ class VonPanel_VRCTools_SaveBoneNameToDict(bpy.types.Operator):
 
     def execute(self, context):
         if bpy.context.object.type == 'ARMATURE':
-            von_vrctools.gatherheirarchydata() #Should be the enumupdate function -- oops
+            von_vrctools.ENUMUPDATE_gatherheirarchydata() #Should be the enumupdate function -- oops
         return {'FINISHED'}
 
 # ------------------------------------------------------------------------
