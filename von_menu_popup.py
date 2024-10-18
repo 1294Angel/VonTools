@@ -37,7 +37,8 @@ def updateexistingboneconstraintsenum(self, context):
     von_buttoncontrols.getselectedbonesforenum(self, context)
 
 def updateexistingjsondictonaries(self, context):
-    von_vrctools.ENUMUPDATE_gatherheirarchydata()
+    return von_vrctools.ENUMUPDATE_gatherheirarchydata()
+
 
 def updatetargetspaceenumlist(self, context):
     von_createcontrols.spaceconsole(5)

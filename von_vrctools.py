@@ -33,7 +33,7 @@ def ENUMUPDATE_gatherheirarchydata():
         #OUTPUT - C:\Users\chris\AppData\Roaming\Blender Foundation\Blender\4.2\scripts\addons\VonTools
 
     dictionaryoptions = []
-    filessearched = -1
+    filessearched = 0
     for filename in os.listdir(directory_path):
 
         if filename.endswith('.json'):
