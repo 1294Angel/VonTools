@@ -28,8 +28,13 @@
     "Spine": [],
     "Chest": [],
     "UpperChest": [],
-    "Neck": [],
-    "Head": [],
+    "Neck": [
+        "spine.005",
+        "spine.004"
+    ],
+    "Head": [
+        "spine.006"
+    ],
     "LeftShoulder": [
         "shoulder.l"
     ],
@@ -45,11 +50,15 @@
     "LeftLowerArm": [
         "forearm.l"
     ],
-    "RightLowerArm": [],
+    "RightLowerArm": [
+        "forearm.r"
+    ],
     "LeftHand": [
         "hand.l"
     ],
-    "RightHand": [],
+    "RightHand": [
+        "hand.r"
+    ],
     "LeftToes": [
         "toe.l"
     ],
