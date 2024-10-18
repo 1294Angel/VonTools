@@ -37,7 +37,7 @@ def updateexistingboneconstraintsenum(self, context):
     von_buttoncontrols.getselectedbonesforenum(self, context)
 
 def updateexistingjsondictonaries(self, context):
-    von_vrctools.ENUMUPDATE_gatherheirarchydata
+    von_vrctools.ENUMUPDATE_gatherheirarchydata()
 
 def updatetargetspaceenumlist(self, context):
     von_createcontrols.spaceconsole(5)
@@ -327,8 +327,6 @@ class VonPanel_VRCTools_SaveBoneNameToDict(bpy.types.Operator):
         layout.prop(mytool, "jsondictionaryoptions_enum")
 
     def execute(self, context):
-        if bpy.context.object.type == 'ARMATURE':
-            von_vrctools.ENUMUPDATE_gatherheirarchydata() #Should be the enumupdate function -- oops
         return {'FINISHED'}
 
 # ------------------------------------------------------------------------
