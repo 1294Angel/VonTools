@@ -7,7 +7,7 @@
 """
 
 import bpy, os,json # type: ignore
-from . import von_createcontrols
+from . import von_createcontrols, von_buttoncontrols
 
 
 """
@@ -25,9 +25,15 @@ def get_directory():
 
 #Get The Data Out Of Each .json Dictionary In The Library
 def gatherheirarchydata(context):
+
+
+    obj = bpy.context.object
+    for bone in obj.data.bones:
+        bpy.context.object.data.bones[bone.name].color.palette = "THEME03"
+
     directory_path = get_directory() + "/Libraries/BoneNames"
         #OUTPUT - C:\Users\chris\AppData\Roaming\Blender Foundation\Blender\4.2\scripts\addons\VonTools
-
+    
     for filename in os.listdir(directory_path):
         if filename.endswith('.json'):
             filepath = os.path.join(directory_path, filename)
@@ -39,7 +45,7 @@ def gatherheirarchydata(context):
                         iterate_overheirarchydata(data,context)
                     else:
                         print(f"Skipping file {filename} as it doesn't contain a valid JSON object.")
-                except json.JSONDecodeError as e: # IF ALL FAILS, IDIOT PROOFING
+                except json.JSONDecodeError as e: # IF ALL FAILS, IDIOT PROOFING NEVER REALLY TRIED THIS BEFORE
                     print(f"Error reading {filename}: {e}")
 
 #What Should Be Done To Each Key/UnityName In The Dictionary
@@ -55,8 +61,11 @@ def iterate_overheirarchydata(data,context):
             for name in possiblenames:
                 if bones == name:
                     bones.name = unityname
-                elif bones != name:
-                    bpy.context.object.data.bones[basename].color.palette = "THEME14"
+                    bpy.context.object.data.bones[basename].color.palette = "THEME03"
+                    print(f"Bone {basename} has been found")
+                    von_buttoncontrols.spaceconsole(3)
+
+    
 
 
 
