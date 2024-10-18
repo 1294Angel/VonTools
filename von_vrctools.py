@@ -46,7 +46,7 @@ def ENUMUPDATE_gatherheirarchydata():
                         itterations = itterations + 1
                         #This is setup to update the enum
                         
-                        dictionaryoptions.append((str(itterations), filename, f"Will Add The Selected Bonename Into Your Chosen Key Within {filename}"))
+                        dictionaryoptions.append((filename, filename, f"Will Add The Selected Bonename Into Your Chosen Key Within {filename}"))
 
                     else:
                         print(f"Skipping file {filename} as it doesn't contain a valid JSON object.")
