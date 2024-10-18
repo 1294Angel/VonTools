@@ -309,9 +309,10 @@ class VonPanel_VRCTools_SaveBoneNameToDict(bpy.types.Operator):
     bl_label = "Save Bone Name To Dict"
 
     def execute(self, context):
-        if bpy.context.object and bpy.context.object.type == 'ARMATURE':
+        if bpy.context.object.type == 'ARMATURE':
             obj = bpy.context.object
-            von_vrctools.gatherheirarchydata(obj)
+            selbone = active_bone = obj.data.bones.active
+            von_vrctools.gatherheirarchydata(obj,selbone)
         return {'FINISHED'}
 
 # ------------------------------------------------------------------------
