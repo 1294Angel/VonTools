@@ -46,9 +46,13 @@ def gatherheirarchydata(selectedheirarchy,selectedbone):
 def iterate_overheirarchydata(data, bonename):
 
     for unityname, possiblenames in data.items():
+        print(unityname)
+        print(possiblenames)
         for name in possiblenames:
             if bonename == name:
+                print("")
                 print(f"Name Matches! : {name}")
+                print("")
     
 
 
