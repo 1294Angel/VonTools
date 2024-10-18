@@ -47,6 +47,7 @@ def gatherheirarchydata(context):
             filepath = os.path.join(directory_path, filename)
             with open(filepath, 'r') as json_file:
                 try:
+                    print(filename)
                     data = json.load(json_file)
                     #If it's a dict then do X (Idiot Proofing)
                     if isinstance(data, dict):
@@ -59,17 +60,17 @@ def gatherheirarchydata(context):
 #What Should Be Done To Each Key/UnityName In The Dictionary
 def iterate_overheirarchydata(data,context):
     obj = bpy.context.object
-    bones = obj.data.bones.active
+    bones = obj.data.bones
+
     for basename in bones.name:
         print(f"Bonename is {basename}")
         basename = basename.lower()
         for unityname, possiblenames in data.items():
-            print(unityname)
-            print(possiblenames)
             for name in possiblenames:
                 if bones == name:
-                    bones.name = unityname
+                    basename = unityname
                     bpy.context.object.data.bones[basename].color.palette = "THEME03"
+                    von_buttoncontrols.spaceconsole(3)
                     print(f"Bone {basename} has been found")
                     von_buttoncontrols.spaceconsole(3)
 
