@@ -33,7 +33,7 @@ def ENUMUPDATE_gatherheirarchydata():
         #OUTPUT - C:\Users\chris\AppData\Roaming\Blender Foundation\Blender\4.2\scripts\addons\VonTools
 
     dictionaryoptions = []
-    filessearched = 0
+    itterations = -1
     for filename in os.listdir(directory_path):
 
         if filename.endswith('.json'):
@@ -43,10 +43,10 @@ def ENUMUPDATE_gatherheirarchydata():
                     data = json.load(json_file)
                     #If it's a dict then do X (Idiot Proofing)
                     if isinstance(data, dict):
-                        filessearched = filessearched + 1
+                        itterations = itterations + 1
                         #This is setup to update the enum
                         
-                        dictionaryoptions.append((str(filessearched), filename, f"Will Add The Selected Bonename Into Your Chosen Key Within {filename}"))
+                        dictionaryoptions.append((str(itterations), filename, f"Will Add The Selected Bonename Into Your Chosen Key Within {filename}"))
 
                     else:
                         print(f"Skipping file {filename} as it doesn't contain a valid JSON object.")

@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------------
 
 
-import bpy, sys, os, re # type: ignore
+import bpy, sys, os, re, json # type: ignore
 from bpy.types import Operator # type: ignore
 from bpy_extras.object_utils import AddObjectHelper # type: ignore
 from bpy.types import Operator # type: ignore
@@ -39,6 +39,24 @@ def updateexistingboneconstraintsenum(self, context):
 def updateexistingjsondictonaries(self, context):
     #FUNCTIONAL
     return von_vrctools.ENUMUPDATE_gatherheirarchydata()
+
+def updatejsonkeyoptions(self, context):
+
+    directory_path = von_vrctools.get_directory() + "/Libraries/BoneNames"
+
+    if not os.path.exists(directory_path):
+        raise FileNotFoundError(f"The file {directory_path} does not exist.")
+    
+    with open(directory_path, 'r') as file:
+        data = json.load(file)
+
+    iterations = -1
+    for key in data.keys():
+        iterations = iterations + 1
+        enum_items =(str(iterations), key, f"Description for {key}")
+
+    return enum_items
+
 
 
 def updatetargetspaceenumlist(self, context):
@@ -114,10 +132,16 @@ class MySettings(PropertyGroup):
     ) # type: ignore
 
     jsondictionaryoptions_enum : bpy.props.EnumProperty(
-        name = "Json Dict Options - ",
-        description = "The Possible Json Dictionaries Edit",
+        name = "Avalible Json Dictionaries - ",
+        description = "Choose an option",
         items = updateexistingjsondictonaries,
-        update = updateexistingjsondictonaries
+        update = lambda self, context: context.scene.my_settings.option_enum.update(context)
+    ) # type: ignore
+    
+    jsondictionarykeyoptions_enum: bpy.props.EnumProperty(
+        name="Avalible Keys - ",
+        description="Choose an option",
+        items=updatejsonkeyoptions
     ) # type: ignore
 
 # ------------------------------------------------------------------------
@@ -281,6 +305,7 @@ class Von_Popout_SaveBoneNameToDict(bpy.types.Operator):
         scene = context.scene
         mytool=scene.my_tool
         layout.prop(mytool, "jsondictionaryoptions_enum")
+        layout.prop(mytool, "jsondictionarykeyoptions_enum")
 
 
 # ------------------------------------------------------------------------
