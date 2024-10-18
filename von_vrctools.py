@@ -47,7 +47,6 @@ def iterate_overheirarchydata(data,context):
     obj = bpy.context.object
     bones = obj.data.bones.active
     for basename in bones.name:
-        basename = basename.name
         print(f"Bonename is {basename}")
         basename = basename.lower()
         for unityname, possiblenames in data.items():
