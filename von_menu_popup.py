@@ -323,8 +323,11 @@ class VonPanel_VRCTools_SaveBoneNameToDict(bpy.types.Operator):
 
     def draw(self, context):
         layout = self.layout
-        props = context.scene.MySettings  # Access the property group
-        layout.prop(props, "jsondictionaryoptions_enum")
+        scene = context.scene
+        mytool=scene.my_tool
+        
+        enum = mytool.jsondictionaryoptions_enum
+        layout.prop(mytool, "jsondictionaryoptions_enum")
 
     def execute(self, context):
         if bpy.context.object.type == 'ARMATURE':
