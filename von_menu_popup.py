@@ -325,8 +325,10 @@ class Von_Popout_SaveBoneNameToDict(bpy.types.Operator):
                     # Check if the string is already in the list
                     if string_to_add not in data[key]:
                         data[key].append(string_to_add)  # Append the new string if not already present
-                        print(f"Added '{string_to_add}'  to the list under key '{key}'.")
+                        print(f"Added '{string_to_add}'  to the list under key '{key}' in the file '{directory_path}'.")
 
+            with open(directory_path, 'w') as file:
+                json.dump(data, file, indent=4)
 
             return{'FINISHED'}
     
