@@ -36,6 +36,7 @@ def gatherheirarchydata(selectedheirarchy,selectedbones):
                     data = json.load(json_file)
                     #If it's a dict then do X (Idiot Proofing)
                     if isinstance(data, dict):
+                        print(f"SELECTED BONES ===================== {selectedbones}")
                         iterate_overheirarchydata(data,selectedbones)
                     else:
                         print(f"Skipping file {filename} as it doesn't contain a valid JSON object.")
