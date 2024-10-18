@@ -309,7 +309,7 @@ class Von_Popout_SaveBoneNameToDict(bpy.types.Operator):
             string_to_add = obj.data.bones.active
             string_to_add = string_to_add.name
             string_to_add = string_to_add.lower()
-            string_to_add = von_buttoncontrols.splitstringfromadditioznalbones(string_to_add)
+            string_to_add = von_buttoncontrols.splitstringfromadditionalbones(string_to_add)
 
             directory_path = von_vrctools.get_directory() + "/Libraries/BoneNames"
             parentenumoption = mytool.jsondictionaryoptions_enum
