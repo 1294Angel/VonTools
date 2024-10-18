@@ -1,180 +1,93 @@
 {
-    "COMMENTS":[
+    "COMMENTS": [
         "ALWAYS LOWERCASE"
     ],
-
-
-
-
-
-    "Hips":[
+    "Hips": [
         "pelvis"
     ],
-    "LeftUpperLeg":[
+    "LeftUpperLeg": [
         "upperleg_l",
         "upperleg.l",
         "thigh.l"
     ],
-    "RightUpperLeg":[
-
+    "RightUpperLeg": [
+        "thigh.r"
     ],
-    "LeftLowerLeg":[
-
+    "LeftLowerLeg": [
+        "shin.l"
     ],
-    "RightLowerLeg":[
-
+    "RightLowerLeg": [
+        "shin.r"
     ],
-    "LeftFoot":[
-
+    "LeftFoot": [
+        "foot.l"
     ],
-    "RightFoot":[
-
+    "RightFoot": [
+        "foot.r"
     ],
-    "Spine":[
-
+    "Spine": [],
+    "Chest": [],
+    "UpperChest": [],
+    "Neck": [],
+    "Head": [],
+    "LeftShoulder": [
+        "shoulder.l"
     ],
-    "Chest":[
-
+    "RightShoulder": [
+        "shoulder.r"
     ],
-    "UpperChest":[
-
+    "LeftUpperArm": [
+        "upper_arm.l"
     ],
-    "Neck":[
-
+    "RightUpperArm": [
+        "upper_arm.r"
     ],
-    "Head":[
-
+    "LeftLowerArm": [
+        "forearm.l"
     ],
-    "LeftShoulder":[
-
+    "RightLowerArm": [],
+    "LeftHand": [
+        "hand.l"
     ],
-    "RightShoulder":[
-
+    "RightHand": [],
+    "LeftToes": [
+        "toe.l"
     ],
-    "LeftUpperArm":[
-
+    "RightToes": [
+        "toe.r"
     ],
-    "RightUpperArm":[
-
-    ],
-    "LeftLowerArm":[
-
-    ],
-    "RightLowerArm":[
-
-    ],
-    "LeftHand":[
-
-    ],
-    "RightHand":[
-
-    ],
-    "LeftToes":[
-
-    ],
-    "RightToes":[
-
-    ],
-    "LeftEye":[
-
-    ],
-    "RightEye":[
-
-    ],
-    "Jaw":[
-
-    ],
-    "LeftThumbProximal":[
-
-    ],
-    "LeftThumbIntermediate":[
-
-    ],
-    "LeftThumbDistal":[
-
-    ],
-    "LeftIndexProximal":[
-
-    ],
-    "LeftIndexIntermediate":[
-
-    ],
-    "LeftIndexDistal":[
-
-    ],
-    "LeftMiddleProximal":[
-
-    ],
-    "LeftMiddleIntermediate":[
-
-    ],
-    "LeftMiddleDistal":[
-
-    ],
-    "LeftRingProximal":[
-
-    ],
-    "LeftRingIntermediate":[
-
-    ],
-    "LeftRingDistal":[
-
-    ],
-    "LeftLittleProximal":[
-
-    ],
-    "LeftLittleIntermediate":[
-
-    ],
-    "LeftLittleDistal":[
-
-    ],
-    "RightThumbProximal":[
-
-    ],
-    "RightThumbIntermediate":[
-
-    ],
-    "RightThumbDistal":[
-
-    ],
-    "RightIndexProximal":[
-
-    ],
-    "RightIndexIntermediate":[
-
-    ],
-    "RightIndexDistal":[
-
-    ],
-    "RightMiddleProximal":[
-
-    ],
-    "RightMiddleIntermediate":[
-
-    ],
-    "RightMiddleDistal":[
-
-    ],
-    "RightRingProximal":[
-
-    ],
-    "RightRingIntermediate":[
-
-    ],
-    "RightRingDistal":[
-
-    ],
-    "RightLittleProximal":[
-
-    ],
-    "RightLittleIntermediate":[
-
-    ],
-    "RightLittleDistal":[
-
-    ],
-    "LastBone":[
-
-    ]
-}   
+    "LeftEye": [],
+    "RightEye": [],
+    "Jaw": [],
+    "LeftThumbProximal": [],
+    "LeftThumbIntermediate": [],
+    "LeftThumbDistal": [],
+    "LeftIndexProximal": [],
+    "LeftIndexIntermediate": [],
+    "LeftIndexDistal": [],
+    "LeftMiddleProximal": [],
+    "LeftMiddleIntermediate": [],
+    "LeftMiddleDistal": [],
+    "LeftRingProximal": [],
+    "LeftRingIntermediate": [],
+    "LeftRingDistal": [],
+    "LeftLittleProximal": [],
+    "LeftLittleIntermediate": [],
+    "LeftLittleDistal": [],
+    "RightThumbProximal": [],
+    "RightThumbIntermediate": [],
+    "RightThumbDistal": [],
+    "RightIndexProximal": [],
+    "RightIndexIntermediate": [],
+    "RightIndexDistal": [],
+    "RightMiddleProximal": [],
+    "RightMiddleIntermediate": [],
+    "RightMiddleDistal": [],
+    "RightRingProximal": [],
+    "RightRingIntermediate": [],
+    "RightRingDistal": [],
+    "RightLittleProximal": [],
+    "RightLittleIntermediate": [],
+    "RightLittleDistal": [],
+    "LastBone": []
+}
