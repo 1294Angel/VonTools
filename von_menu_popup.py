@@ -62,23 +62,14 @@ def updatejsonkeyoptions(self, context):
     return enum_items
 
 def updatebonestandarizationoptions_enum():
+    """Gather names of selected armatures and their corresponding bone names."""
+    armature_options = {}
     selected_armatures = [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()]
-    all_matches = {}
-    if not selected_armatures:
-        return all_matches
-    #all_matches = von_vrctools.filterbonesbyjsondictlist(selected_armatures,von_vrctools.gatherjsondictkeys())[0]
 
-    all_matches = {
-        "Option 1": ["Choice A", "Choice B", "Choice C"],
-        "Option 2": ["Choice D", "Choice E"],
-        "Option 3": ["Choice F", "Choice G", "Choice H", "Choice I"],
-        "Option 4": ["Choice J", "Choice K"]
-    }
+    for obj in selected_armatures:
+        armature_options[obj.name] = [bone.name for bone in obj.data.bones]
 
-    if len(all_matches) > 0:
-        return all_matches
-    else:
-        print("All Matches Empty")
+    return armature_options
 
 
 
@@ -196,16 +187,25 @@ class MySettings(bpy.types.PropertyGroup):
 #--------------
     pass
 
-def register_dynamic_properties():
+def register_dynamic_properties(props):
+    """Register dynamic properties based on selected armatures in the scene."""
     options = updatebonestandarizationoptions_enum()
 
-    for option in options:
+    for option in list(props.keys()):
+        if option in props:
+            del props[option] 
+
+    for option, bones in options.items():
         prop_name = option.lower().replace(' ', '_') + "_choice"
-        choices = [(choice, choice, "") for choice in options[option]]
+        choices = [(bone, bone, "") for bone in bones]
         setattr(MySettings, prop_name, bpy.props.EnumProperty(
-            name=option.replace('_', ' ').title(),
-            items=choices
+            name=f"Bones of {option}",
+            items=choices if choices else [("", "No bones available", "")]  
         ))
+        if choices:
+            props[prop_name] = choices[0][0]
+        else:
+            props[prop_name] = ""  
 # ------------------------------------------------------------------------
 #    Popout Submenu's
 # ------------------------------------------------------------------------
@@ -402,36 +402,22 @@ class Von_Popout_SaveBoneNameToDict(bpy.types.Operator):
         layout.prop(mytool, "jsondictionarykeyoptions_enum")
 
 
-class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
-    bl_idname = "von.mergearmatures"
-    bl_label = "MergeArmatures"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def draw(self, context):
-        layout = self.layout
-        props = context.scene.my_tool
-        options = updatebonestandarizationoptions_enum()
-
-        # Draw the dynamic dropdowns
-        if not options:
-            self.report({'WARNING'}, "No armatures found in the scene.")
-            return {'CANCELLED'}
-        for option in options.keys():
-            prop_name = option.lower().replace(' ', '_') + "_choice"
-            layout.prop(props, prop_name)
+class Von_InitializeArmaturesOperator(bpy.types.Operator):
+    """Operator to initialize armatures and register dynamic properties."""
+    bl_idname = "object.initialize_armatures"
+    bl_label = "Initialize Armatures"
 
     def execute(self, context):
-        # Print selected choices for debugging purposes
         props = context.scene.my_tool
-        options = updatebonestandarizationoptions_enum()
-        for option in options.keys():
-            prop_name = option.lower().replace(' ', '_') + "_choice"
-            selected = getattr(props, prop_name)
-            self.report({'INFO'}, f"{option}: {selected}")
-        return {'FINISHED'}
+        register_dynamic_properties(props)
 
-    def invoke(self, context, event):
-        return context.window_manager.invoke_props_dialog(self)
+        for option in updatebonestandarizationoptions_enum().keys():
+            prop_name = option.lower().replace(' ', '_') + "_choice"
+            if hasattr(props, prop_name):
+                choice = getattr(props, prop_name)
+                print(f"Registered Property: {prop_name} with options: {choice}")
+        
+        return {'FINISHED'}
         
         
         
@@ -541,12 +527,18 @@ class VONPANEL_PT_VRCTools(VonPanel, bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
+        my_tool = context.scene.my_tool
         row = layout.row()
         scene = context.scene
         row.label(text= "VRChat Tools", icon= 'CUBE')
         layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator("von.vrcsavebonenametodict")
-        layout.operator("von.mergearmatures", text="Merge Armatures")
+        options = updatebonestandarizationoptions_enum()
+        for option in options.keys():
+            prop_name = option.lower().replace(' ', '_') + "_choice"
+            if hasattr(my_tool, prop_name):
+                layout.prop(my_tool, prop_name)
+        layout.operator(Von_InitializeArmaturesOperator.bl_idname)
 
 classes = (
     MySettings,
@@ -557,7 +549,7 @@ classes = (
     VonPanel_RiggingTools__Button_SaveNewControl,
     Von_Dropdown_AddCustomBoneshape,
     Von_Popout_SaveBoneNameToDict,
-    Von_Popout_StandardizeNamingConflicts,
+    Von_InitializeArmaturesOperator,
     VONPANEL_PT_VRCTools,
     VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace,
     VonPanel_RiggingTools__Submenu_ColorizeRig,
