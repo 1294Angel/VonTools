@@ -165,11 +165,9 @@ def update_enum_properties():
     for key in options_dict.keys():
         namingoptions_enum = f"{key}_enum"
 
-        # Check if the property already exists
         if hasattr(MySettings, namingoptions_enum):
-            # If it exists, update it
             current_enum = getattr(MySettings, namingoptions_enum)
-            if current_enum != options_dict[key][0]:  # Compare with the new default value
+            if current_enum != options_dict[key][0]:
                 setattr(MySettings, namingoptions_enum, bpy.props.EnumProperty(
                     name=key,
                     items=[(choice, choice, "") for choice in options_dict[key]],
