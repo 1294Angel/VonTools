@@ -407,16 +407,18 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
 
 
     def draw(self, context):
-        mytool = context.scene.mytool
-        all_matches = updatebonestandarizationoptions_enum()
+        mytool = context.scene.my_tool
+        all_matches = updatebonestandarizationoptions_enum  ()
         selections = {}
-        for key in all_matches.keys():
-            enum_property_name = f"{key}_enum"
-            selections[key] = getattr(mytool, enum_property_name)
 
-        print("Selected Options:")
-        for key, value in selections.items():
-            print(f"{key}: {value}")
+        props = context.scene.mytools  # Access the property group
+
+        for key in all_matches.keys():
+            layout = self.layout
+            enum_property_name = f"{key}_enum"
+            row = layout.row(align=True)
+            row.label(text=key)  # Display the key as a string
+            row.prop(mytool, enum_property_name, text="")  # Display the enum property
         
 
         
