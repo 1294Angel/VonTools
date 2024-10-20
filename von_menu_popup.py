@@ -360,7 +360,7 @@ class Von_Popout_SaveBoneNameToDict(bpy.types.Operator):
 
 
 class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
-    bl_idname = "von.vrcstandardizednamingconflicts"
+    bl_idname = "von.mergearmatures"
     bl_label = "Save Bone Name To Dict"
 
     
