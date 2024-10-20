@@ -62,7 +62,6 @@ def updatejsonkeyoptions(self, context):
     return enum_items
 
 
-
 def updatetargetspaceenumlist(self, context):
     von_createcontrols.spaceconsole(5)
     print("UPDATING TARGET SPACE ENUMLIST")
@@ -148,6 +147,18 @@ class MySettings(PropertyGroup):
         items=updatejsonkeyoptions
     ) # type: ignore
 
+    conflictbonerequiringattention_string: StringProperty(
+        name="",
+        description="",
+        default="",
+        maxlen=1024,
+        ) # type: ignore
+
+    jsondictionarykeyoptions_enum: bpy.props.EnumProperty(
+        name="Avalible Keys - ",
+        description="Choose an option",
+        items=updatejsonkeyoptions
+    ) # type: ignore
 # ------------------------------------------------------------------------
 #    Popout Submenu's
 # ------------------------------------------------------------------------
@@ -348,6 +359,31 @@ class Von_Popout_SaveBoneNameToDict(bpy.types.Operator):
         layout.prop(mytool, "jsondictionarykeyoptions_enum")
 
 
+class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
+    bl_idname = "von.vrcstandardizednamingconflicts"
+    bl_label = "Save Bone Name To Dict"
+
+    
+
+    def execute(self,context):
+        scene = context.scene
+        mytool=scene.my_tool
+
+  
+        return{'FINISHED'}
+    def invoke(self, context, event):
+        wm = context.window_manager
+        return context.window_manager.invoke_props_dialog(self)
+    def draw(self, context):
+        layout = self.layout
+        scene = context.scene
+        mytool=scene.my_tool
+        row = layout.row(align=True)
+
+        all_matches, undetectedbones = von_vrctools.standardizeheirarchynames(context)
+        if len(all_matches) > 0:
+            row.label(text=mytool.conflictbonerequiringattention_string)
+            layout.prop(mytool, "conflictboneresolutionoptions_enum")
 
 # ------------------------------------------------------------------------
 #    Button Setup
@@ -396,13 +432,6 @@ class VonPanel_RiggingTools__ClearVertexWeights(bpy.types.Operator):
         von_createcontrols.clear_vertex_weights()
         return {'FINISHED'}
 
-class VonPanel_RiggingTools__ClearVertexWeights(bpy.types.Operator):
-    bl_idname = "von.mergearmatures"
-    bl_label = "Easy Armature Merge"
-
-    def execute(self, context):
-        von_vrctools.standardizeheirarchynames(context)
-        return {'FINISHED'}
 
 # ------------------------------------------------------------------------
 #    Menu Setup

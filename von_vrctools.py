@@ -95,7 +95,7 @@ def standardizeheirarchynames(context):
                         for item in matches:
                             if item != key:
                                 matches.append(key)
-            if matches:
+            if len(matches) > 0:
                 print(f"Bone Identified {bone.name}")
                 if len(matches) >= 2:
                     all_matches[bone.name] = item
