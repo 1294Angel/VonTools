@@ -64,7 +64,8 @@ def updatejsonkeyoptions(self, context):
 def updatebonestandarizationoptions_enum():
     selected_objects = bpy.context.selected_objects
     Armatures = [obj for obj in selected_objects if obj.type == 'ARMATURE']
-    von_vrctools.filterbonesbyjsondictlist(Armatures,von_vrctools.gatherjsondictkeys())
+    all_matches = von_vrctools.filterbonesbyjsondictlist(Armatures,von_vrctools.gatherjsondictkeys())[0]
+    return all_matches
 
 
 
