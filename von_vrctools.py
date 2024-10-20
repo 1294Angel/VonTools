@@ -87,6 +87,7 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list):
         for armature in selected_armatures:
             for bone in armature.pose.bones:
                 bonename = bone.name.lower()
+                print(f"Bonename == {bonename}")
                 matches = []
                 for data in json_data_list:
                     for key, list_data in data.items():
