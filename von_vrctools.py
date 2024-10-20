@@ -101,8 +101,8 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list):
                             for item in matches:
                                 if item != key:
                                     matches.append(key)
-                        else:
-                            print(f"{bone} Not Found??")
+                if len(matches) == 0:
+                    print("Shits Fucked")
                 if len(matches) > 0:
                     print("")
                     print(f"Bone Identified {bone.name}")
