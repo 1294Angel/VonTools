@@ -100,10 +100,12 @@ def standardizeheirarchynames(context):
                         print(f"Bone is in list - Renaming to - {key}")
                         matches.append(key)
             if matches:
+                print(f"Matches List Is = {matches}")
                 if len(matches) >= 2:
                     for item in matches:
                         if item not in all_matches:
                             all_matches[bone.name] = matches
+                            print(f"{item} Not In All Matches")
                         else:
                             print(f"{item} Already In All Matches")
                 elif len(matches) == 1:
