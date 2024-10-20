@@ -111,6 +111,9 @@ def standardizeheirarchynames(context):
                 bpy.context.object.data.bones[bone.name].color.palette = "THEME01"
     print("ENDING STANDARDIZATION OF HEIRARCHIES")
     print("--------------------------------------------------------------")
+
+    print(f"Matches Dictionary = {all_matches}")
+    print(f"Detected Bones = {detectedbones}")
     return all_matches, detectedbones
     
 
