@@ -41,12 +41,20 @@ def updateexistingjsondictonaries(self, context):
     return von_vrctools.ENUMUPDATE_gatherheirarchydata()
 
 def updatebonestandarizationoptions_enum(self,context):
+
+    all_matches = {
+            "Fuck":["Twat","Dick"],
+            "Shit":["Death","Awaits"]
+        }
+
+    """
     enumpop = ()
     selected_armatures = [obj for obj in bpy.context.selected_objects if obj.type == 'ARMATURE']
     all_matches = von_vrctools.filterbonesbyjsondictlist(selected_armatures,von_vrctools.json_data_list(context))
     for key, values in all_matches.items():
         enumpop.append((item, item, "") for item in values)
-    return enumpop,key
+    """
+    return all_matches
 
 
 
@@ -378,11 +386,9 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
         }
 
 
-        for i in all_matches:
-            print(i)
+        for key, value in all_matches:
             row = layout.row(align=True)
-            row.prop(mytool, "conflictbonerequiringattention_string")
-            row.prop(mytool, "jsondictionarykeyoptions_enum", text="Options")
+            row.prop(mytool, "jsondictionarykeyoptions_enum", text=key)
 
 # ------------------------------------------------------------------------
 #    Button Setup
