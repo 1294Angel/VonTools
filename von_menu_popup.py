@@ -387,7 +387,7 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
         update_enum_properties()
 
         # Print selected options to the console
-        mytool = context.scene.mytool
+        mytool = context.scene.my_tool
         options_dict = updatebonestandarizationoptions_enum()
         selections = {}
         for key in options_dict.keys():
@@ -410,8 +410,6 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
         mytool = context.scene.my_tool
         all_matches = updatebonestandarizationoptions_enum()
         selections = {}
-
-        props = context.scene.mytools  # Access the property group
 
         for key in all_matches.keys():
             layout = self.layout
