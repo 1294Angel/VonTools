@@ -92,7 +92,7 @@ def updatetargetspaceenumlist(self, context):
 #    Scene Properties
 # ------------------------------------------------------------------------
 
-class MySettings(PropertyGroup):
+class MySettings(bpy.types.PropertyGroup):
 #--------------
     my_bool : BoolProperty(
         name="Enable or Disable",
@@ -156,27 +156,44 @@ class MySettings(PropertyGroup):
         items=updatejsonkeyoptions
     ) # type: ignore
 
+
+#--------------
+    selected_option: bpy.props.EnumProperty(
+        name="Select Option",
+        description="Choose an option from the list",
+        items=lambda self, context: self.get_option_items(context),
+    ) # type: ignore
+    
+    selected_choice: bpy.props.EnumProperty(
+        name="Select Choice",
+        description="Choose a choice from the selected option",
+        items=lambda self, context: self.get_choice_items(context),
+    ) # type: ignore
+
+    def get_option_items(self, context):
+        """Generate a list of options for the EnumProperty"""
+        options = updatebonestandarizationoptions_enum()
+        return [(key, key, "") for key in options.keys()]
+
+    def get_choice_items(self, context):
+        """Generate a list of choices based on the selected option"""
+        options = updatebonestandarizationoptions_enum()
+        selected_option = self.selected_option
+        choices = options.get(selected_option, [])
+        return [(choice, choice, "") for choice in choices]
+
+#--------------
     pass
 
-
-#--------------
-def update_dropdown_properties(my_tool):
-    options_dict = updatebonestandarizationoptions_enum()
-    
-    # Loop through each key in the options_dict
-    for key in options_dict.keys():
-        attr_name = f"{key}_dropdown"
-        
-        # If the property doesn't exist, create it
-        if not hasattr(MySettings, attr_name):
-            setattr(MySettings, attr_name, bpy.props.EnumProperty(
-                name=key,
-                items=[(item, item, "") for item in options_dict[key]],
-                default=options_dict[key][0] if options_dict[key] else ""
-            ))
-
-#--------------
-
+def register_dynamic_properties():
+    options = updatebonestandarizationoptions_enum()
+    for option in options:
+        prop_name = option.lower().replace(' ', '_') + "_choice"
+        choices = [(choice, choice, "") for choice in options[option]]
+        setattr(MySettings, prop_name, bpy.props.EnumProperty(
+            name=option.replace('_', ' ').title(),
+            items=choices
+        ))
 # ------------------------------------------------------------------------
 #    Popout Submenu's
 # ------------------------------------------------------------------------
@@ -384,40 +401,23 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
     
 
     def execute(self,context):
-        
-        # Print selected options to the console
-        mytool = context.scene.my_tool
-
-        update_dropdown_properties(mytool)
-
-        options_dict = updatebonestandarizationoptions_enum()
-        selections = {}
-        for key in options_dict.keys():
-            enum_property_name = f"{key}_enum"
-            selections[key] = getattr(mytool, enum_property_name)
-
-        print("Selected Options:")
-        for key, value in selections.items():
-            print(f"{key}: {value}")
-
         return {'FINISHED'}
     
     def invoke(self, context, event):
         return context.window_manager.invoke_props_dialog(self)
     
     def draw(self, context):
-        
         my_tool = context.scene.my_tool
-        
-        
-
         layout = self.layout
+        props = context.scene.bone_selection_props
+
+        # Access the properties and draw dropdowns
+        options = updatebonestandarizationoptions_enum()
+        for option in options.keys():
+            prop_name = option.lower().replace(' ', '_') + "_choice"
+            layout.prop(props, prop_name)
         
-        options_dict = updatebonestandarizationoptions_enum()
-        for key in options_dict.keys():
-            attr_name = f"{key}_dropdown"
-            if hasattr(my_tool, attr_name):
-                layout.prop(my_tool, attr_name, text=key)
+        
         
         
 
@@ -529,7 +529,8 @@ class VONPANEL_PT_VRCTools(VonPanel, bpy.types.Panel):
         layout = self.layout
         row = layout.row()
         scene = context.scene
-
+        mytool = scene.my_tool
+        props = context.scene.bone_selection_props
         row.label(text= "VRChat Tools", icon= 'CUBE')
         layout.operator_context = 'INVOKE_DEFAULT'
         if bpy.context.object and bpy.context.object.type == 'ARMATURE':
@@ -552,6 +553,7 @@ classes = (
     VonPanel_RiggingTools__Submenu_ColorizeRig,
     VonPanel_RiggingTools__WeightHammer,
     VonPanel_RiggingTools__ClearVertexWeights,
+    
 )
 
 def von_menupopup_register():
@@ -559,6 +561,7 @@ def von_menupopup_register():
     from bpy.utils import register_class # type: ignore
     for cls in classes:
         register_class(cls)
+    register_dynamic_properties()
 
     bpy.types.Scene.my_tool = PointerProperty(type=MySettings)
 
