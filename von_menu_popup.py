@@ -387,6 +387,9 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
         
         # Print selected options to the console
         mytool = context.scene.my_tool
+
+        update_dropdown_properties(mytool)
+
         options_dict = updatebonestandarizationoptions_enum()
         selections = {}
         for key in options_dict.keys():
@@ -406,12 +409,11 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
         
         my_tool = context.scene.my_tool
         
-        update_dropdown_properties(my_tool)  # Update dropdown properties
+        
 
         layout = self.layout
         
-        # Draw each dropdown menu based on the keys in the options_dict
-        options_dict = updatebonestandarizationoptions_enum()  # Get the latest options
+        options_dict = updatebonestandarizationoptions_enum()
         for key in options_dict.keys():
             attr_name = f"{key}_dropdown"
             if hasattr(my_tool, attr_name):
