@@ -46,7 +46,7 @@ def updatebonestandarizationoptions_enum(self,context):
             "Fuck":["Twat","Dick"],
             "Shit":["Death","Awaits"]
         }
-
+    
     """
     enumpop = ()
     selected_armatures = [obj for obj in bpy.context.selected_objects if obj.type == 'ARMATURE']
@@ -143,13 +143,6 @@ class MySettings(PropertyGroup):
         items=[]
     ) # type: ignore
 #--------------
-    conflictbonerequiringattention_string: StringProperty(
-        name="",
-        description="",
-        default="DEFAULTTEXT",
-        maxlen=1024,
-        ) # type: ignore
-
     jsondictionarykeyoptions_enum: bpy.props.EnumProperty(
         name="Avalible Keys - ",
         description="Choose an option",
@@ -385,9 +378,12 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
             "Shit":["Death","Awaits"]
         }
 
-
+        itterations = 0
         for key, value in all_matches:
+            itterations = itterations +1
+            print(itterations)
             row = layout.row(align=True)
+            mytool.jsondictionaryoptions_enum = value
             row.prop(mytool, "jsondictionarykeyoptions_enum", text=key)
 
 # ------------------------------------------------------------------------
