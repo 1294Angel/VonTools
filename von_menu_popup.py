@@ -561,8 +561,6 @@ def von_menupopup_register():
         register_class(cls)
     bpy.types.Scene.my_tool = PointerProperty(type=MySettings)
 
-    register_dynamic_properties()
-
 
 
 def von_menupopup_unregister():
