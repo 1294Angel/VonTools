@@ -1,3 +1,10 @@
+my_dict = {
+    "Option 1": ["Choice A", "Choice B", "Choice C"],
+    "Option 2": ["Choice D", "Choice E"],
+    "Option 3": ["Choice F", "Choice G", "Choice H", "Choice I"]
+}
+
+
 # ------------------------------------------------------------------------
 #    Addon Info
 # ------------------------------------------------------------------------
@@ -37,8 +44,13 @@ def updateexistingboneconstraintsenum(self, context):
     von_buttoncontrols.getselectedbonesforenum(self, context)
 
 def updateexistingjsondictonaries(self, context):
-    #FUNCTIONAL
-    return von_vrctools.ENUMUPDATE_gatherheirarchydata()
+    return {
+        "Option 1": ["Choice A", "Choice B", "Choice C"],
+        "Option 2": ["Choice D", "Choice E"],
+        "Option 3": ["Choice F", "Choice G", "Choice H", "Choice I"]
+    }
+
+
 
 def updatebonestandarizationoptions_enum(self,context):
 
@@ -142,14 +154,30 @@ class MySettings(PropertyGroup):
         description="Choose an option",
         items=[]
     ) # type: ignore
+
+    pass
+
+
 #--------------
-    jsondictionarykeyoptions_enum: bpy.props.EnumProperty(
-        name="Avalible Keys - ",
-        description="Choose an option",
-        items=updatebonestandarizationoptions_enum,
-        update=updatebonestandarizationoptions_enum
-    ) # type: ignore
+def update_enum_properties():
+    options_dict = updateexistingjsondictonaries()  # Call the function to get the dictionary
+    for key in options_dict.keys():
+        enum_property_name = f"{key}_enum"
+        
+        # Remove existing property if it exists
+        if hasattr(MySettings, enum_property_name):
+            delattr(MySettings, enum_property_name)
+        
+        # Create a new EnumProperty for each key in the dictionary
+        setattr(MySettings, enum_property_name, bpy.props.EnumProperty(
+            name=key,
+            items=[(choice, choice, "") for choice in options_dict[key]],
+            default=options_dict[key][0] if options_dict[key] else ""
+        ))
+
+
 #--------------
+
 # ------------------------------------------------------------------------
 #    Popout Submenu's
 # ------------------------------------------------------------------------
@@ -357,36 +385,42 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
     
 
     def execute(self,context):
-        scene = context.scene
-        mytool=scene.my_tool
-        print("ARMATRESSS YEEE")
-  
-        return{'FINISHED'}
+        update_enum_properties()
+
+        # Print selected options to the console
+        mytool = context.scene.mytool
+        options_dict = updateexistingjsondictonaries()
+        selections = {}
+        for key in options_dict.keys():
+            enum_property_name = f"{key}_enum"
+            selections[key] = getattr(mytool, enum_property_name)
+
+        print("Selected Options:")
+        for key, value in selections.items():
+            print(f"{key}: {value}")
+
+        return {'FINISHED'}
+    
+
     def invoke(self, context, event):
         return context.window_manager.invoke_props_dialog(self)
     
+
+
     def draw(self, context):
-        layout = self.layout
-        scene = context.scene
-        mytool=scene.my_tool
+        mytool = context.scene.mytool
+        all_matches = updateexistingjsondictonaries()
+        selections = {}
+        for key in all_matches.keys():
+            enum_property_name = f"{key}_enum"
+            selections[key] = getattr(mytool, enum_property_name)
+
+        print("Selected Options:")
+        for key, value in selections.items():
+            print(f"{key}: {value}")
         
 
-        #selected_armatures = [obj for obj in context.selected_objects if obj.type == 'ARMATURE']
-        #all_matches = von_vrctools.filterbonesbyjsondictlist(selected_armatures, von_vrctools.gatherjsondictkeys())
-        all_matches = {
-            "Fuck":["Twat","Dick"],
-            "Shit":["Death","Awaits"]
-        }
-
-        itterations = 0
         
-        for key, value in all_matches.items():
-            enumpop = ((item, item, "") for item in value)
-            itterations = itterations +1
-            print(itterations)
-            row = layout.row(align=True)
-            mytool.jsondictionaryoptions_enum = enumpop
-            row.prop(mytool, "jsondictionarykeyoptions_enum", text=key)
 
 # ------------------------------------------------------------------------
 #    Button Setup
@@ -499,7 +533,7 @@ class VONPANEL_PT_VRCTools(VonPanel, bpy.types.Panel):
         layout.operator_context = 'INVOKE_DEFAULT'
         if bpy.context.object and bpy.context.object.type == 'ARMATURE':
             layout.operator("von.vrcsavebonenametodict")
-            layout.operator("von.mergearmatures")
+            layout.operator("von.mergearmatures", text="MergeArmatures")
 
 
 classes = (
@@ -516,7 +550,7 @@ classes = (
     VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace,
     VonPanel_RiggingTools__Submenu_ColorizeRig,
     VonPanel_RiggingTools__WeightHammer,
-    VonPanel_RiggingTools__ClearVertexWeights
+    VonPanel_RiggingTools__ClearVertexWeights,
 )
 
 def von_menupopup_register():
