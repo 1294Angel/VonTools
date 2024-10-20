@@ -175,7 +175,6 @@ def update_dropdown_properties(my_tool):
                 default=options_dict[key][0] if options_dict[key] else ""
             ))
 
-
 #--------------
 
 # ------------------------------------------------------------------------
@@ -405,31 +404,18 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
     
     def draw(self, context):
         
-        mytool = context.scene.my_tool
-        all_matches = updatebonestandarizationoptions_enum()
-        selections = {}
+        my_tool = context.scene.my_tool
+        
+        update_dropdown_properties(my_tool)  # Update dropdown properties
 
-        options_dict = updatebonestandarizationoptions_enum()
-    
-        # Loop through each key in the options_dict
+        layout = self.layout
+        
+        # Draw each dropdown menu based on the keys in the options_dict
+        options_dict = updatebonestandarizationoptions_enum()  # Get the latest options
         for key in options_dict.keys():
             attr_name = f"{key}_dropdown"
-            
-            # If the property doesn't exist, create it
-            if not hasattr(MySettings, attr_name):
-                setattr(MySettings, attr_name, bpy.props.EnumProperty(
-                    name=key,
-                    items=[(item, item, "") for item in options_dict[key]],
-                    default=options_dict[key][0] if options_dict[key] else ""
-                ))
-
-
-        for key in all_matches.keys():
-            layout = self.layout
-            namingoptions_enum = f"{key}_enum"
-            row = layout.row(align=True)
-            row.label(text=key)
-            row.prop(mytool, namingoptions_enum, text="") 
+            if hasattr(my_tool, attr_name):
+                layout.prop(my_tool, attr_name, text=key)
         
         
 
