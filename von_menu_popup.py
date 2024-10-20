@@ -359,7 +359,7 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
         layout = self.layout
         scene = context.scene
         mytool=scene.my_tool
-        row = layout.row(align=True)
+        
 
         selected_armatures = [obj for obj in bpy.context.selected_objects if obj.type == 'ARMATURE']
 
@@ -376,7 +376,7 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
                 name="Dynamic Enum",
                 items=update_enum
             )
-
+            row = layout.row(align=True)
             row.prop(scene.my_dynamic_props, "dynamic_string", text="Category")
             row.prop(scene.my_dynamic_props, "dynamic_enum", text="Options")
 
@@ -491,7 +491,7 @@ class VONPANEL_PT_VRCTools(VonPanel, bpy.types.Panel):
         layout.operator_context = 'INVOKE_DEFAULT'
         if bpy.context.object and bpy.context.object.type == 'ARMATURE':
             layout.operator("von.vrcsavebonenametodict")
-            layout.operator("von.mergearmatures")
+            layout.operator("von.mergearmatures", text="Merge Armatures").name = Von_Popout_StandardizeNamingConflicts.bl_idname
 
 
 classes = (
