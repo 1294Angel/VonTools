@@ -76,37 +76,42 @@ def standardizeheirarchynames(context):
     #For each armature and For each bone, check the name against EVERY key, and EVERY item in each list within each key - If it is identified then rename the bone to the key - If it is not, colour it red
     for armature in selected_armatures:
         for bone in armature.pose.bones:
-            for filename in os.listdir(directory_path):
-                if filename.endswith('.json'):
-                    filepath = os.path.join(directory_path, filename)
-                    with open(filepath, 'r') as json_file:
-                        try:
-                            print(f"{json_file} Opened successfully")
-                            data = json.load(json_file)
-                            #If it's a dict then do X (Idiot Proofing)
-                            if isinstance(data, dict):
-                                for key, list in data.items():
-                                    if bone.name == key:
-                                        print(f"Bone is key = {key}")
-                                        bpy.context.object.data.bones[bone.name].color.palette = "DEFAULT"
-                                        detectedbones.append(bone.name)
-                                        break
-                                    else:
-                                        print(bone.name)
-                                        bonename = bone.name
-                                        bonename = bonename.lower()
-                                        for item in list:
-                                            if item == bonename:
-                                                bone.name = key
-                                                print(f"Bone is in list - Attempting to rename to - {key} - Bone is now called - {bone.name} ")
-                                                detectedbones.append(bone.name)
-                                                bpy.context.object.data.bones[bone.name].color.palette = "DEFAULT"
-                                                break
-                                            elif item != bonename:
-                                                print(f"{bonename} - NOT IDENTIFIED")
-                                                bpy.context.object.data.bones[bone.name].color.palette = "THEME01"
-                        except json.JSONDecodeError as e: # IF ALL FAILS, IDIOT PROOFING -- Seems to work? Copy pasted from "ENUMUPDATE_gatherheirarchydata()"
-                            print(f"Error reading {filename}: {e}")
+            bonefound = False
+            while bonefound == False:
+                for filename in os.listdir(directory_path):
+                    if filename.endswith('.json'):
+                        filepath = os.path.join(directory_path, filename)
+                        with open(filepath, 'r') as json_file:
+                            try:
+                                print(f"{filepath} Opened successfully")
+                                data = json.load(json_file)
+                                #If it's a dict then do X (Idiot Proofing)
+                                if isinstance(data, dict):
+                                    for key, list in data.items():
+                                        if bone.name == key:
+                                            print(f"Bone is key = {key}")
+                                            bpy.context.object.data.bones[bone.name].color.palette = "DEFAULT"
+                                            detectedbones.append(bone.name)
+                                            bonefound = True
+                                        else:
+                                            print(bone.name)
+                                            bonename = bone.name
+                                            bonename = bonename.lower()
+                                            for item in list:
+                                                if item == bonename:
+                                                    bone.name = key
+                                                    print(f"Bone is in list - Attempting to rename to - {key} - Bone is now called - {bone.name} ")
+                                                    detectedbones.append(bone.name)
+                                                    bpy.context.object.data.bones[bone.name].color.palette = "DEFAULT"
+                                                    bonefound = True
+                                                elif item != bonename:
+                                                    print(f"{bone.name} - NOT IDENTIFIED")
+                                                    bpy.context.object.data.bones[bone.name].color.palette = "THEME01"
+            
+                            except json.JSONDecodeError as e: # IF ALL FAILS, IDIOT PROOFING -- Seems to work? Copy pasted from "ENUMUPDATE_gatherheirarchydata()"
+                                print(f"Error reading {filename}: {e}")
+            else:
+                continue
     print("ENDING STANDARDIZATION OF HEIRARCHIES")
     print("--------------------------------------------------------------")
 
