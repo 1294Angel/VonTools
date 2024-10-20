@@ -348,6 +348,7 @@ class Von_Popout_SaveBoneNameToDict(bpy.types.Operator):
         layout.prop(mytool, "jsondictionarykeyoptions_enum")
 
 
+
 # ------------------------------------------------------------------------
 #    Button Setup
 # ------------------------------------------------------------------------
@@ -395,7 +396,13 @@ class VonPanel_RiggingTools__ClearVertexWeights(bpy.types.Operator):
         von_createcontrols.clear_vertex_weights()
         return {'FINISHED'}
 
+class VonPanel_RiggingTools__ClearVertexWeights(bpy.types.Operator):
+    bl_idname = "von.mergearmatures"
+    bl_label = "Easy Armature Merge"
 
+    def execute(self, context):
+        von_vrctools.standardizeheirarchynames(context)
+        return {'FINISHED'}
 
 # ------------------------------------------------------------------------
 #    Menu Setup
@@ -460,6 +467,7 @@ class VONPANEL_PT_VRCTools(VonPanel, bpy.types.Panel):
         layout.operator_context = 'INVOKE_DEFAULT'
         if bpy.context.object and bpy.context.object.type == 'ARMATURE':
             layout.operator("von.vrcsavebonenametodict")
+        layout.operator("von.mergearmatures")
 
 
 classes = (
