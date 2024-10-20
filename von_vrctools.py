@@ -67,11 +67,13 @@ def ENUMUPDATE_gatherheirarchydata():
 
 def standardizeheirarchynames(context):
     obj = bpy.context.object
+    selected_objects = bpy.context.selected_objects
+    selected_armatures = [obj for obj in selected_objects if obj.type == 'ARMATURE']
     directory_path = get_directory()
     undetectedbones = []
     #For each armature and For each bone, check the name against EVERY key, and EVERY item in each list within each key - If it is identified then rename the bone to the key - If it is not, colour it red
-    for armature in obj:
-        for bone in obj.bones:
+    for armature in selected_armatures:
+        for bone in armature.pose.bones:
             for filename in os.listdir(directory_path):
                 if filename.endswith('.json'):
                     filepath = os.path.join(directory_path, filename)
