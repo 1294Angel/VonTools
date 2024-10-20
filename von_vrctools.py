@@ -85,12 +85,10 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list):
     undetectedbones = []
     bonestorename = {}
     print(f"Selected Armatures ================= {selected_armatures}")
-    print(f"Json List = {json_data_list}")
     if len(selected_armatures) > 0:
         for armature in selected_armatures:
             for bone in armature.pose.bones:
                 bonename = bone.name.lower()
-                print(f"Bonename == {bonename}")
                 matches = []
                 for data in json_data_list:
                     for key, list_data in data.items():
@@ -103,6 +101,8 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list):
                             for item in matches:
                                 if item != key:
                                     matches.append(key)
+                        else:
+                            print(f"{bone} Not Found??")
                 if len(matches) > 0:
                     print("")
                     print(f"Bone Identified {bone.name}")
