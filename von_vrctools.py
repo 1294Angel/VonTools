@@ -106,6 +106,7 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list):
                 else:
                     undetectedbones.append(bone.name)
     print(f"All Matches = {all_matches}")
+    print(f"Bones To Rename = {bonestorename}")
     return all_matches, undetectedbones, bonestorename
 
 
