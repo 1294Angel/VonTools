@@ -66,6 +66,8 @@ def ENUMUPDATE_gatherheirarchydata():
 def standardizeheirarchynames(context):
     print("--------------------------------------------------------------")
     print("STARTING STANDARIZATION OF HEIRARCHIES")
+    all_matches = {}
+
     selected_objects = bpy.context.selected_objects
     selected_armatures = [obj for obj in selected_objects if obj.type == 'ARMATURE']
     directory_path = get_directory() + "/Libraries/BoneNames"
@@ -86,34 +88,27 @@ def standardizeheirarchynames(context):
 
     for armature in selected_armatures:
         for bone in armature.pose.bones:
-            bonefound = False
             bonename = bone.name.lower()
-
-            
+            matches = []
             for data in json_data_list:
                 for key, list_data in data.items():
                     if bone.name == key:
                         print(f"Bone is key = {key}")
-                        bpy.context.object.data.bones[bone.name].color.palette = "DEFAULT"
-                        detectedbones.append(bone.name)
-                        bonefound = True
-                        break
-
-                    
+                        detectedbones.append(bone.name) 
                     elif bonename in list_data:
                         bone.name = key
                         print(f"Bone is in list - Renaming to - {key}")
                         detectedbones.append(bone.name)
-                        bpy.context.object.data.bones[bone.name].color.palette = "DEFAULT"
-                        bonefound = True
-                        break
-                if bonefound:
-                    break
-            if not bonefound:
+            if matches:
+                all_matches[bone.name] = matches
+                bpy.context.object.data.bones[bone.name].color.palette = "DEFAULT"
+            else:
                 print(f"{bone.name} - NOT IDENTIFIED")
                 bpy.context.object.data.bones[bone.name].color.palette = "THEME01"
     print("ENDING STANDARDIZATION OF HEIRARCHIES")
     print("--------------------------------------------------------------")
+    return all_matches, detectedbones
+    
 
 
 
