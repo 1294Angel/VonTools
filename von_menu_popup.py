@@ -549,8 +549,7 @@ classes = (
     VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace,
     VonPanel_RiggingTools__Submenu_ColorizeRig,
     VonPanel_RiggingTools__WeightHammer,
-    VonPanel_RiggingTools__ClearVertexWeights,
-    
+    VonPanel_RiggingTools__ClearVertexWeights
 )
 
 def von_menupopup_register():
