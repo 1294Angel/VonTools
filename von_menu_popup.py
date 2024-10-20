@@ -1,9 +1,3 @@
-my_dict = {
-    "Option 1": ["Choice A", "Choice B", "Choice C"],
-    "Option 2": ["Choice D", "Choice E"],
-    "Option 3": ["Choice F", "Choice G", "Choice H", "Choice I"]
-}
-
 
 # ------------------------------------------------------------------------
 #    Addon Info
@@ -43,30 +37,18 @@ from . import von_vrctools
 def updateexistingboneconstraintsenum(self, context):
     von_buttoncontrols.getselectedbonesforenum(self, context)
 
-def updateexistingjsondictonaries():
+def updateexistingjsondictonaries(self, context):
+    #FUNCTIONAL
+    return von_vrctools.ENUMUPDATE_gatherheirarchydata()
+
+
+def updatebonestandarizationoptions_enum(self,context):
+
     return {
         "Option 1": ["Choice A", "Choice B", "Choice C"],
         "Option 2": ["Choice D", "Choice E"],
         "Option 3": ["Choice F", "Choice G", "Choice H", "Choice I"]
     }
-
-
-
-def updatebonestandarizationoptions_enum(self,context):
-
-    all_matches = {
-            "Fuck":["Twat","Dick"],
-            "Shit":["Death","Awaits"]
-        }
-    
-    """
-    enumpop = ()
-    selected_armatures = [obj for obj in bpy.context.selected_objects if obj.type == 'ARMATURE']
-    all_matches = von_vrctools.filterbonesbyjsondictlist(selected_armatures,von_vrctools.json_data_list(context))
-    for key, values in all_matches.items():
-        enumpop.append((item, item, "") for item in values)
-    """
-    return all_matches
 
 
 
@@ -160,7 +142,7 @@ class MySettings(PropertyGroup):
 
 #--------------
 def update_enum_properties():
-    options_dict = updateexistingjsondictonaries()
+    options_dict = updatebonestandarizationoptions_enum()
     for key in options_dict.keys():
         enum_property_name = f"{key}_enum"
         
@@ -387,7 +369,7 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
 
         # Print selected options to the console
         mytool = context.scene.mytool
-        options_dict = updateexistingjsondictonaries()
+        options_dict = updatebonestandarizationoptions_enum()
         selections = {}
         for key in options_dict.keys():
             enum_property_name = f"{key}_enum"
@@ -407,7 +389,7 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
 
     def draw(self, context):
         mytool = context.scene.mytool
-        all_matches = updateexistingjsondictonaries()
+        all_matches = updatebonestandarizationoptions_enum()
         selections = {}
         for key in all_matches.keys():
             enum_property_name = f"{key}_enum"
