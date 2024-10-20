@@ -77,7 +77,7 @@ def standardizeheirarchynames(context):
     for armature in selected_armatures:
         for bone in armature.pose.bones:
             bonefound = False
-            while bonefound == False:
+            while not bonefound:
                 for filename in os.listdir(directory_path):
                     if filename.endswith('.json'):
                         filepath = os.path.join(directory_path, filename)
@@ -93,6 +93,7 @@ def standardizeheirarchynames(context):
                                             bpy.context.object.data.bones[bone.name].color.palette = "DEFAULT"
                                             detectedbones.append(bone.name)
                                             bonefound = True
+                                            break
                                         else:
                                             print(bone.name)
                                             bonename = bone.name
@@ -104,14 +105,17 @@ def standardizeheirarchynames(context):
                                                     detectedbones.append(bone.name)
                                                     bpy.context.object.data.bones[bone.name].color.palette = "DEFAULT"
                                                     bonefound = True
+                                                    break
                                                 elif item != bonename:
                                                     print(f"{bone.name} - NOT IDENTIFIED")
                                                     bpy.context.object.data.bones[bone.name].color.palette = "THEME01"
+                                    if bonefound:
+                                        break
             
                             except json.JSONDecodeError as e: # IF ALL FAILS, IDIOT PROOFING -- Seems to work? Copy pasted from "ENUMUPDATE_gatherheirarchydata()"
                                 print(f"Error reading {filename}: {e}")
             else:
-                continue
+                break
     print("ENDING STANDARDIZATION OF HEIRARCHIES")
     print("--------------------------------------------------------------")
 
