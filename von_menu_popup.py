@@ -40,7 +40,26 @@ def updateexistingboneconstraintsenum(self, context):
 def updateexistingjsondictonaries(self, context):
     #FUNCTIONAL
     return von_vrctools.ENUMUPDATE_gatherheirarchydata()
+def updatejsonkeyoptions(self, context):
 
+    directory_path = von_vrctools.get_directory() + "/Libraries/BoneNames"
+    print(self.jsondictionaryoptions_enum)
+    parentenumoption = self.jsondictionaryoptions_enum
+    directory_path = os.path.join(directory_path, parentenumoption)
+
+    if not os.path.exists(directory_path):
+        raise FileNotFoundError(f"The file {directory_path} does not exist.")
+    
+    with open(directory_path, 'r') as file:
+        data = json.load(file)
+
+    iterations = -1
+    enum_items = []
+    for key in data.keys():
+        iterations = iterations + 1
+        enum_items.append((key, key, f"Description for {key}"))
+
+    return enum_items
 
 def updatebonestandarizationoptions_enum(self,context):
 
