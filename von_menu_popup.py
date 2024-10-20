@@ -163,12 +163,12 @@ class MySettings(PropertyGroup):
 def update_enum_properties():
     options_dict = updatebonestandarizationoptions_enum()
     for key in options_dict.keys():
-        enum_property_name = f"{key}_enum"
+        namingoptions_enum = f"{key}_enum"
         
-        if hasattr(MySettings, enum_property_name):
-            delattr(MySettings, enum_property_name)
+        if hasattr(MySettings, namingoptions_enum):
+            delattr(MySettings, namingoptions_enum)
         
-        setattr(MySettings, enum_property_name, bpy.props.EnumProperty(
+        setattr(MySettings, namingoptions_enum, bpy.props.EnumProperty(
             name=key,
             items=[(choice, choice, "") for choice in options_dict[key]],
             default=options_dict[key][0] if options_dict[key] else ""
@@ -410,13 +410,13 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
         mytool = context.scene.my_tool
         all_matches = updatebonestandarizationoptions_enum()
         selections = {}
-
+        update_enum_properties()
         for key in all_matches.keys():
             layout = self.layout
-            enum_property_name = f"{key}_enum"
+            namingoptions_enum = f"{key}_enum"
             row = layout.row(align=True)
             row.label(text=key)  # Display the key as a string
-            row.prop(mytool, enum_property_name, text="")  # Display the enum property
+            row.prop(mytool, namingoptions_enum, text="")  # Display the enum property
         
 
         
