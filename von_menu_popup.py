@@ -351,7 +351,7 @@ class Von_Popout_SaveBoneNameToDict(bpy.types.Operator):
 
 class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
     bl_idname = "von.mergearmatures"
-    bl_label = "Save Bone Name To Dict"
+    bl_label = "MergeArmatures"
 
     
 
@@ -495,7 +495,7 @@ class VONPANEL_PT_VRCTools(VonPanel, bpy.types.Panel):
         layout.operator_context = 'INVOKE_DEFAULT'
         if bpy.context.object and bpy.context.object.type == 'ARMATURE':
             layout.operator("von.vrcsavebonenametodict")
-            layout.operator("von.mergearmatures", text="Merge Armatures")
+            layout.operator("von.mergearmatures")
 
 
 classes = (
@@ -507,6 +507,7 @@ classes = (
     VonPanel_RiggingTools__Button_SaveNewControl,
     Von_Dropdown_AddCustomBoneshape,
     Von_Popout_SaveBoneNameToDict,
+    Von_Popout_StandardizeNamingConflicts,
     VONPANEL_PT_VRCTools,
     VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace,
     VonPanel_RiggingTools__Submenu_ColorizeRig,
