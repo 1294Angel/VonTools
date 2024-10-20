@@ -63,8 +63,22 @@ def updatejsonkeyoptions(self, context):
 
 def updatebonestandarizationoptions_enum():
     selected_armatures = [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()]
-    all_matches = von_vrctools.filterbonesbyjsondictlist(selected_armatures,von_vrctools.gatherjsondictkeys())[0]
-    return all_matches
+    all_matches = {}
+    if not selected_armatures:
+        return all_matches
+    #all_matches = von_vrctools.filterbonesbyjsondictlist(selected_armatures,von_vrctools.gatherjsondictkeys())[0]
+
+    all_matches = {
+        "Option 1": ["Choice A", "Choice B", "Choice C"],
+        "Option 2": ["Choice D", "Choice E"],
+        "Option 3": ["Choice F", "Choice G", "Choice H", "Choice I"],
+        "Option 4": ["Choice J", "Choice K"]
+    }
+
+    if len(all_matches) > 0:
+        return all_matches
+    else:
+        print("All Matches Empty")
 
 
 
@@ -183,12 +197,14 @@ class MySettings(bpy.types.PropertyGroup):
     pass
 
 def register_dynamic_properties():
-    print("Registering Dynamic Properties")
-    for option, choices in updatebonestandarizationoptions_enum().items():
+    options = updatebonestandarizationoptions_enum()
+
+    for option in options:
         prop_name = option.lower().replace(' ', '_') + "_choice"
+        choices = [(choice, choice, "") for choice in options[option]]
         setattr(MySettings, prop_name, bpy.props.EnumProperty(
-            name=option,
-            items=[(choice, choice, "") for choice in choices]
+            name=option.replace('_', ' ').title(),
+            items=choices
         ))
 # ------------------------------------------------------------------------
 #    Popout Submenu's
@@ -263,10 +279,6 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
         layout.prop(mytool, "targetspace_enum")
         layout.prop(self, "ownerspace_enum")
         
-
-        
-
-
 class VonPanel_RiggingTools__Submenu_ColorizeRig(bpy.types.Operator):
     bl_idname = "von.colorizerig"
     bl_label = "Colorize Rig"
@@ -401,6 +413,9 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
         options = updatebonestandarizationoptions_enum()
 
         # Draw the dynamic dropdowns
+        if not options:
+            self.report({'WARNING'}, "No armatures found in the scene.")
+            return {'CANCELLED'}
         for option in options.keys():
             prop_name = option.lower().replace(' ', '_') + "_choice"
             layout.prop(props, prop_name)
@@ -555,8 +570,9 @@ def von_menupopup_register():
     from bpy.utils import register_class # type: ignore
     for cls in classes:
         register_class(cls)
-    register_dynamic_properties()
     bpy.types.Scene.my_tool = PointerProperty(type=MySettings)
+
+    register_dynamic_properties()
 
 
 
