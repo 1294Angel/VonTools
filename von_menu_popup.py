@@ -160,27 +160,20 @@ class MySettings(PropertyGroup):
 
 
 #--------------
-def update_enum_properties():
+def update_dropdown_properties(my_tool):
     options_dict = updatebonestandarizationoptions_enum()
+    
+    # Loop through each key in the options_dict
     for key in options_dict.keys():
-        namingoptions_enum = f"{key}_enum"
-
-        if hasattr(MySettings, namingoptions_enum):
-            current_enum = getattr(MySettings, namingoptions_enum)
-            if current_enum != options_dict[key][0]:
-                setattr(MySettings, namingoptions_enum, bpy.props.EnumProperty(
-                    name=key,
-                    items=[(choice, choice, "") for choice in options_dict[key]],
-                    default=options_dict[key][0] if options_dict[key] else ""
-                ))
-        else:
-            # Create the property if it doesn't exist
-            setattr(MySettings, namingoptions_enum, bpy.props.EnumProperty(
+        attr_name = f"{key}_dropdown"
+        
+        # If the property doesn't exist, create it
+        if not hasattr(MySettings, attr_name):
+            setattr(MySettings, attr_name, bpy.props.EnumProperty(
                 name=key,
-                items=[(choice, choice, "") for choice in options_dict[key]],
+                items=[(item, item, "") for item in options_dict[key]],
                 default=options_dict[key][0] if options_dict[key] else ""
             ))
-
 
 
 #--------------
@@ -416,24 +409,20 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
         all_matches = updatebonestandarizationoptions_enum()
         selections = {}
 
-        for key in all_matches.keys():
-            namingoptions_enum = f"{key}_enum"
-
-            if hasattr(MySettings, namingoptions_enum):
-                current_enum = getattr(MySettings, namingoptions_enum)
-                if current_enum != all_matches[key][0]:
-                    setattr(MySettings, namingoptions_enum, bpy.props.EnumProperty(
-                        name=key,
-                        items=[(choice, choice, "") for choice in all_matches[key]],
-                        default=all_matches[key][0] if all_matches[key] else ""
-                    ))
-            else:
-                # Create the property if it doesn't exist
-                setattr(MySettings, namingoptions_enum, bpy.props.EnumProperty(
+        options_dict = updatebonestandarizationoptions_enum()
+    
+        # Loop through each key in the options_dict
+        for key in options_dict.keys():
+            attr_name = f"{key}_dropdown"
+            
+            # If the property doesn't exist, create it
+            if not hasattr(MySettings, attr_name):
+                setattr(MySettings, attr_name, bpy.props.EnumProperty(
                     name=key,
-                    items=[(choice, choice, "") for choice in all_matches[key]],
-                    default=all_matches[key][0] if all_matches[key] else ""
+                    items=[(item, item, "") for item in options_dict[key]],
+                    default=options_dict[key][0] if options_dict[key] else ""
                 ))
+
 
         for key in all_matches.keys():
             layout = self.layout
