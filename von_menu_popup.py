@@ -389,6 +389,8 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
     bl_idname = "von.mergearmatures"
     bl_label = "MergeArmatures"
 
+    update_enum_properties()
+
     def execute(self,context):
         update_enum_properties()
         # Print selected options to the console
