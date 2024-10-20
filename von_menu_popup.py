@@ -398,7 +398,7 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
     def draw(self, context):
         layout = self.layout
         props = context.scene.my_tool
-        options = updatebonestandarizationoptions_enum()
+        options = updatebonestandarizationoptions_enum(context)
 
         # Draw the dynamic dropdowns
         for option in options.keys():
@@ -408,7 +408,7 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
     def execute(self, context):
         # Print selected choices for debugging purposes
         props = context.scene.my_tool
-        options = updatebonestandarizationoptions_enum()
+        options = updatebonestandarizationoptions_enum(context)
         for option in options.keys():
             prop_name = option.lower().replace(' ', '_') + "_choice"
             selected = getattr(props, prop_name)
