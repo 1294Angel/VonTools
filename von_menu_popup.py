@@ -422,10 +422,9 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
 
         for bone in undetectedbones:
             bpy.context.object.data.bones[bone].color.palette = "THEME01"
-            print(f"{bone} Recoloured To Red")
 
         von_vrctools.rename_bones_from_dict(selected_armatures, bonestorename)
-        print("Bones Should Be Renamed")
+        print(f"{bonestorename} Should Be Renamed")
         
 
 

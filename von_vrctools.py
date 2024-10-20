@@ -84,6 +84,7 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list):
     all_matches = {}
     undetectedbones = []
     bonestorename = {}
+    print(f"Selected Armatures ================= {selected_armatures}")
     if len(selected_armatures) > 0:
         for armature in selected_armatures:
             for bone in armature.pose.bones:
@@ -112,7 +113,6 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list):
                             bonestorename[bone.name] = matches[0]
                 else:
                     undetectedbones.append(bone.name)
-                print(f"Matches = {matches}")
     print(f"All Matches = {all_matches}")
     print(f"Bones To Rename = {bonestorename}")
     return all_matches, undetectedbones, bonestorename
@@ -127,7 +127,6 @@ def rename_bones_from_dict(selectedarmatures, rename_dict):
                 if old_bone_name in bones:
                     bones[old_bone_name].name = new_bone_name
                     bpy.context.object.data.bones[new_bone_name].color.palette = "THEME03"
-                    print(f"Renamed bone '{old_bone_name}' to '{new_bone_name}'")
                 else:
                     print(f"Bone '{old_bone_name}' not found in armature '{armature.name}'")
         else:
