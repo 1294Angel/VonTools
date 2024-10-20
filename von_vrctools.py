@@ -66,6 +66,8 @@ def ENUMUPDATE_gatherheirarchydata():
 
 
 def standardizeheirarchynames(context):
+    print("--------------------------------------------------------------")
+    print("STARTING STANDARIZATION OF HEIRARCHIES")
     obj = bpy.context.object
     selected_objects = bpy.context.selected_objects
     selected_armatures = [obj for obj in selected_objects if obj.type == 'ARMATURE']
@@ -79,10 +81,12 @@ def standardizeheirarchynames(context):
                     filepath = os.path.join(directory_path, filename)
                     with open(filepath, 'r') as json_file:
                         try:
+                            print(f"{json_file} Opened successfully")
                             data = json.load(json_file)
                             #If it's a dict then do X (Idiot Proofing)
                             if isinstance(data, dict):
                                 for key, list in data:
+                                    print("")
                                     if bone.name == key:
                                         print(f"Bone is key = {key}")
                                     else:
@@ -96,6 +100,8 @@ def standardizeheirarchynames(context):
                                                 undetectedbones.append(bone.name)
                         except json.JSONDecodeError as e: # IF ALL FAILS, IDIOT PROOFING -- Seems to work? Copy pasted from "ENUMUPDATE_gatherheirarchydata()"
                             print(f"Error reading {filename}: {e}")
+    print("ENDING STANDARDIZATION OF HEIRARCHIES")
+    print("--------------------------------------------------------------")
 
 
 
