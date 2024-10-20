@@ -61,7 +61,7 @@ def updatejsonkeyoptions(self, context):
 
     return enum_items
 
-def updatebonestandarizationoptions_enum():
+def updatebonestandarizationoptions_enum(context):
     selected_objects = bpy.context.selected_objects
     Armatures = [obj for obj in selected_objects if obj.type == 'ARMATURE']
     all_matches = von_vrctools.filterbonesbyjsondictlist(Armatures,von_vrctools.gatherjsondictkeys())[0]
@@ -183,8 +183,8 @@ class MySettings(bpy.types.PropertyGroup):
 #--------------
     pass
 
-def register_dynamic_properties():
-    for option, choices in updatebonestandarizationoptions_enum().items():
+def register_dynamic_properties(context):
+    for option, choices in updatebonestandarizationoptions_enum(context).items():
         prop_name = option.lower().replace(' ', '_') + "_choice"
         setattr(MySettings, prop_name, bpy.props.EnumProperty(
             name=option,
@@ -497,7 +497,8 @@ class VONPANEL_PT_RiggingTools(VonPanel, bpy.types.Panel):
         layout = self.layout
         row = layout.row()
         scene = context.scene
-        mytool=scene.my_tool
+
+        register_dynamic_properties(context)
 
         row.label(text= "Bone Manipulation", icon= 'CUBE')
         #Colorize Rig
@@ -529,7 +530,6 @@ class VONPANEL_PT_VRCTools(VonPanel, bpy.types.Panel):
         layout = self.layout
         row = layout.row()
         scene = context.scene
-        mytool = scene.my_tool
         row.label(text= "VRChat Tools", icon= 'CUBE')
         layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator("von.vrcsavebonenametodict")
@@ -557,7 +557,6 @@ def von_menupopup_register():
     from bpy.utils import register_class # type: ignore
     for cls in classes:
         register_class(cls)
-    register_dynamic_properties()
 
     bpy.types.Scene.my_tool = PointerProperty(type=MySettings)
 
