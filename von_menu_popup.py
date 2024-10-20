@@ -406,17 +406,28 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
     
 
 
-    def draw(self, context):
-        mytool = context.scene.my_tool
-        all_matches = updatebonestandarizationoptions_enum()
-        selections = {}
-        update_enum_properties()
-        for key in all_matches.keys():
-            layout = self.layout
-            namingoptions_enum = f"{key}_enum"
-            row = layout.row(align=True)
-            row.label(text=key)
-            row.prop(mytool, namingoptions_enum, text="") 
+def update_enum_properties():
+    options_dict = updatebonestandarizationoptions_enum()
+    for key in options_dict.keys():
+        namingoptions_enum = f"{key}_enum"
+
+        # Check if the property already exists
+        if hasattr(MySettings, namingoptions_enum):
+            # If it exists, update it
+            current_enum = getattr(MySettings, namingoptions_enum)
+            if current_enum != options_dict[key][0]:  # Compare with the new default value
+                setattr(MySettings, namingoptions_enum, bpy.props.EnumProperty(
+                    name=key,
+                    items=[(choice, choice, "") for choice in options_dict[key]],
+                    default=options_dict[key][0] if options_dict[key] else ""
+                ))
+        else:
+            # Create the property if it doesn't exist
+            setattr(MySettings, namingoptions_enum, bpy.props.EnumProperty(
+                name=key,
+                items=[(choice, choice, "") for choice in options_dict[key]],
+                default=options_dict[key][0] if options_dict[key] else ""
+            ))
         
 
         
