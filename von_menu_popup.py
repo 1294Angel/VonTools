@@ -379,11 +379,13 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
         }
 
         itterations = 0
+        
         for key, value in all_matches.items():
+            enumpop = ((item, item, "") for item in value)
             itterations = itterations +1
             print(itterations)
             row = layout.row(align=True)
-            mytool.jsondictionaryoptions_enum = value
+            mytool.jsondictionaryoptions_enum = enumpop
             row.prop(mytool, "jsondictionarykeyoptions_enum", text=key)
 
 # ------------------------------------------------------------------------
