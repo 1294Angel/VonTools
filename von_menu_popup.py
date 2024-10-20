@@ -392,7 +392,7 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
     update_enum_properties()
 
     def execute(self,context):
-        update_enum_properties()
+        
         # Print selected options to the console
         mytool = context.scene.my_tool
         options_dict = updatebonestandarizationoptions_enum()
@@ -421,6 +421,7 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
             row = layout.row(align=True)
             row.label(text=key)
             row.prop(mytool, namingoptions_enum, text="") 
+        
         
 
         
