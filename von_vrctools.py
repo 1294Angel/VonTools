@@ -73,6 +73,7 @@ def gatherjsondictkeys():
                 with open(filepath, 'r') as json_file:
                     data = json.load(json_file)
                     if isinstance(data, dict):
+                        print(json_file)
                         json_data_list.append(data)  # Store dictionaries
             except json.JSONDecodeError as e:
                 print(f"Error reading {filename}: {e}")
