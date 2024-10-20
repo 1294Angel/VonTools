@@ -379,7 +379,7 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
         }
 
         itterations = 0
-        for key, value in all_matches:
+        for key, value in all_matches.items():
             itterations = itterations +1
             print(itterations)
             row = layout.row(align=True)
