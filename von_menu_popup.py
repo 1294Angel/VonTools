@@ -43,7 +43,7 @@ from . import von_vrctools
 def updateexistingboneconstraintsenum(self, context):
     von_buttoncontrols.getselectedbonesforenum(self, context)
 
-def updateexistingjsondictonaries(self, context):
+def updateexistingjsondictonaries():
     return {
         "Option 1": ["Choice A", "Choice B", "Choice C"],
         "Option 2": ["Choice D", "Choice E"],
@@ -160,15 +160,13 @@ class MySettings(PropertyGroup):
 
 #--------------
 def update_enum_properties():
-    options_dict = updateexistingjsondictonaries()  # Call the function to get the dictionary
+    options_dict = updateexistingjsondictonaries()
     for key in options_dict.keys():
         enum_property_name = f"{key}_enum"
         
-        # Remove existing property if it exists
         if hasattr(MySettings, enum_property_name):
             delattr(MySettings, enum_property_name)
         
-        # Create a new EnumProperty for each key in the dictionary
         setattr(MySettings, enum_property_name, bpy.props.EnumProperty(
             name=key,
             items=[(choice, choice, "") for choice in options_dict[key]],
