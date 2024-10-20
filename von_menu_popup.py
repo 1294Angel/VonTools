@@ -409,6 +409,7 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
         props = context.scene.my_tool
         register_dynamic_properties(props)
 
+
         for option in updatebonestandarizationoptions_enum().keys():
             prop_name = option.lower().replace(' ', '_') + "_choice"
             if hasattr(props, prop_name):
@@ -416,6 +417,7 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
                 print(f"Registered Property: {prop_name} with options: {choice}")
 
         selected_armatures = [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()]
+        print(selected_armatures)
         all_matches, undetectedbones, bonestorename = von_vrctools.filterbonesbyjsondictlist(selected_armatures,von_vrctools.gatherjsondictkeys())
 
         for bone in undetectedbones:
