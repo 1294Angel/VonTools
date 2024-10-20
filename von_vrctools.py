@@ -107,6 +107,7 @@ def standardizeheirarchynames(context):
                             print(f"{item} Is Already In All matches !!!!!!!!!!!!!!")
                         else:
                             all_matches[bone.name] = matches
+                            print(f"All Matches = {all_matches}")
                             print(f"{item} Not In All Matches")
                 elif len(matches) == 1:
                     if bone.name != key:
