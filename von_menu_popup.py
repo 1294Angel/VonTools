@@ -65,6 +65,8 @@ def updatebonestandarizationoptions_enum():
     all_matches = {}
     selected_armatures = [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()]
     all_matches = von_vrctools.filterbonesbyjsondictlist(selected_armatures,von_vrctools.gatherjsondictkeys())[0]
+    if len(all_matches) == 0:
+        print("All Matches Empty")
     return all_matches
 
 
