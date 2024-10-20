@@ -64,14 +64,12 @@ def ENUMUPDATE_gatherheirarchydata():
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 """
 def standardizeheirarchynames(context):
-    print("--------------------------------------------------------------")
-    print("STARTING STANDARIZATION OF HEIRARCHIES")
     all_matches = {}
 
     selected_objects = bpy.context.selected_objects
     selected_armatures = [obj for obj in selected_objects if obj.type == 'ARMATURE']
     directory_path = get_directory() + "/Libraries/BoneNames"
-    detectedbones = []
+    undetectedbones = []
     json_data_list = []
     directory_path = get_directory() + "/Libraries/BoneNames"
     for filename in os.listdir(directory_path):
@@ -79,7 +77,6 @@ def standardizeheirarchynames(context):
             filepath = os.path.join(directory_path, filename)
             try:
                 with open(filepath, 'r') as json_file:
-                    print(f"{filepath} Opened successfully")
                     data = json.load(json_file)
                     if isinstance(data, dict):
                         json_data_list.append(data)  # Store dictionaries
@@ -93,33 +90,26 @@ def standardizeheirarchynames(context):
             for data in json_data_list:
                 for key, list_data in data.items():
                     if bone.name == key:
-                        print(f"Bone is key = {key}")
                         matches.append(key)
                     elif bonename in list_data:
-                        shouldnamebone = key
-                        print(f"Bone is in list")
                         for item in matches:
                             if item != key:
                                 matches.append(key)
             if matches:
-                print(f"Matches List Is = {matches}")
+                print(f"Bone Identified {bone.name}")
                 if len(matches) >= 2:
-                    print(f"All Matches = {all_matches}")
                     all_matches[bone.name] = item
-                    print(f"{item} Added To All Matches")
                 elif len(matches) == 1:
                     if bone.name != key:
                         bone.name = matches[0]
                     bpy.context.object.data.bones[bone.name].color.palette = "DEFAULT"
             else:
-                print(f"{bone.name} - NOT IDENTIFIED")
                 bpy.context.object.data.bones[bone.name].color.palette = "THEME01"
-    print("ENDING STANDARDIZATION OF HEIRARCHIES")
-    print("--------------------------------------------------------------")
-
+                undetectedbones.append(bone.name)
+    
     print(f"Matches Dictionary = {all_matches}")
-    print(f"Detected Bones = {detectedbones}")
-    return all_matches, detectedbones
+    print(f"Undetected Bones = {undetectedbones}")
+    return all_matches, undetectedbones
     
 
 
