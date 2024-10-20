@@ -390,6 +390,7 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
     bl_label = "MergeArmatures"
 
     def execute(self,context):
+        update_enum_properties()
         # Print selected options to the console
         mytool = context.scene.my_tool
         options_dict = updatebonestandarizationoptions_enum()
@@ -408,7 +409,7 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
         return context.window_manager.invoke_props_dialog(self)
     
     def draw(self, context):
-        update_enum_properties()
+        
         mytool = context.scene.my_tool
         all_matches = updatebonestandarizationoptions_enum()
         selections = {}
