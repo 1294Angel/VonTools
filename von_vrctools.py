@@ -94,14 +94,18 @@ def standardizeheirarchynames(context):
                 for key, list_data in data.items():
                     if bone.name == key:
                         print(f"Bone is key = {key}")
-                        detectedbones.append(bone.name) 
+                        matches.append(key)
                     elif bonename in list_data:
-                        bone.name = key
+                        shouldnamebone = key
                         print(f"Bone is in list - Renaming to - {key}")
-                        detectedbones.append(bone.name)
+                        matches.append(key)
             if matches:
-                all_matches[bone.name] = matches
-                bpy.context.object.data.bones[bone.name].color.palette = "DEFAULT"
+                if len(matches) >= 2:
+                    all_matches[bone.name] = matches
+                elif len(matches) == 1:
+                    if bone.name != key:
+                        bone.name = matches[0]
+                    bpy.context.object.data.bones[bone.name].color.palette = "DEFAULT"
             else:
                 print(f"{bone.name} - NOT IDENTIFIED")
                 bpy.context.object.data.bones[bone.name].color.palette = "THEME01"
