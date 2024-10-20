@@ -40,6 +40,15 @@ def updateexistingjsondictonaries(self, context):
     #FUNCTIONAL
     return von_vrctools.ENUMUPDATE_gatherheirarchydata()
 
+def updatebonestandarizationoptions_enum(self,context):
+    enumpop = ()
+    selected_armatures = [obj for obj in bpy.context.selected_objects if obj.type == 'ARMATURE']
+    all_matches = von_vrctools.filterbonesbyjsondictlist(selected_armatures,von_vrctools.json_data_list(context))
+    for key, values in all_matches.items():
+        enumpop.append((item, item, "") for item in values)
+    return enumpop,key
+
+
 
 def updatetargetspaceenumlist(self, context):
     von_createcontrols.spaceconsole(5)
@@ -129,14 +138,15 @@ class MySettings(PropertyGroup):
     conflictbonerequiringattention_string: StringProperty(
         name="",
         description="",
-        default="",
+        default="DEFAULTTEXT",
         maxlen=1024,
         ) # type: ignore
 
     jsondictionarykeyoptions_enum: bpy.props.EnumProperty(
         name="Avalible Keys - ",
         description="Choose an option",
-        items=[]
+        items=updatebonestandarizationoptions_enum,
+        update=updatebonestandarizationoptions_enum
     ) # type: ignore
 #--------------
 # ------------------------------------------------------------------------
@@ -352,7 +362,6 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
   
         return{'FINISHED'}
     def invoke(self, context, event):
-        wm = context.window_manager
         return context.window_manager.invoke_props_dialog(self)
     
     def draw(self, context):
@@ -361,25 +370,19 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
         mytool=scene.my_tool
         
 
-        selected_armatures = [obj for obj in bpy.context.selected_objects if obj.type == 'ARMATURE']
+        #selected_armatures = [obj for obj in context.selected_objects if obj.type == 'ARMATURE']
+        #all_matches = von_vrctools.filterbonesbyjsondictlist(selected_armatures, von_vrctools.gatherjsondictkeys())
+        all_matches = {
+            "Fuck":["Twat","Dick"],
+            "Shit":["Death","Awaits"]
+        }
 
-        all_matches = von_vrctools.filterbonesbyjsondictlist(selected_armatures,von_vrctools.gatherjsondictkeys())[0]
-        layout.prop(mytool.my_enum)
 
-        for key, enum_items in all_matches.items():
-            
-            # Set the dynamic string (key of the dictionary)
-            scene.mytool.conflictbonerequiringattention_string = key
-            def update_enum(self, context):
-                return enum_items
-            
-            scene.my_tool.conflictbonerequiringattention_enum = bpy.props.EnumProperty(
-                name="Dynamic Enum",
-                items=update_enum
-            )
+        for i in all_matches:
+            print(i)
             row = layout.row(align=True)
-            row.prop(mytool.conflictbonerequiringattention_string, "dynamic_string", text="Category")
-            row.prop(mytool.conflictbonerequiringattention_enum, "dynamic_enum", text="Options")
+            row.prop(mytool, "conflictbonerequiringattention_string")
+            row.prop(mytool, "jsondictionarykeyoptions_enum", text="Options")
 
 # ------------------------------------------------------------------------
 #    Button Setup
