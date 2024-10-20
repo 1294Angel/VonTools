@@ -40,27 +40,6 @@ def updateexistingjsondictonaries(self, context):
     #FUNCTIONAL
     return von_vrctools.ENUMUPDATE_gatherheirarchydata()
 
-def updatejsonkeyoptions(self, context):
-
-    directory_path = von_vrctools.get_directory() + "/Libraries/BoneNames"
-    print(self.jsondictionaryoptions_enum)
-    parentenumoption = self.jsondictionaryoptions_enum
-    directory_path = os.path.join(directory_path, parentenumoption)
-
-    if not os.path.exists(directory_path):
-        raise FileNotFoundError(f"The file {directory_path} does not exist.")
-    
-    with open(directory_path, 'r') as file:
-        data = json.load(file)
-
-    iterations = -1
-    enum_items = []
-    for key in data.keys():
-        iterations = iterations + 1
-        enum_items.append((key, key, f"Description for {key}"))
-
-    return enum_items
-
 
 def updatetargetspaceenumlist(self, context):
     von_createcontrols.spaceconsole(5)
@@ -84,7 +63,7 @@ def updatetargetspaceenumlist(self, context):
 # ------------------------------------------------------------------------
 
 class MySettings(PropertyGroup):
-
+#--------------
     my_bool : BoolProperty(
         name="Enable or Disable",
         description="A bool property",
@@ -119,7 +98,7 @@ class MySettings(PropertyGroup):
         description = "",   
         items = [],
     ) # type: ignore
-
+#--------------
     ExistingBoneConstraints_enum : bpy.props.EnumProperty(
         name = "",
         description = "",
@@ -133,7 +112,7 @@ class MySettings(PropertyGroup):
         items = updatetargetspaceenumlist,
         update = updatetargetspaceenumlist
     ) # type: ignore
-
+#--------------
     jsondictionaryoptions_enum : bpy.props.EnumProperty(
         name = "Avalible Json Dictionaries - ",
         description = "Choose an option",
@@ -144,9 +123,9 @@ class MySettings(PropertyGroup):
     jsondictionarykeyoptions_enum: bpy.props.EnumProperty(
         name="Avalible Keys - ",
         description="Choose an option",
-        items=updatejsonkeyoptions
+        items=[]
     ) # type: ignore
-
+#--------------
     conflictbonerequiringattention_string: StringProperty(
         name="",
         description="",
@@ -157,8 +136,9 @@ class MySettings(PropertyGroup):
     jsondictionarykeyoptions_enum: bpy.props.EnumProperty(
         name="Avalible Keys - ",
         description="Choose an option",
-        items=updatejsonkeyoptions
+        items=[]
     ) # type: ignore
+#--------------
 # ------------------------------------------------------------------------
 #    Popout Submenu's
 # ------------------------------------------------------------------------
@@ -374,17 +354,31 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
     def invoke(self, context, event):
         wm = context.window_manager
         return context.window_manager.invoke_props_dialog(self)
+    
     def draw(self, context):
         layout = self.layout
         scene = context.scene
         mytool=scene.my_tool
         row = layout.row(align=True)
 
-        all_matches, undetectedbones = von_vrctools.standardizeheirarchynames(context)
-        print(all_matches)
-        if len(all_matches) > 0:
-            row.label(text=mytool.conflictbonerequiringattention_string)
-            layout.prop(mytool, "conflictboneresolutionoptions_enum")
+        selected_armatures = [obj for obj in bpy.context.selected_objects if obj.type == 'ARMATURE']
+
+        all_matches = von_vrctools.filterbonesbyjsondictlist(selected_armatures,von_vrctools.gatherjsondictkeys())[0]
+
+        for key, enum_items in all_matches.items():
+            
+            # Set the dynamic string (key of the dictionary)
+            mytool.conflictbonerequiringattention_string = key
+            def update_enum(self, context):
+                return enum_items
+            
+            mytool.conflictbonerequiringattention_string.dynamic_enum = bpy.props.EnumProperty(
+                name="Dynamic Enum",
+                items=update_enum
+            )
+
+            row.prop(scene.my_dynamic_props, "dynamic_string", text="Category")
+            row.prop(scene.my_dynamic_props, "dynamic_enum", text="Options")
 
 # ------------------------------------------------------------------------
 #    Button Setup
@@ -497,7 +491,7 @@ class VONPANEL_PT_VRCTools(VonPanel, bpy.types.Panel):
         layout.operator_context = 'INVOKE_DEFAULT'
         if bpy.context.object and bpy.context.object.type == 'ARMATURE':
             layout.operator("von.vrcsavebonenametodict")
-        layout.operator("von.mergearmatures")
+            layout.operator("von.mergearmatures")
 
 
 classes = (

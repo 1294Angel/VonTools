@@ -63,13 +63,7 @@ def ENUMUPDATE_gatherheirarchydata():
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 """
-def standardizeheirarchynames(context):
-    all_matches = {}
-
-    selected_objects = bpy.context.selected_objects
-    selected_armatures = [obj for obj in selected_objects if obj.type == 'ARMATURE']
-    directory_path = get_directory() + "/Libraries/BoneNames"
-    undetectedbones = []
+def gatherjsondictkeys():
     json_data_list = []
     directory_path = get_directory() + "/Libraries/BoneNames"
     for filename in os.listdir(directory_path):
@@ -82,34 +76,42 @@ def standardizeheirarchynames(context):
                         json_data_list.append(data)  # Store dictionaries
             except json.JSONDecodeError as e:
                 print(f"Error reading {filename}: {e}")
+    return json_data_list
 
-    for armature in selected_armatures:
-        for bone in armature.pose.bones:
-            bonename = bone.name.lower()
-            matches = []
-            for data in json_data_list:
-                for key, list_data in data.items():
-                    if bone.name == key:
-                        matches.append(key)
-                    elif bonename in list_data:
-                        for item in matches:
-                            if item != key:
-                                matches.append(key)
-            if len(matches) > 0:
-                print(f"Bone Identified {bone.name}")
-                if len(matches) >= 2:
-                    all_matches[bone.name] = item
-                elif len(matches) == 1:
-                    if bone.name != key:
-                        bone.name = matches[0]
-                    bpy.context.object.data.bones[bone.name].color.palette = "DEFAULT"
-            else:
-                bpy.context.object.data.bones[bone.name].color.palette = "THEME01"
-                undetectedbones.append(bone.name)
-    
-    print(f"Matches Dictionary = {all_matches}")
-    print(f"Undetected Bones = {undetectedbones}")
-    return all_matches, undetectedbones
+#returns: all_matches (Dict where key is original bone name and the list is the list of options for renaming when there are more than 1) - Undetected Bones (Bones to colour to red and copy paste to the new armature) - bonestorename (Dict where bonename is the key and the list is the name to rename it to)
+def filterbonesbyjsondictlist(selected_armatures,json_data_list):
+    all_matches = {}
+    undetectedbones = []
+    bonestorename = {}
+    if len(selected_armatures) > 0:
+        for armature in selected_armatures:
+            for bone in armature.pose.bones:
+                bonename = bone.name.lower()
+                matches = []
+                for data in json_data_list:
+                    for key, list_data in data.items():
+                        if bone.name == key:
+                            matches.append(key)
+                        elif bonename in list_data:
+                            for item in matches:
+                                if item != key:
+                                    matches.append(key)
+                if len(matches) > 0:
+                    print(f"Bone Identified {bone.name}")
+                    if len(matches) >= 2:
+                        all_matches[bone.name] = item
+                    elif len(matches) == 1:
+                        if bone.name != key:
+                            bonestorename[bone.name] = matches[0]
+                else:
+                    undetectedbones.append(bone.name)
+
+    return all_matches, undetectedbones, bonestorename
+
+
+
+#def standardizeheirarchynames(context, directorybase):
+
     
 
 
