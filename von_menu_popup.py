@@ -61,10 +61,9 @@ def updatejsonkeyoptions(self, context):
 
     return enum_items
 
-def updatebonestandarizationoptions_enum(context):
-    selected_objects = bpy.context.selected_objects
-    Armatures = [obj for obj in selected_objects if obj.type == 'ARMATURE']
-    all_matches = von_vrctools.filterbonesbyjsondictlist(Armatures,von_vrctools.gatherjsondictkeys())[0]
+def updatebonestandarizationoptions_enum():
+    selected_armatures = [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()]
+    all_matches = von_vrctools.filterbonesbyjsondictlist(selected_armatures,von_vrctools.gatherjsondictkeys())[0]
     return all_matches
 
 
@@ -183,8 +182,9 @@ class MySettings(bpy.types.PropertyGroup):
 #--------------
     pass
 
-def register_dynamic_properties(context):
-    for option, choices in updatebonestandarizationoptions_enum(context).items():
+def register_dynamic_properties():
+    print("Registering Dynamic Properties")
+    for option, choices in updatebonestandarizationoptions_enum().items():
         prop_name = option.lower().replace(' ', '_') + "_choice"
         setattr(MySettings, prop_name, bpy.props.EnumProperty(
             name=option,
@@ -398,7 +398,7 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
     def draw(self, context):
         layout = self.layout
         props = context.scene.my_tool
-        options = updatebonestandarizationoptions_enum(context)
+        options = updatebonestandarizationoptions_enum()
 
         # Draw the dynamic dropdowns
         for option in options.keys():
@@ -408,7 +408,7 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
     def execute(self, context):
         # Print selected choices for debugging purposes
         props = context.scene.my_tool
-        options = updatebonestandarizationoptions_enum(context)
+        options = updatebonestandarizationoptions_enum()
         for option in options.keys():
             prop_name = option.lower().replace(' ', '_') + "_choice"
             selected = getattr(props, prop_name)
@@ -498,8 +498,6 @@ class VONPANEL_PT_RiggingTools(VonPanel, bpy.types.Panel):
         row = layout.row()
         scene = context.scene
 
-        register_dynamic_properties(context)
-
         row.label(text= "Bone Manipulation", icon= 'CUBE')
         #Colorize Rig
 
@@ -557,7 +555,7 @@ def von_menupopup_register():
     from bpy.utils import register_class # type: ignore
     for cls in classes:
         register_class(cls)
-
+    register_dynamic_properties()
     bpy.types.Scene.my_tool = PointerProperty(type=MySettings)
 
 
