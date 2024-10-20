@@ -92,28 +92,22 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list):
                 matches = []
                 for data in json_data_list:
                     for key, list_data in data.items():
-                        if bone.name == key:
-                            print("")
+                        if bonename == key.lower():
                             print(f"{bone.name} Match FOUND -------------- {key}")
-                            print("")
                             matches.append(key)
-                        elif bonename in list_data:
-                            for item in matches:
-                                if item != key:
-                                    matches.append(key)
+                        # Check for partial match in the list data
+                        elif bonename in [item.lower() for item in list_data]:
+                            print(f"{bone.name} found in list_data of {key}")
+                            matches.append(key)
                 if len(matches) == 0:
-                    print("Shits Fucked")
-                if len(matches) > 0:
-                    print("")
-                    print(f"Bone Identified {bone.name}")
-                    print("")
-                    if len(matches) >= 2:
-                        all_matches[bone.name] = item
-                    elif len(matches) == 1:
-                        if bone.name != key:
-                            bonestorename[bone.name] = matches[0]
-                else:
+                    print("No matches found for bone:", bone.name)
                     undetectedbones.append(bone.name)
+                else:
+                    print(f"Bone Identified: {bone.name}")
+                    if len(matches) > 1:
+                        all_matches[bone.name] = matches  # Store all matches
+                    elif len(matches) == 1:
+                        bonestorename[bone.name] = matches[0]
     print(f"All Matches = {all_matches}")
     print(f"Bones To Rename = {bonestorename}")
     return all_matches, undetectedbones, bonestorename
