@@ -134,7 +134,7 @@ class MySettings(PropertyGroup):
     jsondictionarykeyoptions_enum: bpy.props.EnumProperty(
         name="Avalible Keys - ",
         description="Choose an option",
-        items=[]
+        items=updatejsonkeyoptions
     ) # type: ignore
 
     pass
@@ -389,7 +389,7 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
 
     def draw(self, context):
         mytool = context.scene.mytool
-        all_matches = updatebonestandarizationoptions_enum()
+        all_matches = updateexistingjsondictonaries()
         selections = {}
         for key in all_matches.keys():
             enum_property_name = f"{key}_enum"
