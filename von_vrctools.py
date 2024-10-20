@@ -109,11 +109,19 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list):
     return all_matches, undetectedbones, bonestorename
 
 
-
-#def standardizeheirarchynames(context, directorybase):
-
-    
-
+def rename_bones_from_dict(selectedarmatures, rename_dict):
+    for armature in selectedarmatures:
+        armature = bpy.data.objects.get(armature.name)
+        if armature is not None and armature.type == 'ARMATURE':
+            bones = armature.data.bones
+            for old_bone_name, new_bone_name in rename_dict.items():
+                if old_bone_name in bones:
+                    bones[old_bone_name].name = new_bone_name
+                    print(f"Renamed bone '{old_bone_name}' to '{new_bone_name}'")
+                else:
+                    print(f"Bone '{old_bone_name}' not found in armature '{armature.name}'")
+        else:
+            print(f"Armature '{armature.name}' not found or is not an armature")
 
 
 

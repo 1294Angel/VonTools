@@ -65,8 +65,7 @@ def updatebonestandarizationoptions_enum():
     all_matches = {}
     selected_armatures = [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()]
     all_matches = von_vrctools.filterbonesbyjsondictlist(selected_armatures,von_vrctools.gatherjsondictkeys())[0]
-    if len(all_matches) == 0:
-        print("All Matches Empty")
+    print(f"All Matches Contents = {all_matches}")
     return all_matches
 
 
@@ -415,11 +414,21 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
             if hasattr(props, prop_name):
                 choice = getattr(props, prop_name)
                 print(f"Registered Property: {prop_name} with options: {choice}")
+
+        selected_armatures = [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()]
+        all_matches, undetectedbones, bonestorename = von_vrctools.filterbonesbyjsondictlist(selected_armatures,von_vrctools.gatherjsondictkeys())
+
+        for bone in undetectedbones:
+            bpy.context.object.data.bones[bone].color.palette = "THEME01"
+
+        von_vrctools.rename_bones_from_dict(selected_armatures, bonestorename)
         
+
+
+        print("")
         return {'FINISHED'}
         
-        
-        
+
 
         
 
