@@ -186,13 +186,11 @@ class MySettings(bpy.types.PropertyGroup):
     pass
 
 def register_dynamic_properties():
-    options = updatebonestandarizationoptions_enum()
-    for option in options:
+    for option, choices in updatebonestandarizationoptions_enum().items():
         prop_name = option.lower().replace(' ', '_') + "_choice"
-        choices = [(choice, choice, "") for choice in options[option]]
         setattr(MySettings, prop_name, bpy.props.EnumProperty(
-            name=option.replace('_', ' ').title(),
-            items=choices
+            name=option,
+            items=[(choice, choice, "") for choice in choices]
         ))
 # ------------------------------------------------------------------------
 #    Popout Submenu's
@@ -397,26 +395,30 @@ class Von_Popout_SaveBoneNameToDict(bpy.types.Operator):
 class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
     bl_idname = "von.mergearmatures"
     bl_label = "MergeArmatures"
+    bl_options = {'REGISTER', 'UNDO'}
 
-    
-
-    def execute(self,context):
-        return {'FINISHED'}
-    
-    def invoke(self, context, event):
-        return context.window_manager.invoke_props_dialog(self)
-    
     def draw(self, context):
-        my_tool = context.scene.my_tool
         layout = self.layout
-        props = context.scene.bone_selection_props
-
-        # Access the properties and draw dropdowns
+        props = context.scene.my_tool
         options = updatebonestandarizationoptions_enum()
+
+        # Draw the dynamic dropdowns
         for option in options.keys():
             prop_name = option.lower().replace(' ', '_') + "_choice"
             layout.prop(props, prop_name)
-        
+
+    def execute(self, context):
+        # Print selected choices for debugging purposes
+        props = context.scene.my_tool
+        options = updatebonestandarizationoptions_enum()
+        for option in options.keys():
+            prop_name = option.lower().replace(' ', '_') + "_choice"
+            selected = getattr(props, prop_name)
+            self.report({'INFO'}, f"{option}: {selected}")
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        return context.window_manager.invoke_props_dialog(self)
         
         
         
@@ -530,13 +532,10 @@ class VONPANEL_PT_VRCTools(VonPanel, bpy.types.Panel):
         row = layout.row()
         scene = context.scene
         mytool = scene.my_tool
-        props = context.scene.bone_selection_props
         row.label(text= "VRChat Tools", icon= 'CUBE')
         layout.operator_context = 'INVOKE_DEFAULT'
-        if bpy.context.object and bpy.context.object.type == 'ARMATURE':
-            layout.operator("von.vrcsavebonenametodict")
-            layout.operator("von.mergearmatures", text="MergeArmatures")
-
+        layout.operator("von.vrcsavebonenametodict")
+        layout.operator("von.mergearmatures", text="Merge Armatures")
 
 classes = (
     MySettings,
