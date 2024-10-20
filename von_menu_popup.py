@@ -408,7 +408,7 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
 
     def draw(self, context):
         mytool = context.scene.mytool
-        all_matches = updateexistingjsondictonaries()
+        all_matches = updatebonestandarizationoptions_enum()
         selections = {}
         for key in all_matches.keys():
             enum_property_name = f"{key}_enum"
