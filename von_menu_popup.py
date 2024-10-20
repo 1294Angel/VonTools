@@ -61,7 +61,7 @@ def updatejsonkeyoptions(self, context):
 
     return enum_items
 
-def updatebonestandarizationoptions_enum(self,context):
+def updatebonestandarizationoptions_enum():
 
     return {
         "Option 1": ["Choice A", "Choice B", "Choice C"],
@@ -408,7 +408,7 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
 
     def draw(self, context):
         mytool = context.scene.my_tool
-        all_matches = updatebonestandarizationoptions_enum  ()
+        all_matches = updatebonestandarizationoptions_enum()
         selections = {}
 
         props = context.scene.mytools  # Access the property group
