@@ -368,7 +368,7 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
     def execute(self,context):
         scene = context.scene
         mytool=scene.my_tool
-
+        print("ARMATRESSS YEEE")
   
         return{'FINISHED'}
     def invoke(self, context, event):
@@ -381,6 +381,7 @@ class Von_Popout_StandardizeNamingConflicts(bpy.types.Operator):
         row = layout.row(align=True)
 
         all_matches, undetectedbones = von_vrctools.standardizeheirarchynames(context)
+        print(all_matches)
         if len(all_matches) > 0:
             row.label(text=mytool.conflictbonerequiringattention_string)
             layout.prop(mytool, "conflictboneresolutionoptions_enum")
