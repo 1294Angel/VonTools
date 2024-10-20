@@ -85,7 +85,7 @@ def standardizeheirarchynames(context):
                             data = json.load(json_file)
                             #If it's a dict then do X (Idiot Proofing)
                             if isinstance(data, dict):
-                                for key, list in data:
+                                for key, list in data.items():
                                     print("")
                                     if bone.name == key:
                                         print(f"Bone is key = {key}")
