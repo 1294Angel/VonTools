@@ -101,7 +101,11 @@ def standardizeheirarchynames(context):
                         matches.append(key)
             if matches:
                 if len(matches) >= 2:
-                    all_matches[bone.name] = matches
+                    for item in matches:
+                        if item not in all_matches:
+                            all_matches[bone.name] = matches
+                        else:
+                            print(f"{item} Already In All Matches")
                 elif len(matches) == 1:
                     if bone.name != key:
                         bone.name = matches[0]
