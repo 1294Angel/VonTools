@@ -99,20 +99,24 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list):
                         elif bonename in [item.lower() for item in list_data]:
                             print(f"{bone.name} found in list_data of {key}")
                             matches.append(key)
+                        else:
+                            continue
                 if len(matches) == 0:
-                    print("")
-                    print("No matches found for bone:", bone.name)
                     undetectedbones.append(bone.name)
                 else:
-                    print("")
-                    print(f"Bone Identified: {bone.name}")
                     if len(matches) > 1:
+                        print(f"{armature} bone {bone.name} identified with more than 1 match")
                         all_matches[bone.name] = matches  # Store all matches
                     elif len(matches) == 1:
-                        print(f"MultiMatch")
+                        print(f"{armature} bone {bone.name} identified with ONLY 1 match 1--1")
                         bonestorename[bone.name] = matches[0]
+    print("")
     print(f"All Matches = {all_matches}")
+    print("")
     print(f"Bones To Rename = {bonestorename}")
+    print("")
+    print(f"Undetected Bones = {undetectedbones}")
+    print("")
     return all_matches, undetectedbones, bonestorename
 
 
