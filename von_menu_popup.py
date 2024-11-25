@@ -406,6 +406,7 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
     bl_label = "Initialize Armatures"
 
     def execute(self, context):
+        self.report({'INFO'}, 'RUNNING Von_InitializeArmaturesOperator')
         props = context.scene.my_tool
         register_dynamic_properties(props)
 
@@ -434,7 +435,7 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
 
         print("")
         return {'FINISHED'}
-        
+
 
 
         

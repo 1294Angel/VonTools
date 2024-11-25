@@ -21,3 +21,5 @@ TempFiles/temptest.py
 *.blend
 *.blend1
 *.blend1
+*.blend
+/TempFiles
