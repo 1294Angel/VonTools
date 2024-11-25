@@ -81,7 +81,7 @@ def gatherjsondictkeys():
 
 #returns: all_matches (Dict where key is original bone name and the list is the list of options for renaming when there are more than 1) - Undetected Bones (Bones to colour to red and copy paste to the new armature) - bonestorename (Dict where bonename is the key and the list is the name to rename it to)
 def filterbonesbyjsondictlist(selected_armatures,json_data_list,shouldrename):
-    all_matches = {}
+    all_duplicatematches = {}
     undetectedbones = []
     bonestorename = {}
     print(f"Selected Armatures ================= {selected_armatures}")
@@ -111,17 +111,16 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list,shouldrename):
                 else:
                     if len(matches) > 1:
                         print(f"{armature.name} bone {bone.name} identified with more than 1 match")
-                        all_matches[bone.name] = matches  # Store all matches
+                        all_duplicatematches[bone.name] = matches  # Store all matches
                     elif len(matches) == 1:
                         bonestorename[bone.name] = matches[0]
-                        all_matches[bone.name] = matches[0]
             if shouldrename == True:
                 rename_bones_from_dict(armature,bonestorename)
-    print(f"All Matches = {all_matches}")
+    print(f"All Matches = {all_duplicatematches}")
     print(f"Undetected Bones = {undetectedbones}")
     print(f"Bones To Rename = {bonestorename}")
     print("")
-    return all_matches, undetectedbones, bonestorename
+    return all_duplicatematches, undetectedbones, bonestorename
 
 
 def rename_bones_from_dict(armature, rename_dict):
