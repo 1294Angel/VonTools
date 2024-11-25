@@ -446,7 +446,7 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
 
         for armature in selected_armatures:
             armaturebones = armature.data.bones
-            bpy.context.view_layer.objects.active = armature.name
+            bpy.context.view_layer.objects.active = armature
             for bone in undetectedbones:
                 if bone in armaturebones:
                     #bpy.ops.object.mode_set(mode='EDIT')
