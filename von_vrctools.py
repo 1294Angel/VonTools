@@ -98,7 +98,7 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list):
                                 matches.append(key)
                         # Check for partial match in the list data
                         elif bonename in [item.lower() for item in list_data]:
-                            if bonename not in [item2.lower() for item2 in matches]:
+                            if bonename not in matches:
                                 print(f"{bone.name} found in list_data of {key}")
                                 print("Adding to matches")
                                 matches.append(key)
