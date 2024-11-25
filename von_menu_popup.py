@@ -431,8 +431,7 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
         register_dynamic_properties(props)
 
         options = updatebonestandarizationoptions_enum()
-        options = my_tool.set_vrc_tool_options(options)
-        context.scene.vrc_tool_options = options  # Store the options in a scene property so that they can be accessed by the panel later -- If this is not done it will run on every draw and prevent any context changes by code -- (Hopeing to get this to be in a popout window rather than a damn sidepanel)
+        options = my_tool.set_vrc_tool_options(options) # Store the options in a scene property so that they can be accessed by the panel later -- If this is not done it will run on every draw and prevent any context changes by code -- (Hopeing to get this to be in a popout window rather than a damn sidepanel)
 
         for option in updatebonestandarizationoptions_enum().keys():
             prop_name = option.lower().replace(' ', '_') + "_choice"
