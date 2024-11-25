@@ -90,7 +90,7 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list):
             for bone in armature.pose.bones:
                 bonename = von_buttoncontrols.splitstringfromadditionalbones(bone.name.lower())
                 matches = []
-                print(f"Searching {bone.name}")
+                print(f"Searching {bonename}")
                 for data in json_data_list:
                     for key, list_data in data.items():
                         if bonename == key.lower():
