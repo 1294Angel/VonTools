@@ -429,7 +429,7 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
         self.report({'INFO'}, 'RUNNING Von_InitializeArmaturesOperator')
         props = context.scene.my_tool
         register_dynamic_properties(props)
-
+        initiallyselectedarmature = bpy.context.view_layer.objects.active = armature.name
         options = updatebonestandarizationoptions_enum()
         options = my_tool.set_vrc_tool_options(options) # Store the options in a scene property so that they can be accessed by the panel later -- If this is not done it will run on every draw and prevent any context changes by code -- (Hopeing to get this to be in a popout window rather than a damn sidepanel)
 
@@ -446,11 +446,13 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
 
         for armature in selected_armatures:
             armaturebones = armature.data.bones
+            bpy.context.view_layer.objects.active = armature.name
             for bone in undetectedbones:
                 if bone in armaturebones:
                     #bpy.ops.object.mode_set(mode='EDIT')
                     bpy.context.object.data.bones[bone].color.palette = "THEME01"
                     #bpy.ops.object.mode_set(mode='OBJECT')
+            bpy.context.view_layer.objects.active = initiallyselectedarmature
             self.report({'INFO'}, "Undetected Bones Recoloured")
         
 
