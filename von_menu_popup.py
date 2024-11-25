@@ -410,6 +410,9 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
         props = context.scene.my_tool
         register_dynamic_properties(props)
 
+        options = updatebonestandarizationoptions_enum()
+
+        context.scene.vrc_tool_options = options  # Store the options in a scene property so that they can be accessed by the panel later -- If this is not done it will run on every draw and prevent any context changes by code -- (Hopeing to get this to be in a popout window rather than a damn sidepanel)
 
         for option in updatebonestandarizationoptions_enum().keys():
             prop_name = option.lower().replace(' ', '_') + "_choice"
@@ -549,12 +552,15 @@ class VONPANEL_PT_VRCTools(VonPanel, bpy.types.Panel):
         row.label(text= "VRChat Tools", icon= 'CUBE')
         layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator("von.vrcsavebonenametodict")
-        options = updatebonestandarizationoptions_enum()
-        for option in options.keys():
-            prop_name = option.lower().replace(' ', '_') + "_choice"
-            if hasattr(my_tool, prop_name):
-                layout.prop(my_tool, prop_name)
+
         layout.operator("von.initialize_armatures")
+        if hasattr(scene, 'vrc_tool_options'):
+            options = scene.vrc_tool_options  # Get the options stored by von.initialize_armatures in the scene so that it doesn't FOREVER update and block context switching from OBJECT mode to EDIT mode for bone renaming and sanity saving purposes - PLEASE WORK
+            for option in options.keys():
+                prop_name = option.lower().replace(' ', '_') + "_choice"
+                if hasattr(my_tool, prop_name):
+                    layout.prop(my_tool, prop_name)
+        
 
 classes = (
     MySettings,
