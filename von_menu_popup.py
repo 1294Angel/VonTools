@@ -62,9 +62,11 @@ def updatejsonkeyoptions(self, context):
     return enum_items
 
 def updatebonestandarizationoptions_enum():
+    print("")
+    print("STARTING UPDATE BONE STANDARDIZATION OPTIONS")
     all_matches = {}
     selected_armatures = [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()]
-    all_matches = von_vrctools.filterbonesbyjsondictlist(selected_armatures,von_vrctools.gatherjsondictkeys(),False)[0]
+    all_matches = von_vrctools.filterbonesbyjsondictlist_fordrawcall(selected_armatures,von_vrctools.gatherjsondictkeys())
     print(f"All Matches Contents -- UPDATE FUNC = {all_matches}")
     return all_matches
 
@@ -440,7 +442,13 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
         
         options = my_tool.set_vrc_tool_options(options) # Store the options in a scene property so that they can be accessed by the panel later -- If this is not done it will run on every draw and prevent any context changes by code -- (Hopeing to get this to be in a popout window rather than a damn sidepanel)
 
-        
+        if options is not None:
+            for option in options.keys():
+                prop_name = option.lower().replace(' ', '_') + "_choice"
+            if hasattr(props, prop_name):
+                choice = getattr(props, prop_name)
+                print(f"Registered Property: {prop_name} with options: {choice}")
+
         selected_armatures = [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()]
 
         all_matches,undetectedbones,bonestorename = von_vrctools.filterbonesbyjsondictlist(selected_armatures,von_vrctools.gatherjsondictkeys(),True)
@@ -459,12 +467,7 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
             bpy.context.view_layer.objects.active = initiallyselectedarmature
             self.report({'INFO'}, "Undetected Bones Recoloured")
         
-        """if options is not None:
-            for option in options.keys():
-                prop_name = option.lower().replace(' ', '_') + "_choice"
-            if hasattr(props, prop_name):
-                choice = getattr(props, prop_name)
-                print(f"Registered Property: {prop_name} with options: {choice}")"""
+        
 
         print("")
         return {'FINISHED'}
@@ -593,13 +596,12 @@ class VONPANEL_PT_VRCTools(VonPanel, bpy.types.Panel):
 
         layout.operator("von.initialize_armatures", text="Initialize Armatures")
 
-        """# Display dynamic properties (enum options) after they are registered
         if hasattr(my_tool, 'vrc_tool_options'):
-            options = updatebonestandarizationoptions_enum()
+            options = my_tool.get_vrc_tool_options()  # Get the options stored by von.initialize_armatures in the scene so that it doesn't FOREVER update and block context switching from OBJECT mode to EDIT mode for bone renaming and sanity saving purposes - PLEASE WORK
             for option in options.keys():
                 prop_name = option.lower().replace(' ', '_') + "_choice"
                 if hasattr(my_tool, prop_name):
-                    layout.prop(my_tool, prop_name)"""
+                    layout.prop(my_tool, prop_name)
         
 
 classes = (

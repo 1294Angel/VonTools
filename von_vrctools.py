@@ -79,6 +79,28 @@ def gatherjsondictkeys():
                 print(f"Error reading {filename}: {e}")
     return json_data_list
 
+def filterbonesbyjsondictlist_fordrawcall(selected_armatures,json_data_list):
+    all_duplicatematches = {}
+    if len(selected_armatures) > 0:
+        for armature in selected_armatures:
+            for bone in armature.pose.bones:
+                bonename = von_buttoncontrols.splitstringfromadditionalbones(bone.name.lower())
+                matches = []
+                for data in json_data_list:
+                    for key, list_data in data.items():
+                        if bonename == key.lower():
+                            if key not in matches:
+                                matches.append(key)
+                        elif bonename in [item.lower() for item in list_data]:
+                            if key not in matches:
+                                matches.append(key)
+                        else:
+                            continue
+                else:
+                    if len(matches) > 1:
+                        all_duplicatematches[bone.name] = matches  # Store all matches
+    return all_duplicatematches
+
 #returns: all_matches (Dict where key is original bone name and the list is the list of options for renaming when there are more than 1) - Undetected Bones (Bones to colour to red and copy paste to the new armature) - bonestorename (Dict where bonename is the key and the list is the name to rename it to)
 def filterbonesbyjsondictlist(selected_armatures,json_data_list,shouldrename):
     #Gathering intial context data to allow minimal obstruction to the end user
@@ -88,36 +110,28 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list,shouldrename):
     all_duplicatematches = {}
     undetectedbones = []
     bonestorename = {}
-    print(f"Selected Armatures ================= {selected_armatures}")
     if len(selected_armatures) > 0:
         for armature in selected_armatures:
             bpy.context.view_layer.objects.active = armature
             for bone in armature.pose.bones:
                 bonename = von_buttoncontrols.splitstringfromadditionalbones(bone.name.lower())
                 matches = []
-                print(f"Searching {bonename}")
                 for data in json_data_list:
                     for key, list_data in data.items():
                         if bonename == key.lower():
                             if key not in matches:
-                                print(f"{bone.name} = No Change")
                                 bpy.context.object.data.bones[bone.name].color.palette = "THEME03"
                                 matches.append(key)
                         # Check for partial match in the list data
                         elif bonename in [item.lower() for item in list_data]:
                             if key not in matches:
-                                print(f"{bone.name} found in list_data of {key}")
-                                print("Adding to matches")
                                 matches.append(key)
-                            else:
-                                print(f"{bonename} contained in matches")
                         else:
                             continue
                 if len(matches) == 0:
                     undetectedbones.append(bone.name)
                 else:
                     if len(matches) > 1:
-                        print(f"{armature.name} bone {bone.name} identified with more than 1 match")
                         all_duplicatematches[bone.name] = matches  # Store all matches
                     elif len(matches) == 1:
                         bonestorename[bone.name] = matches[0]
@@ -131,7 +145,7 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list,shouldrename):
     #Setting everything back to how it was prior to running the script to minimise inconvinences and cut off edge cases
     bpy.context.view_layer.objects.active = initalarmature
     bpy.ops.object.mode_set(mode=initialcontext)
-    
+
     return all_duplicatematches, undetectedbones, bonestorename
 
 
@@ -149,7 +163,6 @@ def rename_bones_from_dict(armature, rename_dict):
         if old_name in edit_bones:
             try:
                 edit_bones[old_name].name = new_name
-                print(f"Renamed bone '{old_name}' to '{new_name}'.")
             except Exception as e:
                 print(f"Error renaming bone '{old_name}': {e}")
         else:
