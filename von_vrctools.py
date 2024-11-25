@@ -131,6 +131,7 @@ def rename_bones_from_dict(armature, rename_dict):
         if old_name in edit_bones:
             try:
                 edit_bones[old_name].name = new_name
+                bpy.context.object.data.bones[new_name].color.palette = "THEME03"
                 print(f"Renamed bone '{old_name}' to '{new_name}'.")
             except Exception as e:
                 print(f"Error renaming bone '{old_name}': {e}")
