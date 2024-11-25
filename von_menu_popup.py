@@ -176,6 +176,7 @@ class MySettings(bpy.types.PropertyGroup):
         items=lambda self, context: self.get_choice_items(context),
     ) # type: ignore
 
+#--------------
     def get_option_items(self, context):
         """Generate a list of options for the EnumProperty"""
         options = updatebonestandarizationoptions_enum()
@@ -188,6 +189,13 @@ class MySettings(bpy.types.PropertyGroup):
         choices = options.get(selected_option, [])
         return [(choice, choice, "") for choice in choices]
 
+    def get_vrc_tool_options(self):
+        """Deserialize the JSON string into a dictionary."""
+        return json.loads(self.vrc_tool_options)
+    
+    def set_vrc_tool_options(self, value):
+        """Serialize a dictionary into a JSON string."""
+        self.vrc_tool_options = json.dumps(value)
 #--------------
     pass
 
@@ -211,13 +219,7 @@ def register_dynamic_properties(props):
         else:
             props[prop_name] = ""  
 
-def get_vrc_tool_options(self):
-    """Deserialize the JSON string into a dictionary."""
-    return json.loads(self.vrc_tool_options)
-    
-def set_vrc_tool_options(self, value):
-    """Serialize a dictionary into a JSON string."""
-    self.vrc_tool_options = json.dumps(value)
+
 
 
 # ------------------------------------------------------------------------
