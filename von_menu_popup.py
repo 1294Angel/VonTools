@@ -418,7 +418,8 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
 
         selected_armatures = [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()]
 
-        all_matches, undetectedbones, bonestorename = von_vrctools.filterbonesbyjsondictlist(selected_armatures,von_vrctools.gatherjsondictkeys())
+        undetectedbones,all_matches = von_vrctools.filterbonesbyjsondictlist(selected_armatures,von_vrctools.gatherjsondictkeys())
+
 
         for armature in selected_armatures:
             armaturebones = armature.data.bones
@@ -426,10 +427,6 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
                 if bone in armaturebones:
                     bpy.context.object.data.bones[bone].color.palette = "THEME01"
                     self.report({'INFO'}, "Undetected Bones Recoloured")
-
-        von_vrctools.rename_bones_from_dict(selected_armatures, bonestorename)
-        print(f"{bonestorename} Should Be Renamed")
-        self.report({'INFO'}, "Bones Renamed")
         
 
 

@@ -88,7 +88,7 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list):
     if len(selected_armatures) > 0:
         for armature in selected_armatures:
             for bone in armature.pose.bones:
-                bonename = bone.name.lower()
+                bonename = von_buttoncontrols.splitstringfromadditionalbones(bone.name.lower())
                 matches = []
                 for data in json_data_list:
                     for key, list_data in data.items():
@@ -114,29 +114,23 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list):
                         all_matches[bone.name] = matches  # Store all matches
                     elif len(matches) == 1:
                         bonestorename[bone.name] = matches[0]
-    print("")
-    print(f"All Matches = {all_matches}")
-    print("")
-    print(f"Bones To Rename = {bonestorename}")
-    print("")
+            rename_bones_from_dict(armature,bonestorename)
     print(f"Undetected Bones = {undetectedbones}")
     print("")
-    return all_matches, undetectedbones, bonestorename
+    return undetectedbones, all_matches
 
 
-def rename_bones_from_dict(selectedarmatures, rename_dict):
-    for armature in selectedarmatures:
-        armature = bpy.data.objects.get(armature.name)
-        if armature is not None and armature.type == 'ARMATURE':
-            bones = armature.data.bones
-            for old_bone_name, new_bone_name in rename_dict.items():
-                if old_bone_name in bones:
-                    bones[old_bone_name].name = new_bone_name
-                    bpy.context.object.data.bones[new_bone_name].color.palette = "THEME03"
-                else:
-                    print(f"Bone '{old_bone_name}' not found in armature '{armature.name}'")
-        else:
-            print(f"Armature '{armature.name}' not found or is not an armature")
+def rename_bones_from_dict(activearmature, rename_dict):
+    if activearmature is not None and activearmature.type == 'ARMATURE':
+        bones = activearmature.data.bones
+        for old_bone_name, new_bone_name in rename_dict.items():
+            if old_bone_name in bones:
+                bones[old_bone_name].name = new_bone_name
+                bpy.context.object.data.bones[new_bone_name].color.palette = "THEME03"
+            else:
+                print(f"Bone '{old_bone_name}' not found in armature '{activearmature.name}'")
+    else:
+        print(f"Armature '{activearmature.name}' not found or is not an armature")
 
 
 
