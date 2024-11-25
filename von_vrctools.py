@@ -121,18 +121,21 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list):
 
 
 def rename_bones_from_dict(activearmature, rename_dict):
-    if activearmature is not None and activearmature.type == 'ARMATURE':
-        bones = activearmature.data.bones
-        for old_bone_name, new_bone_name in rename_dict.items():
-            if old_bone_name in bones:
-                bones[old_bone_name].name = new_bone_name
-                bpy.ops.object.mode_set(mode='EDIT')
-                bpy.context.object.data.bones[new_bone_name].color.palette = "THEME03"
-                bpy.ops.object.mode_set(mode='OBJECT')
-            else:
-                print(f"Bone '{old_bone_name}' not found in armature '{activearmature.name}'")
-    else:
-        print(f"Armature '{activearmature.name}' not found or is not an armature")
+    bpy.ops.object.mode_set(mode='EDIT')
+
+    bones = activearmature.data.bones
+    for old_name, new_name in rename_dict.items():
+        if old_name in bones:
+            try:
+                bones[old_name].name = new_name
+                bpy.context.object.data.bones[old_name].color.palette = "THEME03"
+                print(f"Renamed bone '{old_name}' to '{new_name}'.")
+            except Exception as e:
+                print(f"Error renaming bone '{old_name}': {e}")
+        else:
+            print(f"Bone '{old_name}' not found in armature '{activearmature.name}'.")
+
+    bpy.ops.object.mode_set(mode='OBJECT')
 
 
 
