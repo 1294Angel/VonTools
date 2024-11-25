@@ -93,22 +93,26 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list):
                 for data in json_data_list:
                     for key, list_data in data.items():
                         if bonename == key.lower():
-                            print(f"{bone.name} Match FOUND -------------- {key}")
-                            matches.append(key)
+                            if bonename not in matches:
+                                print(f"{bone.name} = No Change")
+                                matches.append(key)
                         # Check for partial match in the list data
                         elif bonename in [item.lower() for item in list_data]:
-                            print(f"{bone.name} found in list_data of {key}")
-                            matches.append(key)
+                            if bonename not in [item2.lower() for item2 in matches]:
+                                print(f"{bone.name} found in list_data of {key}")
+                                print("Adding to matches")
+                                matches.append(key)
+                            else:
+                                print(f"{bonename} contained in matches")
                         else:
                             continue
                 if len(matches) == 0:
                     undetectedbones.append(bone.name)
                 else:
                     if len(matches) > 1:
-                        print(f"{armature} bone {bone.name} identified with more than 1 match")
+                        print(f"{armature.name} bone {bone.name} identified with more than 1 match")
                         all_matches[bone.name] = matches  # Store all matches
                     elif len(matches) == 1:
-                        print(f"{armature} bone {bone.name} identified with ONLY 1 match 1--1")
                         bonestorename[bone.name] = matches[0]
     print("")
     print(f"All Matches = {all_matches}")
