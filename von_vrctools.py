@@ -121,7 +121,7 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list,shouldrename):
     print(f"Undetected Bones = {undetectedbones}")
     print(f"Bones To Rename = {bonestorename}")
     print("")
-    return all_matches, undetectedbones
+    return all_matches, undetectedbones, bonestorename
 
 
 def rename_bones_from_dict(armature, rename_dict):

@@ -441,16 +441,16 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
 
         selected_armatures = [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()]
 
-        undetectedbones,all_matches = von_vrctools.filterbonesbyjsondictlist(selected_armatures,von_vrctools.gatherjsondictkeys(),True)
+        all_matches,undetectedbones,bonestorename = von_vrctools.filterbonesbyjsondictlist(selected_armatures,von_vrctools.gatherjsondictkeys(),False)
 
 
         for armature in selected_armatures:
             armaturebones = armature.data.bones
             for bone in undetectedbones:
                 if bone in armaturebones:
-                    bpy.ops.object.mode_set(mode='EDIT')
+                    #bpy.ops.object.mode_set(mode='EDIT')
                     bpy.context.object.data.bones[bone].color.palette = "THEME01"
-                    bpy.ops.object.mode_set(mode='OBJECT')
+                    #bpy.ops.object.mode_set(mode='OBJECT')
                     self.report({'INFO'}, "Undetected Bones Recoloured")
         
 
