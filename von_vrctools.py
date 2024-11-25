@@ -135,8 +135,8 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list,shouldrename):
                         all_duplicatematches[bone.name] = matches  # Store all matches
                     elif len(matches) == 1:
                         bonestorename[bone.name] = matches[0]
-            if shouldrename == True:
-                rename_bones_from_dict(armature,bonestorename)
+        if shouldrename == True:
+            rename_bones_from_dict(selected_armatures,bonestorename)
     print(f"All Matches = {all_duplicatematches}")
     print(f"Undetected Bones = {undetectedbones}")
     print(f"Bones To Rename = {bonestorename}")
@@ -149,28 +149,29 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list,shouldrename):
     return all_duplicatematches, undetectedbones, bonestorename
 
 
-def rename_bones_from_dict(armature, rename_dict):
-    bpy.context.view_layer.objects.active = armature
-    print(armature.name)
-    posebones = armature.data.bones
-    for key in rename_dict:
-        if key in posebones:
-            bpy.context.object.data.bones[key].color.palette = "THEME03"
-    
-    bpy.ops.object.mode_set(mode='EDIT')
-    edit_bones = armature.data.edit_bones
-    for old_name, new_name in rename_dict.items():
-        if old_name in edit_bones:
-            try:
-                edit_bones[old_name].name = new_name
-            except Exception as e:
-                print(f"Error renaming bone '{old_name}': {e}")
-        else:
-            print(f"Bone '{old_name}' not found in armature '{armature.name}'.")
-    
+def rename_bones_from_dict(armaturelist, rename_dict):
+    for armature in armaturelist:
+        bpy.context.view_layer.objects.active = armature
+        print(armature.name)
+        posebones = armature.data.bones
+        for key in rename_dict:
+            if key in posebones:
+                bpy.context.object.data.bones[key].color.palette = "THEME03"
+        
+        bpy.ops.object.mode_set(mode='EDIT')
+        edit_bones = armature.data.edit_bones
+        for old_name, new_name in rename_dict.items():
+            if old_name in edit_bones:
+                try:
+                    edit_bones[old_name].name = new_name
+                except Exception as e:
+                    print(f"Error renaming bone '{old_name}': {e}")
+            else:
+                print(f"Bone '{old_name}' not found in armature '{armature.name}'.")
+        
 
 
-    bpy.ops.object.mode_set(mode='OBJECT')
+        bpy.ops.object.mode_set(mode='OBJECT')
 
 
 
