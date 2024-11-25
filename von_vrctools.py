@@ -115,8 +115,6 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list,shouldrename):
                     elif len(matches) == 1:
                         bonestorename[bone.name] = matches[0]
                         all_matches[bone.name] = matches[0]
-            if shouldrename == True:
-                rename_bones_from_dict(armature,bonestorename)
     print(f"All Matches = {all_matches}")
     print(f"Undetected Bones = {undetectedbones}")
     print(f"Bones To Rename = {bonestorename}")
