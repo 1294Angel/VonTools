@@ -429,7 +429,7 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
         self.report({'INFO'}, 'RUNNING Von_InitializeArmaturesOperator')
         props = context.scene.my_tool
         register_dynamic_properties(props)
-        initiallyselectedarmature = bpy.context.view_layer.objects.active = armature.name
+        initiallyselectedarmature = bpy.context.view_layer.objects.active
         options = updatebonestandarizationoptions_enum()
         options = my_tool.set_vrc_tool_options(options) # Store the options in a scene property so that they can be accessed by the panel later -- If this is not done it will run on every draw and prevent any context changes by code -- (Hopeing to get this to be in a popout window rather than a damn sidepanel)
 
