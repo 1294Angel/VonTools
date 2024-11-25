@@ -126,7 +126,7 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list,shouldrename):
 
 def rename_bones_from_dict(armature, rename_dict):
     bonestocolour = []
-    bpy.context.view_layer.objects.active = armature.name
+    bpy.context.view_layer.objects.active = armature
     bpy.ops.object.mode_set(mode='EDIT')
     edit_bones = armature.data.edit_bones
     for old_name, new_name in rename_dict.items():
