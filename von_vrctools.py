@@ -123,13 +123,10 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list):
 def rename_bones_from_dict(armature, rename_dict):
     bpy.ops.object.mode_set(mode='EDIT')
 
-    def switch_to_edit_mode():
-        if bpy.context.object.mode != 'EDIT':
-            bpy.ops.object.mode_set(mode='EDIT')
-
     try:
-        if not bpy.context.view_layer.is_rendering:
-            switch_to_edit_mode()
+        if not bpy.context.scene.render.is_rendering:
+            if bpy.context.object.mode != 'EDIT':
+                bpy.ops.object.mode_set(mode='EDIT')
         else:
             print("Cannot switch to Edit Mode while rendering/drawing.")
     except RuntimeError as e:
