@@ -90,12 +90,12 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list):
             for bone in armature.pose.bones:
                 bonename = von_buttoncontrols.splitstringfromadditionalbones(bone.name.lower())
                 matches = []
+                print(f"Searching {bone.name}")
                 for data in json_data_list:
                     for key, list_data in data.items():
                         if bonename == key.lower():
                             if key not in matches:
                                 print(f"{bone.name} = No Change")
-                                matches.append(key)
                         # Check for partial match in the list data
                         elif bonename in [item.lower() for item in list_data]:
                             if key not in matches:
