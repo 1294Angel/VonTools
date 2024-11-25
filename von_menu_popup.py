@@ -430,6 +430,7 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
     def invoke(self, context, event):
         scene = bpy.context.scene
         my_tool = scene.my_tool
+        
 
         options = updatebonestandarizationoptions_enum()
         if options:

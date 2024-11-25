@@ -168,10 +168,6 @@ def rename_bones_from_dict(armaturelist, rename_dict):
                     print(f"Error renaming bone '{old_name}': {e}")
             else:
                 print(f"Bone '{old_name}' not found in armature '{armature.name}'.")
-        
-
-
-        bpy.ops.object.mode_set(mode='OBJECT')
 
 
 
