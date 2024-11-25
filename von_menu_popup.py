@@ -441,7 +441,7 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
 
         selected_armatures = [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()]
 
-        all_matches,undetectedbones,bonestorename = von_vrctools.filterbonesbyjsondictlist(selected_armatures,von_vrctools.gatherjsondictkeys(),False)
+        all_matches,undetectedbones,bonestorename = von_vrctools.filterbonesbyjsondictlist(selected_armatures,von_vrctools.gatherjsondictkeys(),True)
 
 
         for armature in selected_armatures:
