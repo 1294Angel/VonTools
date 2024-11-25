@@ -120,22 +120,36 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list):
     return undetectedbones, all_matches
 
 
-def rename_bones_from_dict(activearmature, rename_dict):
+def rename_bones_from_dict(armature, rename_dict):
     bpy.ops.object.mode_set(mode='EDIT')
 
-    bones = activearmature.data.bones
+    def switch_to_edit_mode():
+        if bpy.context.object.mode != 'EDIT':
+            bpy.ops.object.mode_set(mode='EDIT')
+
+    try:
+        if not bpy.context.view_layer.is_rendering:
+            switch_to_edit_mode()
+        else:
+            print("Cannot switch to Edit Mode while rendering/drawing.")
+    except RuntimeError as e:
+        print(f"Error switching modes: {e}")
+        return
+
+    edit_bones = armature.data.edit_bones
     for old_name, new_name in rename_dict.items():
-        if old_name in bones:
+        if old_name in edit_bones:
             try:
-                bones[old_name].name = new_name
-                bpy.context.object.data.bones[old_name].color.palette = "THEME03"
+                edit_bones[old_name].name = new_name
                 print(f"Renamed bone '{old_name}' to '{new_name}'.")
             except Exception as e:
                 print(f"Error renaming bone '{old_name}': {e}")
         else:
-            print(f"Bone '{old_name}' not found in armature '{activearmature.name}'.")
+            print(f"Bone '{old_name}' not found in armature '{armature.name}'.")
+
 
     bpy.ops.object.mode_set(mode='OBJECT')
+
 
 
 
