@@ -402,7 +402,7 @@ class Von_Popout_SaveBoneNameToDict(bpy.types.Operator):
 
 class Von_InitializeArmaturesOperator(bpy.types.Operator):
     """Operator to initialize armatures and register dynamic properties."""
-    bl_idname = "object.initialize_armatures"
+    bl_idname = "von.initialize_armatures"
     bl_label = "Initialize Armatures"
 
     def execute(self, context):
@@ -554,7 +554,7 @@ class VONPANEL_PT_VRCTools(VonPanel, bpy.types.Panel):
             prop_name = option.lower().replace(' ', '_') + "_choice"
             if hasattr(my_tool, prop_name):
                 layout.prop(my_tool, prop_name)
-        layout.operator(Von_InitializeArmaturesOperator.bl_idname)
+        layout.operator("von.initialize_armatures")
 
 classes = (
     MySettings,
