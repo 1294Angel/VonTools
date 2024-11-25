@@ -81,12 +81,17 @@ def gatherjsondictkeys():
 
 #returns: all_matches (Dict where key is original bone name and the list is the list of options for renaming when there are more than 1) - Undetected Bones (Bones to colour to red and copy paste to the new armature) - bonestorename (Dict where bonename is the key and the list is the name to rename it to)
 def filterbonesbyjsondictlist(selected_armatures,json_data_list,shouldrename):
+    #Gathering intial context data to allow minimal obstruction to the end user
+    initialcontext = bpy.context.object.mode
+    initalarmature = bpy.context.view_layer.objects.active
+
     all_duplicatematches = {}
     undetectedbones = []
     bonestorename = {}
     print(f"Selected Armatures ================= {selected_armatures}")
     if len(selected_armatures) > 0:
         for armature in selected_armatures:
+            bpy.context.view_layer.objects.active = armature
             for bone in armature.pose.bones:
                 bonename = von_buttoncontrols.splitstringfromadditionalbones(bone.name.lower())
                 matches = []
@@ -97,6 +102,7 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list,shouldrename):
                             if key not in matches:
                                 print(f"{bone.name} = No Change")
                                 bpy.context.object.data.bones[bone.name].color.palette = "THEME03"
+                                matches.append(key)
                         # Check for partial match in the list data
                         elif bonename in [item.lower() for item in list_data]:
                             if key not in matches:
@@ -121,6 +127,11 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list,shouldrename):
     print(f"Undetected Bones = {undetectedbones}")
     print(f"Bones To Rename = {bonestorename}")
     print("")
+
+    #Setting everything back to how it was prior to running the script to minimise inconvinences and cut off edge cases
+    bpy.context.view_layer.objects.active = initalarmature
+    bpy.ops.object.mode_set(mode=initialcontext)
+    
     return all_duplicatematches, undetectedbones, bonestorename
 
 

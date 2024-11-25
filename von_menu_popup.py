@@ -371,37 +371,40 @@ class Von_Popout_SaveBoneNameToDict(bpy.types.Operator):
     def execute(self,context):
         scene = context.scene
         mytool=scene.my_tool
-
+        obj = bpy.context.object
         print("EXECUTING ADD TO DICTIONARY")
+        
+        if obj and obj.type == 'ARMATURE':
+            followthrough = False
+            if obj.mode != 'POSE':
+                self.report({'ERROR'}, 'Must be in pose mode')
+                return{'CANCELLED'}
+            for i in bpy.context.selected_pose_bones:
 
-        if bpy.context.object and bpy.context.object.type == 'ARMATURE':
-            obj = bpy.context.object
-            string_to_add = obj.data.bones.active
-            string_to_add = string_to_add.name
-            string_to_add = string_to_add.lower()
-            string_to_add = von_buttoncontrols.splitstringfromadditionalbones(string_to_add)
+                string_to_add = i
+                string_to_add = string_to_add.name.lower()
+                string_to_add = von_buttoncontrols.splitstringfromadditionalbones(string_to_add)
 
-            directory_path = von_vrctools.get_directory() + "/Libraries/BoneNames"
-            parentenumoption = mytool.jsondictionaryoptions_enum
-            directory_path = os.path.join(directory_path, parentenumoption)
-            key = mytool.jsondictionarykeyoptions_enum
+                directory_path = von_vrctools.get_directory() + "/Libraries/BoneNames"
+                parentenumoption = mytool.jsondictionaryoptions_enum
+                directory_path = os.path.join(directory_path, parentenumoption)
+                key = mytool.jsondictionarykeyoptions_enum
 
-            print(f"string to add = {string_to_add} | parentenumoption = {parentenumoption} | key = {key} ")
+                print(f"string to add = {string_to_add} | parentenumoption = {parentenumoption} | key = {key} ")
 
-            with open(directory_path, 'r') as file:
-                data = json.load(file)
+                with open(directory_path, 'r') as file:
+                    data = json.load(file)
 
-            enum_items = []
-            if key in data:
-                if isinstance(data[key], list):
-                    # Check if the string is already in the list
-                    if string_to_add not in data[key]:
-                        data[key].append(string_to_add)  # Append the new string if not already present
-                        print(f"Added '{string_to_add}'  to the list under key '{key}' in the file '{directory_path}'.")
+                enum_items = []
+                if key in data:
+                    if isinstance(data[key], list):
+                        # Check if the string is already in the list
+                        if string_to_add not in data[key]:
+                            data[key].append(string_to_add)  # Append the new string if not already present
+                            print(f"Added '{string_to_add}'  to the list under key '{key}' in the file '{directory_path}'.")
 
-            with open(directory_path, 'w') as file:
-                json.dump(data, file, indent=4)
-
+                with open(directory_path, 'w') as file:
+                    json.dump(data, file, indent=4)
             return{'FINISHED'}
     
         else:
@@ -417,36 +420,37 @@ class Von_Popout_SaveBoneNameToDict(bpy.types.Operator):
         layout.prop(mytool, "jsondictionaryoptions_enum")
         layout.prop(mytool, "jsondictionarykeyoptions_enum")
 
-
 class Von_InitializeArmaturesOperator(bpy.types.Operator):
     """Operator to initialize armatures and register dynamic properties."""
     bl_idname = "von.initialize_armatures"
     bl_label = "Initialize Armatures"
 
+    
+
     def execute(self, context):
         scene = bpy.context.scene
         my_tool = scene.my_tool
         self.report({'INFO'}, 'RUNNING Von_InitializeArmaturesOperator')
+
         props = context.scene.my_tool
         register_dynamic_properties(props)
+        
         initiallyselectedarmature = bpy.context.view_layer.objects.active
         options = updatebonestandarizationoptions_enum()
+        
         options = my_tool.set_vrc_tool_options(options) # Store the options in a scene property so that they can be accessed by the panel later -- If this is not done it will run on every draw and prevent any context changes by code -- (Hopeing to get this to be in a popout window rather than a damn sidepanel)
 
-        for option in updatebonestandarizationoptions_enum().keys():
-            prop_name = option.lower().replace(' ', '_') + "_choice"
-            if hasattr(props, prop_name):
-                choice = getattr(props, prop_name)
-                print(f"Registered Property: {prop_name} with options: {choice}")
-
+        
         selected_armatures = [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()]
 
         all_matches,undetectedbones,bonestorename = von_vrctools.filterbonesbyjsondictlist(selected_armatures,von_vrctools.gatherjsondictkeys(),True)
 
+        
+
 
         for armature in selected_armatures:
-            armaturebones = armature.data.bones
             bpy.context.view_layer.objects.active = armature
+            armaturebones = armature.data.bones
             for bone in undetectedbones:
                 if bone in armaturebones:
                     #bpy.ops.object.mode_set(mode='EDIT')
@@ -455,13 +459,22 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
             bpy.context.view_layer.objects.active = initiallyselectedarmature
             self.report({'INFO'}, "Undetected Bones Recoloured")
         
-
+        """if options is not None:
+            for option in options.keys():
+                prop_name = option.lower().replace(' ', '_') + "_choice"
+            if hasattr(props, prop_name):
+                choice = getattr(props, prop_name)
+                print(f"Registered Property: {prop_name} with options: {choice}")"""
 
         print("")
         return {'FINISHED'}
 
-
-
+"""if hasattr(my_tool, 'vrc_tool_options'):
+            options = my_tool.get_vrc_tool_options()  # Get the options stored by von.initialize_armatures in the scene so that it doesn't FOREVER update and block context switching from OBJECT mode to EDIT mode for bone renaming and sanity saving purposes - PLEASE WORK
+            for option in options.keys():
+                prop_name = option.lower().replace(' ', '_') + "_choice"
+                if hasattr(my_tool, prop_name):
+                    layout.prop(my_tool, prop_name)"""
         
 
 # ------------------------------------------------------------------------
@@ -510,6 +523,10 @@ class VonPanel_RiggingTools__ClearVertexWeights(bpy.types.Operator):
     def execute(self, context):
         von_createcontrols.clear_vertex_weights()
         return {'FINISHED'}
+
+class VonPanel_VRCTools__SelectDesiredName():
+    bl_idname = "von.selectdesiredname"
+    bl_label = "Select Desired Name"
 
 
 # ------------------------------------------------------------------------
@@ -574,15 +591,15 @@ class VONPANEL_PT_VRCTools(VonPanel, bpy.types.Panel):
         layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator("von.vrcsavebonenametodict")
 
-        layout.operator("von.initialize_armatures")
+        layout.operator("von.initialize_armatures", text="Initialize Armatures")
 
-
+        """# Display dynamic properties (enum options) after they are registered
         if hasattr(my_tool, 'vrc_tool_options'):
-            options = my_tool.get_vrc_tool_options()  # Get the options stored by von.initialize_armatures in the scene so that it doesn't FOREVER update and block context switching from OBJECT mode to EDIT mode for bone renaming and sanity saving purposes - PLEASE WORK
+            options = updatebonestandarizationoptions_enum()
             for option in options.keys():
                 prop_name = option.lower().replace(' ', '_') + "_choice"
                 if hasattr(my_tool, prop_name):
-                    layout.prop(my_tool, prop_name)
+                    layout.prop(my_tool, prop_name)"""
         
 
 classes = (
@@ -600,7 +617,7 @@ classes = (
     VonPanel_RiggingTools__Submenu_ColorizeRig,
     VonPanel_RiggingTools__WeightHammer,
     VonPanel_RiggingTools__ClearVertexWeights
-)
+    )
 
 def von_menupopup_register():
     print(f'Menu File Initiated')

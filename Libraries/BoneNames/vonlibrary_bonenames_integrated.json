@@ -25,7 +25,15 @@
     "RightFoot": [
         "foot.r"
     ],
-    "Spine": [],
+    "Spine": [
+        "spine",
+        "spine.001",
+        "spine.002",
+        "spine.003",
+        "spine.006",
+        "spine.004",
+        "spine.005"
+    ],
     "Chest": [],
     "UpperChest": [],
     "Neck": [],
