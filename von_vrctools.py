@@ -80,7 +80,7 @@ def gatherjsondictkeys():
     return json_data_list
 
 #returns: all_matches (Dict where key is original bone name and the list is the list of options for renaming when there are more than 1) - Undetected Bones (Bones to colour to red and copy paste to the new armature) - bonestorename (Dict where bonename is the key and the list is the name to rename it to)
-def filterbonesbyjsondictlist(selected_armatures,json_data_list):
+def filterbonesbyjsondictlist(selected_armatures,json_data_list,shouldrename):
     all_matches = {}
     undetectedbones = []
     bonestorename = {}
@@ -115,7 +115,8 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list):
                     elif len(matches) == 1:
                         bonestorename[bone.name] = matches[0]
                         all_matches[bone.name] = matches[0]
-            rename_bones_from_dict(armature,bonestorename)
+            if shouldrename:
+                rename_bones_from_dict(armature,bonestorename)
     print(f"All Matches = {all_matches}")
     print(f"Undetected Bones = {undetectedbones}")
     print(f"Bones To Rename = {bonestorename}")

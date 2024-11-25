@@ -64,7 +64,7 @@ def updatejsonkeyoptions(self, context):
 def updatebonestandarizationoptions_enum():
     all_matches = {}
     selected_armatures = [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()]
-    all_matches = von_vrctools.filterbonesbyjsondictlist(selected_armatures,von_vrctools.gatherjsondictkeys())[0]
+    all_matches = von_vrctools.filterbonesbyjsondictlist(selected_armatures,von_vrctools.gatherjsondictkeys(),False)[0]
     print(f"All Matches Contents -- UPDATE FUNC = {all_matches}")
     return all_matches
 
@@ -442,7 +442,7 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
 
         selected_armatures = [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()]
 
-        undetectedbones,all_matches = von_vrctools.filterbonesbyjsondictlist(selected_armatures,von_vrctools.gatherjsondictkeys())
+        undetectedbones,all_matches = von_vrctools.filterbonesbyjsondictlist(selected_armatures,von_vrctools.gatherjsondictkeys(),True)
 
 
         for armature in selected_armatures:
