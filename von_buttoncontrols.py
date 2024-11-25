@@ -85,6 +85,8 @@ def colorizerig(context):
                 bpy.context.object.data.bones[i].color.palette = 'THEME03'
                 bpy.context.object.pose.bones[i].color.palette = 'THEME03'
 
+
+
 #Functional
 def searchforbone(selected_armature, temp_bonetofind):
     if poll("POSE") == True:

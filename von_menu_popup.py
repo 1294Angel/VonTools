@@ -156,6 +156,12 @@ class MySettings(bpy.types.PropertyGroup):
         items=updatejsonkeyoptions
     ) # type: ignore
 
+    vrc_tool_options: bpy.props.StringProperty(
+        name="TempName",
+        description="Store serialized dictionary as a JSON string",
+        default="{}"
+    ) # type: ignore
+
 
 #--------------
     selected_option: bpy.props.EnumProperty(
@@ -204,6 +210,16 @@ def register_dynamic_properties(props):
             props[prop_name] = choices[0][0]
         else:
             props[prop_name] = ""  
+
+def get_vrc_tool_options(self):
+    """Deserialize the JSON string into a dictionary."""
+    return json.loads(self.vrc_tool_options)
+    
+def set_vrc_tool_options(self, value):
+    """Serialize a dictionary into a JSON string."""
+    self.vrc_tool_options = json.dumps(value)
+
+
 # ------------------------------------------------------------------------
 #    Popout Submenu's
 # ------------------------------------------------------------------------
@@ -406,12 +422,14 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
     bl_label = "Initialize Armatures"
 
     def execute(self, context):
+        scene = bpy.context.scene
+        my_tool = scene.my_tool
         self.report({'INFO'}, 'RUNNING Von_InitializeArmaturesOperator')
         props = context.scene.my_tool
         register_dynamic_properties(props)
 
         options = updatebonestandarizationoptions_enum()
-
+        options = my_tool.set_vrc_tool_options(options)
         context.scene.vrc_tool_options = options  # Store the options in a scene property so that they can be accessed by the panel later -- If this is not done it will run on every draw and prevent any context changes by code -- (Hopeing to get this to be in a popout window rather than a damn sidepanel)
 
         for option in updatebonestandarizationoptions_enum().keys():
@@ -554,8 +572,10 @@ class VONPANEL_PT_VRCTools(VonPanel, bpy.types.Panel):
         layout.operator("von.vrcsavebonenametodict")
 
         layout.operator("von.initialize_armatures")
-        if hasattr(scene, 'vrc_tool_options'):
-            options = scene.vrc_tool_options  # Get the options stored by von.initialize_armatures in the scene so that it doesn't FOREVER update and block context switching from OBJECT mode to EDIT mode for bone renaming and sanity saving purposes - PLEASE WORK
+
+
+        if hasattr(my_tool, 'vrc_tool_options'):
+            options = my_tool.get_vrc_tool_options()  # Get the options stored by von.initialize_armatures in the scene so that it doesn't FOREVER update and block context switching from OBJECT mode to EDIT mode for bone renaming and sanity saving purposes - PLEASE WORK
             for option in options.keys():
                 prop_name = option.lower().replace(' ', '_') + "_choice"
                 if hasattr(my_tool, prop_name):
