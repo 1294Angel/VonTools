@@ -429,55 +429,69 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
 
     
 
-    def execute(self, context):
+    def invoke(self, context, event):
+        # Ensure options are set before the pop-up appears
         scene = bpy.context.scene
         my_tool = scene.my_tool
-        self.report({'INFO'}, 'RUNNING Von_InitializeArmaturesOperator')
 
-        props = context.scene.my_tool
-        register_dynamic_properties(props)
-        
-        initiallyselectedarmature = bpy.context.view_layer.objects.active
+        # Populate options dynamically
         options = updatebonestandarizationoptions_enum()
-        
-        options = my_tool.set_vrc_tool_options(options) # Store the options in a scene property so that they can be accessed by the panel later -- If this is not done it will run on every draw and prevent any context changes by code -- (Hopeing to get this to be in a popout window rather than a damn sidepanel)
+        if options:
+            my_tool.set_vrc_tool_options(options)  # Store options in my_tool
+            print(f"Options set: {options}")  # Debugging statement to verify
 
-        if options is not None:
-            for option in options.keys():
-                prop_name = option.lower().replace(' ', '_') + "_choice"
-            if hasattr(props, prop_name):
-                choice = getattr(props, prop_name)
-                print(f"Registered Property: {prop_name} with options: {choice}")
+        # Dynamically register enum properties for each option
+        for option in options.keys():
+            prop_name = option.lower().replace(' ', '_') + "_choice"
+            if not hasattr(my_tool, prop_name):  # Avoid re-registering properties
+                enum_items = [(choice, choice, "") for choice in options[option]]
+                setattr(
+                    type(my_tool),
+                    prop_name,
+                    bpy.props.EnumProperty(items=enum_items, name=option),
+                )
 
+        return context.window_manager.invoke_props_dialog(self)
+
+    def draw(self, context):
+        layout = self.layout
+        my_tool = context.scene.my_tool
+
+        # Display dynamic properties in the pop-up
+        if hasattr(my_tool, 'vrc_tool_options'):
+            options = my_tool.get_vrc_tool_options()
+            if options:
+                for option in options.keys():
+                    prop_name = option.lower().replace(' ', '_') + "_choice"
+                    if hasattr(my_tool, prop_name):
+                        layout.prop(my_tool, prop_name)
+            else:
+                layout.label(text="No options available.")
+        else:
+            layout.label(text="No options available.")
+
+    def execute(self, context):
+        # Logic for applying changes or processing after "OK" is pressed
+        scene = bpy.context.scene
+        my_tool = scene.my_tool
         selected_armatures = [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()]
 
-        all_matches,undetectedbones,bonestorename = von_vrctools.filterbonesbyjsondictlist(selected_armatures,von_vrctools.gatherjsondictkeys(),True)
+        all_matches, undetectedbones, bonestorename = von_vrctools.filterbonesbyjsondictlist(
+            selected_armatures, von_vrctools.gatherjsondictkeys(), True
+        )
 
-        
-
+        initiallyselectedarmature = bpy.context.view_layer.objects.active
 
         for armature in selected_armatures:
             bpy.context.view_layer.objects.active = armature
             armaturebones = armature.data.bones
             for bone in undetectedbones:
                 if bone in armaturebones:
-                    #bpy.ops.object.mode_set(mode='EDIT')
                     bpy.context.object.data.bones[bone].color.palette = "THEME01"
-                    #bpy.ops.object.mode_set(mode='OBJECT')
             bpy.context.view_layer.objects.active = initiallyselectedarmature
-            self.report({'INFO'}, "Undetected Bones Recoloured")
-        
-        
 
-        print("")
+        self.report({'INFO'}, "Undetected Bones Recoloured")
         return {'FINISHED'}
-
-"""if hasattr(my_tool, 'vrc_tool_options'):
-            options = my_tool.get_vrc_tool_options()  # Get the options stored by von.initialize_armatures in the scene so that it doesn't FOREVER update and block context switching from OBJECT mode to EDIT mode for bone renaming and sanity saving purposes - PLEASE WORK
-            for option in options.keys():
-                prop_name = option.lower().replace(' ', '_') + "_choice"
-                if hasattr(my_tool, prop_name):
-                    layout.prop(my_tool, prop_name)"""
         
 
 # ------------------------------------------------------------------------
@@ -595,13 +609,6 @@ class VONPANEL_PT_VRCTools(VonPanel, bpy.types.Panel):
         layout.operator("von.vrcsavebonenametodict")
 
         layout.operator("von.initialize_armatures", text="Initialize Armatures")
-
-        if hasattr(my_tool, 'vrc_tool_options'):
-            options = my_tool.get_vrc_tool_options()  # Get the options stored by von.initialize_armatures in the scene so that it doesn't FOREVER update and block context switching from OBJECT mode to EDIT mode for bone renaming and sanity saving purposes - PLEASE WORK
-            for option in options.keys():
-                prop_name = option.lower().replace(' ', '_') + "_choice"
-                if hasattr(my_tool, prop_name):
-                    layout.prop(my_tool, prop_name)
         
 
 classes = (
