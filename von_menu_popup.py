@@ -425,7 +425,9 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
             armaturebones = armature.data.bones
             for bone in undetectedbones:
                 if bone in armaturebones:
+                    bpy.ops.object.mode_set(mode='EDIT')
                     bpy.context.object.data.bones[bone].color.palette = "THEME01"
+                    bpy.ops.object.mode_set(mode='OBJECT')
                     self.report({'INFO'}, "Undetected Bones Recoloured")
         
 

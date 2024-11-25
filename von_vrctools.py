@@ -126,7 +126,9 @@ def rename_bones_from_dict(activearmature, rename_dict):
         for old_bone_name, new_bone_name in rename_dict.items():
             if old_bone_name in bones:
                 bones[old_bone_name].name = new_bone_name
+                bpy.ops.object.mode_set(mode='EDIT')
                 bpy.context.object.data.bones[new_bone_name].color.palette = "THEME03"
+                bpy.ops.object.mode_set(mode='OBJECT')
             else:
                 print(f"Bone '{old_bone_name}' not found in armature '{activearmature.name}'")
     else:
