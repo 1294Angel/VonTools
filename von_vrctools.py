@@ -129,7 +129,8 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list,shouldrename):
                         else:
                             continue
                 if len(matches) == 0:
-                    undetectedbones.append(bone.name)
+                    if bone.name not in undetectedbones:
+                        undetectedbones.append(bone.name)
                 else:
                     if len(matches) > 1:
                         all_duplicatematches[bone.name] = matches  # Store all matches
@@ -137,10 +138,11 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list,shouldrename):
                         bonestorename[bone.name] = matches[0]
         if shouldrename == True:
             rename_bones_from_dict(selected_armatures,bonestorename)
+    von_createcontrols.spaceconsole(2)
     print(f"All Matches = {all_duplicatematches}")
     print(f"Undetected Bones = {undetectedbones}")
     print(f"Bones To Rename = {bonestorename}")
-    print("")
+    von_createcontrols.spaceconsole(2)
 
     #Setting everything back to how it was prior to running the script to minimise inconvinences and cut off edge cases
     bpy.context.view_layer.objects.active = initalarmature
@@ -168,6 +170,69 @@ def rename_bones_from_dict(armaturelist, rename_dict):
                     print(f"Error renaming bone '{old_name}': {e}")
             else:
                 print(f"Bone '{old_name}' not found in armature '{armature.name}'.")
+
+def generateextrabone(source_armatures, target_armature, bonelist):
+    def setallarmaturecontext(Mode):
+        for source in source_armatures:
+            bpy.context.view_layer.objects.active = source
+            bpy.ops.object.mode_set(mode=Mode)
+        
+        bpy.context.view_layer.objects.active = target_armature
+        bpy.ops.object.mode_set(mode=Mode)
+    print("BONELIST IS ")
+    print(bonelist)
+    addedbones = []
+    setallarmaturecontext('EDIT')
+
+    target_bones = target_armature.data.edit_bones
+
+
+        
+
+    for source in source_armatures:
+        bpy.context.view_layer.objects.active = source
+
+        source_bones = source.data.edit_bones
+        print(f"Source bones = {source_bones}")
+
+        for bone in bonelist:
+            if bone not in source_bones:
+                print(f"{bone} Not Detected In Source")
+                continue
+            source_bone_loop = source_bones[bone]
+            print(f"Source Bone Loop = {source_bone_loop}")
+
+            if bone not in target_armature.data.bones:
+                print(f"Bone is {bone}")
+                target_bones.data.edit_bones.new(bone)
+                addedbones.append(bone)
+                target_bone = target_bones.data.edit_bones[bone]
+
+                target_bone.head = source_bone_loop.head
+                target_bone.tail = source_bone_loop.tail
+                target_bone.roll = source_bone_loop.roll
+
+                try:
+                    if source_bone_loop.parent:
+                        if target_bones.data.edit_bones.get(source_bone_loop.parent.name):
+                            target_bone.parent = target_bones.data.edit_bones.get(source_bone_loop.parent.name)
+                        else:
+                            print("Parent Bone Doesn't Exist Bro")
+                except Exception as e:
+                    print(f"ERROR 129: {e}")
+                    continue
+            else:
+                continue
+
+
+    setallarmaturecontext('POSE')
+    for i in target_bones:
+        if i in addedbones:
+            bpy.context.object.data.bones[i].color.palette = "THEME04"
+        else:
+            bpy.context.object.data.bones[i].color.palette = "THEME03"
+    setallarmaturecontext('OBJECT')
+
 
 
 

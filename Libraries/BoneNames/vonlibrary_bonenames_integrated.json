@@ -32,9 +32,16 @@
         "spine.003",
         "spine.006",
         "spine.004",
-        "spine.005"
+        "spine.005",
+        "spine.007"
     ],
     "Chest": [],
+    "LeftBreast": [
+        "breast.l"
+    ],
+    "RightBreast": [
+        "breast.r"
+    ],
     "UpperChest": [],
     "Neck": [],
     "Head": [],
@@ -101,5 +108,14 @@
     "RightLittleProximal": [],
     "RightLittleIntermediate": [],
     "RightLittleDistal": [],
+    "Pelvis": [
+        "pelvis"
+    ],
+    "LeftPelvis": [
+        "pelvis.l"
+    ],
+    "RightPelvis": [
+        "pelvis.r"
+    ],
     "LastBone": []
 }

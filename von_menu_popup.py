@@ -472,6 +472,7 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
         all_matches, undetectedbones, bonestorename = von_vrctools.filterbonesbyjsondictlist(selected_armatures, von_vrctools.gatherjsondictkeys(), True)
         initiallyselectedarmature = bpy.context.view_layer.objects.active
 
+        #Standardizing Bone Names Between Armatures For Easier Modification Later On
         for armature in selected_armatures:
             bpy.context.view_layer.objects.active = armature
             armaturebones = armature.data.bones
@@ -479,8 +480,6 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
                 if bone in armaturebones:
                     bpy.context.object.data.bones[bone].color.palette = "THEME01"
             bpy.context.view_layer.objects.active = initiallyselectedarmature
-        
-
         if hasattr(my_tool, 'vrc_tool_options'):
             options = my_tool.get_vrc_tool_options()
             if options:
@@ -493,7 +492,27 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
                         opt_dict[option] = selected_value
                         von_vrctools.rename_bones_from_dict(selected_armatures, opt_dict)
 
+        #Identifying the active and source armatures to find the mesh that needs the undetected bones added to
+        active_object = bpy.context.object
+        target_armature = None
+        source_armatures = []
 
+        for obj in bpy.context.scene.objects:
+            if obj.type == 'ARMATURE':
+                if obj.select_get():
+                    if obj == active_object:
+                        target_armature = obj
+                    else:
+                        source_armatures.append(obj)
+        print("Source = ")
+        print(source_armatures)
+        print("Target = ")
+        print(target_armature)
+
+        
+        if target_armature:
+            #Generating the bones
+            von_vrctools.generateextrabone(source_armatures, target_armature, undetectedbones)
 
         return {'FINISHED'}
         
