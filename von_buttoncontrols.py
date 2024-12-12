@@ -1,8 +1,6 @@
 #Import all needed
-import bpy # type: ignore
-import os
-from . import von_createcontrols
-from .von_createcontrols import *    
+import bpy, re, os # type: ignore
+from . import von_createcontrols 
 #____________________________________________________________________________________________
 #____________________________________________________________________________________________
 #____________________________________________________________________________________________ 
@@ -47,8 +45,22 @@ def getselectedbonesforenum(self, context):
         addtoenum = tuple((indexstr, i, description))
         enumlist.append(addtoenum)
     return enumlist
+
+def splitstringfromadditionalbones(input_string):
+    match = re.search(r'(.+?)([._][lr])$', input_string, re.IGNORECASE)
     
-        
+    if match:
+        return match.group(0)
+    else:
+        return input_string
+
+    """
+    if re.search(r'[LR]\d', input_string):
+        return re.split(r'(?<=\w)(?=[._])|(?<=[._])(?=\d)', input_string)[0]
+    if re.search(r'^[\w]+[._]?[LR]$', input_string):
+        return input_string
+    return re.split(r'(?<=\w)(?=[._])', input_string)[0]
+    """
 
 #Functional
 def colorizerig(context):
@@ -80,6 +92,8 @@ def colorizerig(context):
             if iendswithR:
                 bpy.context.object.data.bones[i].color.palette = 'THEME03'
                 bpy.context.object.pose.bones[i].color.palette = 'THEME03'
+
+
 
 #Functional
 def searchforbone(selected_armature, temp_bonetofind):
@@ -158,7 +172,8 @@ def setboneconstraintspace(activearmature, selectedbones, constrainttotarget,tar
                 #Adjust each constraint on the selected bone (i) to be in Local space (need to adjust to work off of a menu str or enum later)
                 bpy.context.object.pose.bones[bonename].constraints[con.name].target_space = targetspace
                 bpy.context.object.pose.bones[bonename].constraints[con.name].owner_space = ownerspace
-        
+
+
 #____________________________________________________________________________________________
 #____________________________________________________________________________________________
 #____________________________________________________________________________________________
