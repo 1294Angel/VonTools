@@ -6,7 +6,7 @@
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 """
 
-import bpy, os,json # type: ignore
+import bpy, os, json, mathutils # type: ignore
 from . import von_createcontrols, von_buttoncontrols
 
 
@@ -200,10 +200,7 @@ def generateextrabone(source_armatures, target_armature, bonelist):
                 print(f"{bone} Not Detected In Source")
                 continue
             source_bone_loop = source_bones[bone]
-            print(f"Source Bone Loop = {source_bone_loop}")
-
             if bone not in target_armature.data.bones:
-                print(f"Bone is {bone}")
                 target_bones.data.edit_bones.new(bone)
                 addedbones.append(bone)
                 target_bone = target_bones.data.edit_bones[bone]
@@ -233,10 +230,87 @@ def generateextrabone(source_armatures, target_armature, bonelist):
             bpy.context.object.data.bones[i].color.palette = "THEME03"
     setallarmaturecontext('OBJECT')
 
+"""
+def moveskeletalmesh(selectedarmatures, target_armature):
+    print("Moving Skeletal Meshes")
+    for obj in bpy.data.objects:
+        if obj.type == 'MESH':
+            for modifier in obj.modifiers:
+                if modifier.type == 'ARMATURE' and modifier.object is not None:
+                    target_object = modifier.object
+                    for selarmature in selectedarmatures:
+                        selarmature = selarmature.name
+                        if target_object.name == selarmature:
+                            print(f"Mesh Object: {obj.name}, Modifier: {modifier.name}, Source Armature: {target_object.name}")
 
+                            # Calculate the location offset relative to the source armature
+                            offset_location = obj.location - target_object.location
 
+                            # Calculate the rotation offset using matrices
+                            source_rot_matrix = target_object.matrix_world.to_3x3()
+                            obj_rot_matrix = obj.matrix_world.to_3x3()
+                            offset_rotation_matrix = source_rot_matrix.inverted() @ obj_rot_matrix
 
+                            # Set the modifier's object to the target armature
+                            modifier.object = target_armature
 
+                            # Apply the location offset to the new target
+                            obj.location = target_armature.location + offset_location
+
+                            # Apply the rotation offset to the new target
+                            target_rot_matrix = target_armature.matrix_world.to_3x3()
+                            new_rot_matrix = target_rot_matrix @ offset_rotation_matrix
+                            obj.rotation_euler = new_rot_matrix.to_euler()
+
+                            currentparnt = obj.parent
+                            if currentparnt != target_armature:
+                                obj.parent = target_armature
+                            else:
+                                print("Parents Match??")
+
+                        else:
+                            print("No MATCH")
+"""
+
+def moveskeletalmesh(selected_armatures, target_armature):
+    print("Moving Skeletal Meshes")
+    for obj in bpy.data.objects:
+        if obj.type == 'MESH':
+            for modifier in obj.modifiers:
+                if modifier.type == 'ARMATURE' and modifier.object in selected_armatures:
+                    source_armature = modifier.object
+                    print(f"Mesh Object: {obj.name}, Modifier: {modifier.name}, Source Armature: {source_armature.name}")
+
+                    # Calculate the location offset relative to the source armature's origin
+                    offset_location = obj.location - source_armature.location
+
+                    # Calculate the rotation offset using matrices
+                    source_rot_matrix = source_armature.matrix_world.to_3x3()
+                    obj_rot_matrix = obj.matrix_world.to_3x3()
+                    offset_rotation_matrix = source_rot_matrix.inverted() @ obj_rot_matrix
+
+                    # Set the modifier's object to the target armature
+                    modifier.object = target_armature
+
+                    # Apply the location offset to the new target relative to the target armature's origin
+                    obj.location = target_armature.location + offset_location
+
+                    # Apply the rotation offset to the new target relative to the target armature's origin
+                    target_rot_matrix = target_armature.matrix_world.to_3x3()
+                    new_rot_matrix = target_rot_matrix @ offset_rotation_matrix
+                    obj.rotation_euler = new_rot_matrix.to_euler()
+
+                    print(f"Mesh Object: {obj.name}, Modifier: {modifier.name}, now targeting: {target_armature.name}")
+
+                    # Reset the parent without affecting the transformation
+                    current_parent = obj.parent
+                    if current_parent != target_armature:
+                        obj.parent = target_armature
+                        obj.matrix_parent_inverse = target_armature.matrix_world.inverted() @ obj.matrix_world
+                    else:
+                        print("Parents Match??")
+                else:
+                    print("No MATCH for", source_armature.name)
 
 
 
