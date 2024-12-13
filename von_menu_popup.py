@@ -492,27 +492,37 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
                         opt_dict[option] = selected_value
                         von_vrctools.rename_bones_from_dict(selected_armatures, opt_dict)
 
-        #Identifying the active and source armatures to find the mesh that needs the undetected bones added to
-        active_object = bpy.context.object
+
+
+
+
+
+
         target_armature = None
         source_armatures = []
+        active_object = bpy.context.view_layer.objects.active
 
-        for obj in bpy.context.scene.objects:
-            if obj.type == 'ARMATURE':
-                if obj.select_get():
-                    if obj == active_object:
-                        target_armature = obj
-                    else:
-                        source_armatures.append(obj)
-        print("Source = ")
-        print(source_armatures)
-        print("Target = ")
-        print(target_armature)
+        if active_object and active_object.type == 'ARMATURE':
+            target_armature = active_object
+        for obj in bpy.context.selected_objects:
+            if obj.type == 'ARMATURE' and obj != target_armature:
+                source_armatures.append(obj)
+
+        # Output the results
+        print(f"Target Armature: {target_armature}")
+        print(f"Source Armatures: {source_armatures}")
+
+
+
+
+
 
         
         if target_armature:
             #Generating the bones
             von_vrctools.generateextrabone(source_armatures, target_armature, undetectedbones)
+
+            von_vrctools.moveskeletalmesh(selected_armatures, target_armature)
 
         return {'FINISHED'}
         
