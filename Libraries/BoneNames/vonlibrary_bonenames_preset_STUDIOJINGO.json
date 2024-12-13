@@ -1,0 +1,203 @@
+{
+    "COMMENTS": [
+        "ALWAYS LOWERCASE"
+    ],
+    "Hips": [
+        "hips"
+    ],
+    "LeftUpperLeg": [
+        "upperleg_l"
+    ],
+    "RightUpperLeg": [
+        "upperleg_r"
+    ],
+    "LeftLowerLeg": [
+        "lowerleg_l"
+    ],
+    "RightLowerLeg": [
+        "lowerleg_r"
+    ],
+    "LeftFoot": [
+        "foot_l"
+    ],
+    "RightFoot": [
+        "foot_r"
+    ],
+    "Spine": [
+        "spine"
+    ],
+    "Chest": [
+        "chest"
+    ],
+    "LeftBreast": [
+        "breast_l"
+    ],
+    "RightBreast": [
+        "breast_r"
+    ],
+    "UpperChest": [],
+    "Neck": [
+        "neck"
+    ],
+    "Head": [
+        "head"
+    ],
+    "LeftShoulder": [
+        "shoulder_l"
+    ],
+    "RightShoulder": [
+        "shoulder_r"
+    ],
+    "LeftUpperArm": [
+        "upperarm_l"
+    ],
+    "LeftUpperArmTwist": [
+        "upperarm_l_twist"
+    ],
+    "RightUpperArm": [
+        "upperarm_r"
+    ],
+    "RightUpperArmTwist": [
+        "upperarm_r_twist"
+    ],
+    "LeftLowerArm": [
+        "lowerarm_l"
+    ],
+    "LeftLowerArmTwist": [
+        "lowerarm_l_twist"
+    ],
+    "RightLowerArm": [
+        "lowerarm_r"
+    ],
+    "RightLowerArmTwist": [
+        "lowerarm_r_twist"
+    ],
+    "LeftHand": [
+        "hand_l"
+    ],
+    "RightHand": [
+        "hand_r"
+    ],
+    "LeftToes": [
+        "toe_l"
+    ],
+    "RightToes": [
+        "toe_r"
+    ],
+    "LeftEye": [
+        "lefteye"
+    ],
+    "RightEye": [
+        "righteye"
+    ],
+    "Jaw": [],
+    "Pelvis": [],
+    "LeftPelvis": [],
+    "RightPelvis": [],
+    "LeftButt": [
+        "butt_l"
+    ],
+    "RightButt": [
+        "butt_r"
+    ],
+    "Tail": [
+        "tail",
+        "tail.001",
+        "tail.002",
+        "tail.003",
+        "tail.004",
+        "tail.005",
+        "tail.006"
+    ],
+    "LeftThumbProximal": [
+        "thumbproximal_l"
+    ],
+    "LeftThumbIntermediate": [
+        "thumbintermediate_l"
+    ],
+    "LeftThumbDistal": [
+        "thumbdistal_l"
+    ],
+    "LeftIndexProximal": [
+        "indexproximal_l"
+    ],
+    "LeftIndexIntermediate": [
+        "indexintermediate_l"
+    ],
+    "LeftIndexDistal": [
+        "indexdistal_l"
+    ],
+    "LeftMiddleProximal": [
+        "middleproximal_l"
+    ],
+    "LeftMiddleIntermediate": [
+        "middleintermediate_l"
+    ],
+    "LeftMiddleDistal": [
+        "middledistal_l"
+    ],
+    "LeftRingProximal": [
+        "ringproximal_l"
+    ],
+    "LeftRingIntermediate": [
+        "ringintermediate_l"
+    ],
+    "LeftRingDistal": [
+        "ringdistal_l"
+    ],
+    "LeftLittleProximal": [
+        "littleproximal_l"
+    ],
+    "LeftLittleIntermediate": [
+        "littleintermediate_l"
+    ],
+    "LeftLittleDistal": [
+        "littledistal_l"
+    ],
+    "RightThumbProximal": [
+        "thumbproximal_r"
+    ],
+    "RightThumbIntermediate": [
+        "thumbintermediate_r"
+    ],
+    "RightThumbDistal": [
+        "thumbdistal_r"
+    ],
+    "RightIndexProximal": [
+        "indexproximal_r"
+    ],
+    "RightIndexIntermediate": [
+        "indexintermediate_r"
+    ],
+    "RightIndexDistal": [
+        "indexdistal_r"
+    ],
+    "RightMiddleProximal": [
+        "middleproximal_r"
+    ],
+    "RightMiddleIntermediate": [
+        "middleintermediate_r"
+    ],
+    "RightMiddleDistal": [
+        "middledistal_r"
+    ],
+    "RightRingProximal": [
+        "ringproximal_r"
+    ],
+    "RightRingIntermediate": [
+        "ringintermediate_r"
+    ],
+    "RightRingDistal": [
+        "ringdistal_r"
+    ],
+    "RightLittleProximal": [
+        "littleproximal_r"
+    ],
+    "RightLittleIntermediate": [
+        "littleintermediate_r"
+    ],
+    "RightLittleDistal": [
+        "littledistal_r"
+    ],
+    "LastBone": []
+}

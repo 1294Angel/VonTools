@@ -3,7 +3,8 @@
         "ALWAYS LOWERCASE"
     ],
     "Hips": [
-        "pelvis"
+        "pelvis",
+        "hips"
     ],
     "LeftUpperLeg": [
         "upperleg_l",
@@ -11,19 +12,24 @@
         "thigh.l"
     ],
     "RightUpperLeg": [
-        "thigh.r"
+        "thigh.r",
+        "upperleg_r"
     ],
     "LeftLowerLeg": [
-        "shin.l"
+        "shin.l",
+        "lowerleg_l"
     ],
     "RightLowerLeg": [
-        "shin.r"
+        "shin.r",
+        "lowerleg_r"
     ],
     "LeftFoot": [
-        "foot.l"
+        "foot.l",
+        "foot_l"
     ],
     "RightFoot": [
-        "foot.r"
+        "foot.r",
+        "foot_r"
     ],
     "Spine": [
         "spine",
@@ -35,7 +41,9 @@
         "spine.005",
         "spine.007"
     ],
-    "Chest": [],
+    "Chest": [
+        "chest"
+    ],
     "LeftBreast": [
         "breast.l"
     ],
@@ -43,7 +51,9 @@
         "breast.r"
     ],
     "UpperChest": [],
-    "Neck": [],
+    "Neck": [
+        "neck"
+    ],
     "Head": [],
     "LeftShoulder": [
         "shoulder.l"
