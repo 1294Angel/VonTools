@@ -230,7 +230,6 @@ def generateextrabone(source_armatures, target_armature, bonelist):
             bpy.context.object.data.bones[i].color.palette = "THEME03"
     setallarmaturecontext('OBJECT')
 
-"""
 def moveskeletalmesh(selectedarmatures, target_armature):
     print("Moving Skeletal Meshes")
     for obj in bpy.data.objects:
@@ -271,7 +270,6 @@ def moveskeletalmesh(selectedarmatures, target_armature):
                         else:
                             print("No MATCH")
 """
-
 def moveskeletalmesh(selected_armatures, target_armature):
     print("Moving Skeletal Meshes")
     for obj in bpy.data.objects:
@@ -311,8 +309,7 @@ def moveskeletalmesh(selected_armatures, target_armature):
                         print("Parents Match??")
                 else:
                     print("No MATCH for", source_armature.name)
-
-
+"""
 
 """
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
