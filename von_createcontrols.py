@@ -162,8 +162,12 @@ def movetocollection(NameOfCollection,object_name):
     bpy.data.collections[NameOfCollection].hide_viewport = True
         
 
+# ------------------------------------------------------------------------
+#    Create Animation Retargeter Functions 
+# ------------------------------
 
-
+def retargetanimations(targetarmature, sourcearmatures):
+    print("FUCK")
 
 # ------------------------------------------------------------------------
 #    Create Multiuse Functions #Functional

@@ -484,21 +484,29 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
 
 
 
+        # The armatures need unique names or otherwise the script will not work as blender cannot decide which armatures are 
+        bpy.ops.object.mode_set(mode='EDIT')
+        bpy.ops.object.mode_set(mode='OBJECT')
 
+        active_object = bpy.context.selected_objects[0]
+        #active_object = bpy.context.active_object
         target_armature = None
         source_armatures = []
-        active_object = bpy.context.view_layer.objects.active
-
+        endswithnumbers = False
+        
         if active_object and active_object.type == 'ARMATURE':
             target_armature = active_object
-        for obj in bpy.context.selected_objects:
-            if obj.type == 'ARMATURE' and obj != target_armature:
-                source_armatures.append(obj)
-        
+        if target_armature:
+            for obj in bpy.context.selected_objects:
+                if obj.type == 'ARMATURE' and obj != target_armature.name:
+                    source_armatures.append(obj)
+
+            # Debug output
+            #print(f"Target Armature: {target_armature.name if target_armature else 'None'}")
+            #print(f"Source Armatures: {[obj.name for obj in source_armatures]}")
         if target_armature:
             #Generating the bones
             von_vrctools.generateextrabone(source_armatures, target_armature, undetectedbones, self)
-
             von_vrctools.moveskeletalmesh(selected_armatures, target_armature,self)
 
         return {'FINISHED'}
