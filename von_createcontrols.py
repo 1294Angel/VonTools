@@ -2,15 +2,13 @@
 #    Import Required Controls -- NEEDS CLEANUP
 # ------------------------------------------------------------------------
 
-import bpy, json, pprint, bmesh, os, sys, mathutils # type: ignore
-from bpy import context # type: ignore
+import bpy, json, pprint, bmesh, os, sys, mathutils, pathlib # type: ignore
 from bpy.types import Operator # type: ignore 
 from bpy_extras.object_utils import object_data_add # type: ignore
 from mathutils import Vector # type: ignore
 from math import radians
-import pathlib
+from collections import defaultdict
 from . import von_buttoncontrols
-from .von_buttoncontrols import *
 
 # ------------------------------------------------------------------------
 #    Create General Functions
@@ -349,6 +347,25 @@ def assignvertexweights(vertex_group_name, vertex_weight):
 
         bpy.ops.object.mode_set(mode='EDIT')
 
+
+def mergejsondicts(dictdirectory,self):
+    merged_dict = defaultdict(list)
+
+    for file_name in os.listdir(dictdirectory):
+        if file_name.endswith('.json'):
+            file_path = os.path.join(dictdirectory, file_name)
+            try:
+                with open(file_path, 'r', encoding='utf-8') as file:
+                    data = json.load(file)
+                    if isinstance(data, dict):
+                        for key, value in data.items():
+                            if isinstance(value, list):
+                                merged_dict[key] = list(set(merged_dict[key] + value))
+                            else:
+                                merged_dict[key] = value
+            except (json.JSONDecodeError, IOError) as e:
+                self.report({'ERROR'}, f"Error processing file {file_name}: {e}")
+    return dict(merged_dict)
 # ------------------------------------------------------------------------
 #    Test Controls
 # -----------------------------------------------------------------------

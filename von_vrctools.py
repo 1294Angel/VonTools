@@ -21,7 +21,7 @@ def get_directory():
     addon_directory = os.path.dirname(__file__)
     return addon_directory
 
-def ENUMUPDATE_gatherheirarchydata():
+def ENUMUPDATE_gatherheirarchydata(self):
 
     """
     obj = bpy.context.object
@@ -47,12 +47,8 @@ def ENUMUPDATE_gatherheirarchydata():
                         #This is setup to update the enum
                         
                         dictionaryoptions.append((filename, filename, f"Will Add The Selected Bonename Into Your Chosen Key Within {filename}"))
-
-                    else:
-                        print(f"Skipping file {filename} as it doesn't contain a valid JSON object.")
                 except json.JSONDecodeError as e: # IF ALL FAILS, IDIOT PROOFING NEVER REALLY TRIED THIS BEFORE
-                    print(f"Error reading {filename}: {e}")
-    #print(f"The Options for the Enum Will be: {dictionaryoptions}")
+                    self.report({'ERROR'}, f"Error reading {filename}: {e}")
     return dictionaryoptions
 
 
@@ -63,7 +59,7 @@ def ENUMUPDATE_gatherheirarchydata():
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 """
-def gatherjsondictkeys():
+def gatherjsondictkeys(self):
     json_data_list = []
     directory_path = get_directory() + "/Libraries/BoneNames"
     for filename in os.listdir(directory_path):
@@ -73,10 +69,9 @@ def gatherjsondictkeys():
                 with open(filepath, 'r') as json_file:
                     data = json.load(json_file)
                     if isinstance(data, dict):
-                        print(json_file)
                         json_data_list.append(data)  # Store dictionaries
             except json.JSONDecodeError as e:
-                print(f"Error reading {filename}: {e}")
+                self.report({'ERROR'}, f"Error reading {filename}: {e}")
     return json_data_list
 
 def filterbonesbyjsondictlist_fordrawcall(selected_armatures,json_data_list):
@@ -102,7 +97,7 @@ def filterbonesbyjsondictlist_fordrawcall(selected_armatures,json_data_list):
     return all_duplicatematches
 
 #returns: all_matches (Dict where key is original bone name and the list is the list of options for renaming when there are more than 1) - Undetected Bones (Bones to colour to red and copy paste to the new armature) - bonestorename (Dict where bonename is the key and the list is the name to rename it to)
-def filterbonesbyjsondictlist(selected_armatures,json_data_list,shouldrename):
+def filterbonesbyjsondictlist(selected_armatures,json_data_list,shouldrename,self):
     #Gathering intial context data to allow minimal obstruction to the end user
     initialcontext = bpy.context.object.mode
     initalarmature = bpy.context.view_layer.objects.active
@@ -137,13 +132,7 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list,shouldrename):
                     elif len(matches) == 1:
                         bonestorename[bone.name] = matches[0]
         if shouldrename == True:
-            rename_bones_from_dict(selected_armatures,bonestorename)
-    von_createcontrols.spaceconsole(2)
-    print(f"All Matches = {all_duplicatematches}")
-    print(f"Undetected Bones = {undetectedbones}")
-    print(f"Bones To Rename = {bonestorename}")
-    von_createcontrols.spaceconsole(2)
-
+            rename_bones_from_dict(selected_armatures,bonestorename,self)
     #Setting everything back to how it was prior to running the script to minimise inconvinences and cut off edge cases
     bpy.context.view_layer.objects.active = initalarmature
     bpy.ops.object.mode_set(mode=initialcontext)
@@ -151,10 +140,9 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list,shouldrename):
     return all_duplicatematches, undetectedbones, bonestorename
 
 
-def rename_bones_from_dict(armaturelist, rename_dict):
+def rename_bones_from_dict(armaturelist, rename_dict,self):
     for armature in armaturelist:
         bpy.context.view_layer.objects.active = armature
-        print(armature.name)
         posebones = armature.data.bones
         for key in rename_dict:
             if key in posebones:
@@ -167,11 +155,9 @@ def rename_bones_from_dict(armaturelist, rename_dict):
                 try:
                     edit_bones[old_name].name = new_name
                 except Exception as e:
-                    print(f"Error renaming bone '{old_name}': {e}")
-            else:
-                print(f"Bone '{old_name}' not found in armature '{armature.name}'.")
+                    self.report({'ERROR'}, f"Error renaming bone '{old_name}': {e}")
 
-def generateextrabone(source_armatures, target_armature, bonelist):
+def generateextrabone(source_armatures, target_armature, bonelist, self):
     def setallarmaturecontext(Mode):
         for source in source_armatures:
             bpy.context.view_layer.objects.active = source
@@ -179,8 +165,6 @@ def generateextrabone(source_armatures, target_armature, bonelist):
         
         bpy.context.view_layer.objects.active = target_armature
         bpy.ops.object.mode_set(mode=Mode)
-    print("BONELIST IS ")
-    print(bonelist)
     addedbones = []
     setallarmaturecontext('EDIT')
 
@@ -193,11 +177,9 @@ def generateextrabone(source_armatures, target_armature, bonelist):
         bpy.context.view_layer.objects.active = source
 
         source_bones = source.data.edit_bones
-        print(f"Source bones = {source_bones}")
 
         for bone in bonelist:
             if bone not in source_bones:
-                print(f"{bone} Not Detected In Source")
                 continue
             source_bone_loop = source_bones[bone]
             if bone not in target_armature.data.bones:
@@ -213,10 +195,8 @@ def generateextrabone(source_armatures, target_armature, bonelist):
                     if source_bone_loop.parent:
                         if target_bones.data.edit_bones.get(source_bone_loop.parent.name):
                             target_bone.parent = target_bones.data.edit_bones.get(source_bone_loop.parent.name)
-                        else:
-                            print("Parent Bone Doesn't Exist Bro")
                 except Exception as e:
-                    print(f"ERROR 129: {e}")
+                    self.report({'ERROR'}, f"ERROR 129: {e}")
                     continue
             else:
                 continue
@@ -230,86 +210,21 @@ def generateextrabone(source_armatures, target_armature, bonelist):
             bpy.context.object.data.bones[i].color.palette = "THEME03"
     setallarmaturecontext('OBJECT')
 
-def moveskeletalmesh(selectedarmatures, target_armature):
-    print("Moving Skeletal Meshes")
+def moveskeletalmesh(selectedarmatures, target_armature,self):
     for obj in bpy.data.objects:
         if obj.type == 'MESH':
             for modifier in obj.modifiers:
                 if modifier.type == 'ARMATURE' and modifier.object is not None:
-                    target_object = modifier.object
-                    for selarmature in selectedarmatures:
-                        selarmature = selarmature.name
-                        if target_object.name == selarmature:
-                            print(f"Mesh Object: {obj.name}, Modifier: {modifier.name}, Source Armature: {target_object.name}")
-
-                            # Calculate the location offset relative to the source armature
-                            offset_location = obj.location - target_object.location
-
-                            # Calculate the rotation offset using matrices
-                            source_rot_matrix = target_object.matrix_world.to_3x3()
-                            obj_rot_matrix = obj.matrix_world.to_3x3()
-                            offset_rotation_matrix = source_rot_matrix.inverted() @ obj_rot_matrix
-
-                            # Set the modifier's object to the target armature
-                            modifier.object = target_armature
-
-                            # Apply the location offset to the new target
-                            obj.location = target_armature.location + offset_location
-
-                            # Apply the rotation offset to the new target
-                            target_rot_matrix = target_armature.matrix_world.to_3x3()
-                            new_rot_matrix = target_rot_matrix @ offset_rotation_matrix
-                            obj.rotation_euler = new_rot_matrix.to_euler()
-
-                            currentparnt = obj.parent
-                            if currentparnt != target_armature:
-                                obj.parent = target_armature
-                            else:
-                                print("Parents Match??")
-
-                        else:
-                            print("No MATCH")
-"""
-def moveskeletalmesh(selected_armatures, target_armature):
-    print("Moving Skeletal Meshes")
-    for obj in bpy.data.objects:
-        if obj.type == 'MESH':
-            for modifier in obj.modifiers:
-                if modifier.type == 'ARMATURE' and modifier.object in selected_armatures:
                     source_armature = modifier.object
-                    print(f"Mesh Object: {obj.name}, Modifier: {modifier.name}, Source Armature: {source_armature.name}")
+                    for selarmature in selectedarmatures:
+                        selarmature_name = selarmature.name
+                        if source_armature.name == selarmature_name:
+                            relative_offset = obj.location - source_armature.location
+                            obj.parent = target_armature
+                            obj.matrix_parent_inverse = target_armature.matrix_world.inverted()
 
-                    # Calculate the location offset relative to the source armature's origin
-                    offset_location = obj.location - source_armature.location
-
-                    # Calculate the rotation offset using matrices
-                    source_rot_matrix = source_armature.matrix_world.to_3x3()
-                    obj_rot_matrix = obj.matrix_world.to_3x3()
-                    offset_rotation_matrix = source_rot_matrix.inverted() @ obj_rot_matrix
-
-                    # Set the modifier's object to the target armature
-                    modifier.object = target_armature
-
-                    # Apply the location offset to the new target relative to the target armature's origin
-                    obj.location = target_armature.location + offset_location
-
-                    # Apply the rotation offset to the new target relative to the target armature's origin
-                    target_rot_matrix = target_armature.matrix_world.to_3x3()
-                    new_rot_matrix = target_rot_matrix @ offset_rotation_matrix
-                    obj.rotation_euler = new_rot_matrix.to_euler()
-
-                    print(f"Mesh Object: {obj.name}, Modifier: {modifier.name}, now targeting: {target_armature.name}")
-
-                    # Reset the parent without affecting the transformation
-                    current_parent = obj.parent
-                    if current_parent != target_armature:
-                        obj.parent = target_armature
-                        obj.matrix_parent_inverse = target_armature.matrix_world.inverted() @ obj.matrix_world
-                    else:
-                        print("Parents Match??")
-                else:
-                    print("No MATCH for", source_armature.name)
-"""
+                            modifier.object = target_armature
+                            obj.location = target_armature.location + relative_offset
 
 """
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
