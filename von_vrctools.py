@@ -201,7 +201,7 @@ def generateextrabone(source_armatures, target_armature, bonelist, self):
             else:
                 continue
     
-    bpy.context.view_layer.objects.active = target_armature
+    bpy.context.view_layer.objects.active = target_armature 
 
     setallarmaturecontext('POSE')
     for i in target_bones:

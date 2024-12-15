@@ -79,9 +79,13 @@ def colorizerig(context):
 
             if iupper.endswith("_L") or iupper.endswith(".L") == True:
                 iendswithL = True
+            elif i.startswith("LEFT") == True:
+                iendswithL = True
             
             if iupper.endswith("_R") or iupper.endswith(".R") == True:
                 iendswithR = True
+            elif i.startswith("RIGHT") == True:
+                iendswithL = True
 
             if iendswithL and iendswithR != True:
                 bpy.context.object.data.bones[i].color.palette = 'THEME13'
