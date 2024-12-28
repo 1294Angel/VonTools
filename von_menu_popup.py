@@ -484,8 +484,6 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
 
 
 
-        # The armatures need unique names or otherwise the script will not work as blender cannot decide which armatures are 
-        bpy.ops.object.mode_set(mode='EDIT')
         bpy.ops.object.mode_set(mode='OBJECT')
 
         active_object = bpy.context.selected_objects[0]
@@ -506,8 +504,24 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
             #print(f"Source Armatures: {[obj.name for obj in source_armatures]}")
         if target_armature:
             #Generating the bones
-            von_vrctools.generateextrabone(source_armatures, target_armature, undetectedbones, self)
+            von_vrctools.setrelativescalemod(selected_armatures, target_armature, self)
+            createdbones = von_vrctools.generateextrabone(source_armatures, target_armature, self)
             von_vrctools.moveskeletalmesh(selected_armatures, target_armature,self)
+            target_armature_bones = target_armature.data.bones
+            for bone in createdbones:
+                print(f"COLOURING - {bone}")
+                bpy.context.object.data.bones[bone].color.palette = "THEME09"
+            for bone in target_armature_bones:
+                bone = bone.name
+                if bone not in createdbones:
+                    bpy.context.object.data.bones[bone].color.palette = "THEME15"
+
+
+
+
+
+
+            
 
         return {'FINISHED'}
         
@@ -562,6 +576,18 @@ class VonPanel_RiggingTools__ClearVertexWeights(bpy.types.Operator):
 class VonPanel_VRCTools__SelectDesiredName():
     bl_idname = "von.selectdesiredname"
     bl_label = "Select Desired Name"
+class VonPanel_TESTButton(bpy.types.Operator):
+    bl_idname = "von.testbutton"
+    bl_label = "Test Button"
+
+    def execute(self, context):
+        print("EXECUTING TEST BUTTON")
+        selectedobjects = [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()]
+        active_object = selectedobjects[0]
+        selectedobjects.remove(selectedobjects[0])
+        von_vrctools.setrelativescalemod(selectedobjects, active_object, self)
+        return {'FINISHED'}
+
 
 
 # ------------------------------------------------------------------------
@@ -625,7 +651,7 @@ class VONPANEL_PT_VRCTools(VonPanel, bpy.types.Panel):
         row.label(text= "VRChat Tools", icon= 'CUBE')
         layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator("von.vrcsavebonenametodict")
-
+        layout.operator("von.testbutton", text = "Test Button!")
         layout.operator("von.initialize_armatures", text="Initialize Armatures")
         
 
@@ -643,7 +669,8 @@ classes = (
     VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace,
     VonPanel_RiggingTools__Submenu_ColorizeRig,
     VonPanel_RiggingTools__WeightHammer,
-    VonPanel_RiggingTools__ClearVertexWeights
+    VonPanel_RiggingTools__ClearVertexWeights,
+    VonPanel_TESTButton
     )
 
 def von_menupopup_register():

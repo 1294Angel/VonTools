@@ -42,7 +42,8 @@
         "spine.007"
     ],
     "Chest": [
-        "chest"
+        "chest",
+        "spine.003"
     ],
     "LeftBreast": [
         "breast.l"
