@@ -363,7 +363,7 @@ class Von_Dropdown_AddCustomBoneshape(bpy.types.Operator):
 class Von_Popout_SaveBoneNameToDict(bpy.types.Operator):
     bl_idname = "von.vrcsavebonenametodict"
     bl_label = "Save Bone Name To Dict"
-
+    bl_description = "Add the selected bone's name to a library of your choice so that the MERGE ARMATURES button can identify these bones in future"
     def execute(self,context):
         scene = context.scene
         mytool=scene.my_tool
@@ -415,6 +415,7 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
     """Operator to initialize armatures and register dynamic properties."""
     bl_idname = "von.initialize_armatures"
     bl_label = "Initialize Armatures"
+    bl_description = "Merge 2 or more selected armatures, the active armature will be the target that all additional bones, armature scales and meshes will be focused on." 
 
     def invoke(self, context, event):
         scene = bpy.context.scene
@@ -651,9 +652,8 @@ class VONPANEL_PT_VRCTools(VonPanel, bpy.types.Panel):
         row.label(text= "VRChat Tools", icon= 'CUBE')
         layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator("von.vrcsavebonenametodict")
-        layout.operator("von.testbutton", text = "Test Button!")
-        layout.operator("von.initialize_armatures", text="Initialize Armatures")
-        
+        #layout.operator("von.testbutton", text = "Test Button!")
+        layout.operator("von.initialize_armatures", text="Merge Armatures")
 
 classes = (
     MySettings,
