@@ -6,3 +6,7 @@ Mass Set Constraint Space - Sets constraint spaces on multiple bones at once, yo
 Colorize Rig - Colorizes the armature quickly
 Weight Hammer - Normalizes skinned vertex location by applying the average of nearby verticies weights
 Clear Vertex Weights - I got sick of deleting weights from a single vertex if I accidentally applied multiple groups without deselecting
+
+
+
+To Do - Make Rigify and Unreal Library Naming Conventions - Have the ability to pick between specific libraries at large for the base naming conventions (Like how you can select the library in the save bone name button
