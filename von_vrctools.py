@@ -157,7 +157,32 @@ def rename_bones_from_dict(armaturelist, rename_dict,self):
                 except Exception as e:
                     self.report({'ERROR'}, f"Error renaming bone '{old_name}': {e}")
 
-def generateextrabone(source_armatures, target_armature, bonelist, self):
+def setrelativescalemod(sourcearmatures,targetarmature, self):
+    targetheight = targetarmature.dimensions.z
+    if targetheight == 0:
+
+        self.report({'ERROR'}, f"{targetarmature.name} HAS Z HEIGHT OF 0")
+        return
+
+    for source in sourcearmatures:
+        bpy.context.view_layer.objects.active = source
+        sourceheight = source.dimensions.z
+        if sourceheight == 0:
+            self.report({'ERROR'}, f"{source.name} - HAS Z HEIGHT OF 0")
+            continue
+        if targetheight == sourceheight:
+            continue
+        heightscale = targetheight / sourceheight
+
+        source.scale *= heightscale
+        bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+    
+    bpy.context.view_layer.objects.active = targetarmature
+
+
+def generateextrabone(source_armatures, target_armature, self):
+        
+        
     def setallarmaturecontext(Mode):
         for source in source_armatures:
             bpy.context.view_layer.objects.active = source
@@ -166,6 +191,7 @@ def generateextrabone(source_armatures, target_armature, bonelist, self):
         bpy.context.view_layer.objects.active = target_armature
         bpy.ops.object.mode_set(mode=Mode)
     addedbones = []
+    foundbones = []
     setallarmaturecontext('EDIT')
 
     target_bones = target_armature.data.edit_bones
@@ -177,39 +203,35 @@ def generateextrabone(source_armatures, target_armature, bonelist, self):
         bpy.context.view_layer.objects.active = source
 
         source_bones = source.data.edit_bones
-
-        for bone in bonelist:
-            if bone not in source_bones:
+        
+        for bone in source_bones:
+            if bone.name in target_bones:
                 continue
-            source_bone_loop = source_bones[bone]
-            if bone not in target_armature.data.bones:
-                target_bones.data.edit_bones.new(bone)
-                addedbones.append(bone)
-                target_bone = target_bones.data.edit_bones[bone]
+            source_bone_loop = source_bones[bone.name]
+            target_bones.data.edit_bones.new(bone.name)
+            target_bone = target_bones.data.edit_bones[bone.name]
 
-                target_bone.head = source_bone_loop.head
-                target_bone.tail = source_bone_loop.tail
-                target_bone.roll = source_bone_loop.roll
+            target_bone.head = source_bone_loop.head
+            target_bone.tail = source_bone_loop.tail
+            target_bone.roll = source_bone_loop.roll
 
-                try:
-                    if source_bone_loop.parent:
-                        if target_bones.data.edit_bones.get(source_bone_loop.parent.name):
-                            target_bone.parent = target_bones.data.edit_bones.get(source_bone_loop.parent.name)
-                except Exception as e:
-                    self.report({'ERROR'}, f"ERROR 129: {e}")
-                    continue
+            addedbones.append(bone.name)
+
+            try:
+                if source_bone_loop.parent:
+                    if target_bones.data.edit_bones.get(source_bone_loop.parent.name):
+                        target_bone.parent = target_bones.data.edit_bones.get(source_bone_loop.parent.name)
+            except Exception as e:
+                self.report({'ERROR'}, f"ERROR: {e}")
+                continue
             else:
                 continue
-    
-    bpy.context.view_layer.objects.active = target_armature
 
-    setallarmaturecontext('POSE')
-    for i in target_bones:
-        if i in addedbones:
-            bpy.context.object.data.bones[i].color.palette = "THEME04"
-        else:
-            bpy.context.object.data.bones[i].color.palette = "THEME03"
+    
     setallarmaturecontext('OBJECT')
+    print(f"Added bones = {addedbones}")
+    return(addedbones)
+
 
 def moveskeletalmesh(selectedarmatures, target_armature,self):
     for obj in bpy.data.objects:
@@ -226,6 +248,9 @@ def moveskeletalmesh(selectedarmatures, target_armature,self):
 
                             modifier.object = target_armature
                             obj.location = target_armature.location + relative_offset
+                            
+
+    
 
 """
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
