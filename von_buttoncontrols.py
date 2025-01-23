@@ -54,16 +54,11 @@ def splitstringfromadditionalbones(input_string):
     else:
         return input_string
 
-    """
-    if re.search(r'[LR]\d', input_string):
-        return re.split(r'(?<=\w)(?=[._])|(?<=[._])(?=\d)', input_string)[0]
-    if re.search(r'^[\w]+[._]?[LR]$', input_string):
-        return input_string
-    return re.split(r'(?<=\w)(?=[._])', input_string)[0]
-    """
 
 #Functional
 def colorizerig(context):
+    #target_armature = bpy.context.view_layer.objects.active
+
     if poll("POSE") == True:
         lst_bones = getselectedbones(context)
         lst_bonenames = []
@@ -96,6 +91,7 @@ def colorizerig(context):
             if iendswithR:
                 bpy.context.object.data.bones[i].color.palette = 'THEME03'
                 bpy.context.object.pose.bones[i].color.palette = 'THEME03'
+
 
 
 

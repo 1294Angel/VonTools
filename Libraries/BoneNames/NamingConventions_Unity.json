@@ -3,37 +3,55 @@
         "ALWAYS LOWERCASE"
     ],
     "Hips": [
+        "pelvis",
         "hips"
     ],
     "LeftUpperLeg": [
-        "upperleg_l"
+        "upperleg_l",
+        "upperleg.l",
+        "thigh.l"
     ],
     "RightUpperLeg": [
+        "thigh.r",
         "upperleg_r"
     ],
     "LeftLowerLeg": [
-        "lowerleg_l"
+        "shin.l",
+        "lowerleg_l",
+        "foot.l"
     ],
     "RightLowerLeg": [
-        "lowerleg_r"
+        "shin.r",
+        "lowerleg_r",
+        "foot.l"
     ],
     "LeftFoot": [
+        "foot.l",
         "foot_l"
     ],
     "RightFoot": [
+        "foot.r",
         "foot_r"
     ],
     "Spine": [
-        "spine"
+        "spine",
+        "spine.001",
+        "spine.002",
+        "spine.003",
+        "spine.006",
+        "spine.004",
+        "spine.005",
+        "spine.007"
     ],
     "Chest": [
-        "chest"
+        "chest",
+        "spine.003"
     ],
     "LeftBreast": [
-        "breast_l"
+        "breast.l"
     ],
     "RightBreast": [
-        "breast_r"
+        "breast.r"
     ],
     "UpperChest": [],
     "Neck": [
@@ -43,13 +61,13 @@
         "head"
     ],
     "LeftShoulder": [
-        "shoulder_l"
+        "shoulder.l"
     ],
     "RightShoulder": [
-        "shoulder_r"
+        "shoulder.r"
     ],
     "LeftUpperArm": [
-        "upperarm_l"
+        "upper_arm.l"
     ],
     "LeftUpperArmTwist": [
         "upperarm_l_twist"
@@ -61,28 +79,22 @@
         "upperarm_r_twist"
     ],
     "LeftLowerArm": [
-        "lowerarm_l"
-    ],
-    "LeftLowerArmTwist": [
-        "lowerarm_l_twist"
+        "forearm.l"
     ],
     "RightLowerArm": [
-        "lowerarm_r"
-    ],
-    "RightLowerArmTwist": [
-        "lowerarm_r_twist"
+        "forearm.r"    
     ],
     "LeftHand": [
-        "hand_l"
+        "hand.l"
     ],
     "RightHand": [
-        "hand_r"
+        "hand.r"
     ],
     "LeftToes": [
-        "toe_l"
+        "toe.l"
     ],
     "RightToes": [
-        "toe_r"
+        "toe.r"
     ],
     "LeftEye": [
         "lefteye"
@@ -91,9 +103,6 @@
         "righteye"
     ],
     "Jaw": [],
-    "Pelvis": [],
-    "LeftPelvis": [],
-    "RightPelvis": [],
     "LeftButt": [
         "butt_l"
     ],
@@ -101,13 +110,7 @@
         "butt_r"
     ],
     "Tail": [
-        "tail",
-        "tail.001",
-        "tail.002",
-        "tail.003",
-        "tail.004",
-        "tail.005",
-        "tail.006"
+        "tail"
     ],
     "LeftThumbProximal": [
         "thumbproximal_l"
@@ -198,6 +201,15 @@
     ],
     "RightLittleDistal": [
         "littledistal_r"
+    ],
+    "Pelvis": [
+        "pelvis"
+    ],
+    "LeftPelvis": [
+        "pelvis.l"
+    ],
+    "RightPelvis": [
+        "pelvis.r"
     ],
     "LastBone": []
 }
