@@ -1,0 +1,6 @@
+List of commands I keep having to search for (Or have a habit of forgetting even though they are easy to find) as they are frequently used (Might also be useful for anyone who comes across this):
+
+bpy.context.view_layer.objects.active | Actively Selected Object (Can put = "Object you want to be active" at the end to change the active object) 
+bpy.ops.object.mode_set(mode='MODEYOUWANT') | Change Viewmode (POSE, EDIT, OBJECT, ect)
+self.report({'ERROR'}, f"YOUR MESSAGE") | Effectively a nicer print statement that doesn't clog the console (Typically I use error, but can use the others as well)
+bpy.context.selected_pose_bones_from_active_object

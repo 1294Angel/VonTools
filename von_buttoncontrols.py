@@ -8,11 +8,9 @@ from . import von_createcontrols
 def poll(compstr):
     active_object = bpy.context.mode
     if active_object == compstr:
-        bool = True
-        return bool
+        return True
     if active_object != compstr:
-        bool = False
-        return bool
+        return False
 
 #Functional only when taking in context
 def getselectedbones(context):
@@ -28,13 +26,12 @@ def getselectedbonesforenum(self, context):
 
     addtoenum = tuple(("0","All","Target All Detected Constraints"))
     enumlist.append(addtoenum)
+    
 
     constrainttypestmp = getboneconstraints(getselectedbones(context))
-    
+    print(f"Bone Constraints = {constrainttypestmp}")
     index = 0
-    for i in constrainttypestmp:
-        toadd = ()
-        
+    for i in constrainttypestmp:        
         index = index + 1
         indexstr = str(index)
         
@@ -129,12 +126,17 @@ def checkboneconstrainttarget(bonelist):
     selectedbones = bonelist
 
     for i in selectedbones:
+            print(i.name)
             for con in i.constraints:
                 target = con.target
-                objtarget = target.type
+                try:
+                    objtarget = target.type
+                except:
+                    objtarget = None
+                print(f"Obj target = {objtarget}")
 
-                if target == None:
-                    return "NOTARMATURE"
+                if not objtarget:
+                    return None
                 if objtarget == "ARMATURE":
                     return objtarget
                 if objtarget != "ARMATURE":
@@ -160,8 +162,6 @@ def setboneconstraintspace(activearmature, selectedbones, constrainttotarget,tar
 
 
         for con in i.constraints:
-            target = con.target
-            objtarget = target.type
 
             bpy.context.object.data.bones.active = boneToSelect
             if constrainttotarget == "all" or "All":

@@ -87,18 +87,20 @@ def updatebonestandarizationoptions_enum(self, context, key):
     return enum_items
 
 def updatetargetspaceenumlist(self, context):
+    print("RUNNING UPDATETARGETSPACE??")
     von_createcontrols.spaceconsole(5)
     factor = von_buttoncontrols.checkboneconstrainttarget(von_buttoncontrols.getselectedbones(context))
     enumlist = []
-
-    if factor == None:
-        return[("-1000", "NONEVALUE, REPORT ERROR")]
+    print("Factor =")
+    print(factor)
     if factor == "ARMATURE":
+        print("FACTOR ARMATURE")
         enumlist = [("1", "LOCAL", "Description"), ("2", "WORLD", "Description"), ("3", "CUSTOM", "Description"), ("4", "POSE", "Description"), ("5", "LOCAL_WITH_PARENT", "Description"), ("6", "LOCAL_OWNER_ORIENT", "Description")]
         return enumlist
-    if factor == "NOTARMATURE":
+    if factor != "ARMATURE":
+        print("FACTOR NOTARMATURE")
         enumlist = [("1", "LOCAL", "Description"), ("2", "WORLD", "Description"), ("3", "CUSTOM", "Description")]
-        return enumlist
+        return enumlist        
 
 def updateavaliblenamingconventions(self,context):
     namingconventions = ([])
@@ -167,28 +169,6 @@ class MySettings(bpy.types.PropertyGroup):
         self.vrc_tool_options = json.dumps(value)
 #--------------
     pass
-"""
-
-def register_dynamic_properties(props,self,context):
-    options = updatebonestandarizationoptions_enum(self,context)
-
-    for option in list(props.keys()):
-        if option in props:
-            del props[option] 
-
-    for option, bones in options.items():
-        prop_name = option.lower().replace(' ', '_') + "_choice"
-        choices = [(bone, bone, "") for bone in bones]
-        setattr(MySettings, prop_name, bpy.props.EnumProperty(
-            name=f"Bones of {option}",
-            items=choices if choices else [("", "No bones available", "")]  
-        ))
-        if choices:
-            props[prop_name] = choices[0][0]
-        else:
-            props[prop_name] = ""  
-
-"""
 
 
 
@@ -241,9 +221,10 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
         ownerspace = spacebruhs[ownerspacechosen]
         targetspace = spacebruhs[targetspacechosen]
         constraint = constraints[constraintchosen][1]
-
-        von_buttoncontrols.setboneconstraintspace(activearmature, selectedbones, constraint, targetspace, ownerspace)
-
+        try:
+            von_buttoncontrols.setboneconstraintspace(activearmature, selectedbones, constraint, targetspace, ownerspace)
+        except:
+            self.report({'ERROR'}, f"NO TARGET OBJECT SELECTED IN CONSTRAINT - OPERATION ABOARTED")
         return {'FINISHED'}
 
 
