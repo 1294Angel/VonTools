@@ -69,21 +69,23 @@ def updatebonestandarizationoptions(self, context):
 
 
 def updatebonestandarizationoptions_enum(self, context, key):
-    print("")
-    print("UPDATE BONE STANDARDIZATION OPTIONS _ ENUM")
+    """Update Enum items based on the specific key."""
     my_tool = context.scene.my_tool
     selected_dict = my_tool.AvalibleNamingConventions
-    targetdict = von_vrctools.gatherspecificjsondictkeys(selected_dict)
-    all_matches = {}
-    selected_armatures = [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()]
-    all_matches = von_vrctools.filterbonesbyjsondictlist(selected_armatures, von_vrctools.gatherjsondictkeys(self, targetdict), targetdict, self, True)
-    
+    targetdict = von_vrctools.gatherspecificjsondictkeys(selected_dict)  # Replace `von_vrctools` with the appropriate namespace if needed
+    all_matches = von_vrctools.filterbonesbyjsondictlist(
+        [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()],
+        von_vrctools.gatherjsondictkeys(self, targetdict),
+        targetdict,
+        self,
+        True
+    )
+
+    # Filter matches for the specific key
     enum_items = []
     if key in all_matches:
         values = all_matches[key]
-        enum_items = [(choice, choice, "") for choice in values] 
-    print(f"TargetDict = {selected_dict}")
-    print(f"Enum items = {enum_items}")
+        enum_items = [(value, value, "") for value in values]  # Create tuples for EnumProperty
     return enum_items
 
 def updatetargetspaceenumlist(self, context):
@@ -377,23 +379,44 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
         scene = bpy.context.scene
         my_tool = scene.my_tool
 
+        # Retrieve the dynamic dictionary of options
         options = updatebonestandarizationoptions(self, context)
 
         if options:
-            my_tool.set_vrc_tool_options(options)
-            for option, values in options.items():
-                prop_name = option.lower().replace(' ', '_') + "_choice"
+            # Ensure that `_dynamic_options` exists in the tool's settings
+            if not hasattr(my_tool, "_dynamic_options"):
+                my_tool._dynamic_options = {}
+            
+            # Update `_dynamic_options` with the new options
+            my_tool._dynamic_options.update(options)
+
+            # Create dynamic EnumProperties for each key in the options dictionary
+            for option_key, values in options.items():
+                prop_name = option_key.lower().replace(" ", "_") + "_choice"
+
                 if not hasattr(my_tool, prop_name):
+                    # Define a two-argument items function
+                    def items_func(self, context):
+                        # Access the `_dynamic_options` from the scene's tool settings
+                        dynamic_options = context.scene.my_tool._dynamic_options
+                        values = dynamic_options.get(option_key, [])
+                        return [(val, val, "") for val in values]
+
+                    # Dynamically create the EnumProperty
                     setattr(
                         type(my_tool),
                         prop_name,
                         bpy.props.EnumProperty(
-                            items=lambda self, context: updatebonestandarizationoptions_enum(self, context, option),
-                            name=option
+                            name=option_key,
+                            items=items_func
                         )
                     )
+
         context.area.tag_redraw()
         return context.window_manager.invoke_props_dialog(self)
+
+
+
 
     def draw(self, context):
         layout = self.layout
@@ -408,11 +431,11 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
                 for option in options.keys():
                     prop_name = option.lower().replace(' ', '_') + "_choice"
                     if hasattr(my_tool, prop_name):
-                        layout.prop(my_tool, prop_name)
+                        layout.prop(my_tool, prop_name)  # Display the EnumProperty for this key
+                else:
+                    layout.label(text="No options available.")
             else:
                 layout.label(text="No options available.")
-        else:
-            layout.label(text="No options available.")
 
     def execute(self, context):
         scene = bpy.context.scene
@@ -640,6 +663,7 @@ def von_menupopup_register():
     for cls in classes:
         register_class(cls)
     bpy.types.Scene.my_tool = PointerProperty(type=MySettings)
+
 
 
 
