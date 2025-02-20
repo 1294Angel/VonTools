@@ -29,7 +29,6 @@ def getselectedbonesforenum(self, context):
     
 
     constrainttypestmp = getboneconstraints(getselectedbones(context))
-    print(f"Bone Constraints = {constrainttypestmp}")
     index = 0
     for i in constrainttypestmp:        
         index = index + 1
@@ -126,15 +125,12 @@ def checkboneconstrainttarget(bonelist):
     selectedbones = bonelist
 
     for i in selectedbones:
-            print(i.name)
             for con in i.constraints:
                 target = con.target
                 try:
                     objtarget = target.type
                 except:
                     objtarget = None
-                print(f"Obj target = {objtarget}")
-
                 if not objtarget:
                     return None
                 if objtarget == "ARMATURE":
@@ -162,13 +158,16 @@ def setboneconstraintspace(activearmature, selectedbones, constrainttotarget,tar
 
 
         for con in i.constraints:
-
-            bpy.context.object.data.bones.active = boneToSelect
-            if constrainttotarget == "all" or "All":
+            print(con.type)
+            print(bonename)
+            print(f"Contraint target = {constrainttotarget} |||| Con Type = {con.type}")
+            if con.type == constrainttotarget:   
+                print("RUNNING TARGETED")            
                 #Adjust each constraint on the selected bone (i) to be in Local space (need to adjust to work off of a menu str or enum later)
                 bpy.context.object.pose.bones[bonename].constraints[con.name].target_space = targetspace
                 bpy.context.object.pose.bones[bonename].constraints[con.name].owner_space = ownerspace
-            elif con.type == constrainttotarget:               
+            if constrainttotarget == "All":
+                print("TARGETING ALL ")
                 #Adjust each constraint on the selected bone (i) to be in Local space (need to adjust to work off of a menu str or enum later)
                 bpy.context.object.pose.bones[bonename].constraints[con.name].target_space = targetspace
                 bpy.context.object.pose.bones[bonename].constraints[con.name].owner_space = ownerspace

@@ -93,14 +93,10 @@ def updatetargetspaceenumlist(self, context):
     von_createcontrols.spaceconsole(5)
     factor = von_buttoncontrols.checkboneconstrainttarget(von_buttoncontrols.getselectedbones(context))
     enumlist = []
-    print("Factor =")
-    print(factor)
     if factor == "ARMATURE":
-        print("FACTOR ARMATURE")
         enumlist = [("1", "LOCAL", "Description"), ("2", "WORLD", "Description"), ("3", "CUSTOM", "Description"), ("4", "POSE", "Description"), ("5", "LOCAL_WITH_PARENT", "Description"), ("6", "LOCAL_OWNER_ORIENT", "Description")]
         return enumlist
     if factor != "ARMATURE":
-        print("FACTOR NOTARMATURE")
         enumlist = [("1", "LOCAL", "Description"), ("2", "WORLD", "Description"), ("3", "CUSTOM", "Description")]
         return enumlist        
 
