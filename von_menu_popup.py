@@ -56,15 +56,12 @@ def updatejsonkeyoptions(self, context):
     return enum_items
 
 def updatebonestandarizationoptions(self, context):
-    print("")
-    print("UPDATE BONE STANDARDIZATION OPTIONS _ ENUM")
+    all_matches = {}
     my_tool = context.scene.my_tool
     selected_dict = my_tool.AvalibleNamingConventions
     targetdict = von_vrctools.gatherspecificjsondictkeys(selected_dict)
-    all_matches = {}
     selected_armatures = [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()]
     all_matches = von_vrctools.filterbonesbyjsondictlist(selected_armatures, von_vrctools.gatherjsondictkeys(self, targetdict), targetdict, self, True)
-    
     return all_matches
 
 
@@ -72,7 +69,7 @@ def updatebonestandarizationoptions_enum(self, context, key):
     """Update Enum items based on the specific key."""
     my_tool = context.scene.my_tool
     selected_dict = my_tool.AvalibleNamingConventions
-    targetdict = von_vrctools.gatherspecificjsondictkeys(selected_dict)  # Replace `von_vrctools` with the appropriate namespace if needed
+    targetdict = von_vrctools.gatherspecificjsondictkeys(selected_dict)
     all_matches = von_vrctools.filterbonesbyjsondictlist(
         [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()],
         von_vrctools.gatherjsondictkeys(self, targetdict),
@@ -81,11 +78,10 @@ def updatebonestandarizationoptions_enum(self, context, key):
         True
     )
 
-    # Filter matches for the specific key
     enum_items = []
     if key in all_matches:
         values = all_matches[key]
-        enum_items = [(value, value, "") for value in values]  # Create tuples for EnumProperty
+        enum_items = [(value, value, "") for value in values]
     return enum_items
 
 def updatetargetspaceenumlist(self, context):
@@ -148,7 +144,6 @@ class MySettings(bpy.types.PropertyGroup):
         description="Store serialized dictionary as a JSON string",
         default="{}"
     ) # type: ignore
-
 
 #--------------
     AvalibleNamingConventions: bpy.props.EnumProperty(
@@ -418,8 +413,7 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
         layout = self.layout
         my_tool = context.scene.my_tool
 
-        layout.prop(my_tool, "AvalibleNamingConventions")
-        layout.separator()
+        
 
         if hasattr(my_tool, 'vrc_tool_options'):
             options = my_tool.get_vrc_tool_options()
@@ -630,11 +624,12 @@ class VONPANEL_PT_VRCTools(VonPanel, bpy.types.Panel):
         my_tool = context.scene.my_tool
         row = layout.row()
         scene = context.scene
-        row.label(text= "VRChat Tools", icon= 'CUBE')
+        layout.label(text= "VRChat Tools", icon= 'CUBE')
         layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator("von.vrcsavebonenametodict")
-        #layout.operator("von.testbutton", text = "Test Button!")
-        layout.operator("von.initialize_armatures", text="Merge Armatures")
+        row = layout.row()
+        row.prop(my_tool, "AvalibleNamingConventions")
+        row.operator("von.initialize_armatures", text="Merge Armatures")
 
 classes = (
     MySettings,

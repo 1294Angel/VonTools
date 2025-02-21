@@ -156,61 +156,6 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list,targetdict, self
 
 
 """
-
-def filterbonesbyjsondictlist_fordrawcall(selected_armatures,json_data_list,targetdict):
-    all_duplicatematches = {}
-    matches = []
-    if len(selected_armatures) > 0:
-        for armature in selected_armatures:
-            print(armature.name)
-            bpy.context.view_layer.objects.active = armature
-            for bone in armature.pose.bones:
-                bonename = von_buttoncontrols.splitstringfromadditionalbones(bone.name.lower())
-                matches = []
-                #have it check through the target dict and only search ALL dicts when it cannot find it in the target dict
-                for data in targetdict:
-                    for key, list_data in data.items():
-
-                        if bonename in key.lower or list_data:
-                            print(f"{bonename} FOUND")
-
-
-                        if bonename == key.lower():
-                            if key not in matches:
-                                bpy.context.object.data.bones[bone.name].color.palette = "THEME03"
-                                matches.append(key)
-                        # Check for partial match in the list data
-                        elif bonename in [item.lower() for item in list_data]:
-                            if key not in matches:
-                                matches.append(key)
-                                print(f"{bonename} Found - Placed in matches")
-                        else:
-                            for dictionarylist in json_data_list:
-                                for key, list_data in dictionarylist.items():
-                                    if bonename == key.lower():
-                                        if key not in matches:
-                                            bpy.context.object.data.bones[bone.name].color.palette = "THEME03"
-                                            matches.append(key)
-                                            print(f"{bonename} Found - Placed in matches")
-                                        elif key in matches:
-                                            all_duplicatematches[key] = bone.name
-                                    # Check for partial match in the list data
-                                    elif bonename in [item.lower() for item in list_data]:
-                                        if key not in matches:
-                                            matches.append(key)
-                                        elif key in matches:
-                                            all_duplicatematches[key] = bone.name
-                            continue
-    
-
-    print("All Duplicate Matches")
-    print(all_duplicatematches)
-    print("")
-    print("All Matches")
-    print(matches)
-    return all_duplicatematches
-"""
-"""
 #returns: all_matches (Dict where key is original bone name and the list is the list of options for renaming when there are more than 1) - Undetected Bones (Bones to colour to red and copy paste to the new armature) - bonestorename (Dict where bonename is the key and the list is the name to rename it to)
 def filterbonesbyjsondictlist(selected_armatures,json_data_list,shouldrename,self,targetdict):
     #Gathering intial context data to allow minimal obstruction to the end user
