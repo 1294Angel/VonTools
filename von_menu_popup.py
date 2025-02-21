@@ -149,7 +149,6 @@ class MySettings(bpy.types.PropertyGroup):
         default="{}"
     ) # type: ignore
 
-
 #--------------
     AvalibleNamingConventions: bpy.props.EnumProperty(
         name = "AvalibleNamingConventions",
@@ -418,8 +417,7 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
         layout = self.layout
         my_tool = context.scene.my_tool
 
-        layout.prop(my_tool, "AvalibleNamingConventions")
-        layout.separator()
+        
 
         if hasattr(my_tool, 'vrc_tool_options'):
             options = my_tool.get_vrc_tool_options()
@@ -630,11 +628,12 @@ class VONPANEL_PT_VRCTools(VonPanel, bpy.types.Panel):
         my_tool = context.scene.my_tool
         row = layout.row()
         scene = context.scene
-        row.label(text= "VRChat Tools", icon= 'CUBE')
+        layout.label(text= "VRChat Tools", icon= 'CUBE')
         layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator("von.vrcsavebonenametodict")
-        #layout.operator("von.testbutton", text = "Test Button!")
-        layout.operator("von.initialize_armatures", text="Merge Armatures")
+        row = layout.row()
+        row.prop(my_tool, "AvalibleNamingConventions")
+        row.operator("von.initialize_armatures", text="Merge Armatures")
 
 classes = (
     MySettings,
