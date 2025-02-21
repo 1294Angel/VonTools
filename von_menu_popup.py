@@ -374,33 +374,15 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
         options = updatebonestandarizationoptions(self, context)
 
         if options:
-            # Ensure that `_dynamic_options` exists in the tool's settings
-            if not hasattr(my_tool, "_dynamic_options"):
-                my_tool._dynamic_options = {}
-            
-            # Update `_dynamic_options` with the new options
-            my_tool._dynamic_options.update(options)
-
-            # Create dynamic EnumProperties for each key in the options dictionary
-            for option_key, values in options.items():
-                prop_name = option_key.lower().replace(" ", "_") + "_choice"
-
-                if not hasattr(my_tool, prop_name):
-                    # Define a two-argument items function
-                    def items_func(self, context):
-                        # Access the `_dynamic_options` from the scene's tool settings
-                        dynamic_options = context.scene.my_tool._dynamic_options
-                        values = dynamic_options.get(option_key, [])
-                        return [(val, val, "") for val in values]
-
-                    # Dynamically create the EnumProperty
+            my_tool.set_vrc_tool_options(options)
+            for option, values in options.items():
+                prop_name = option.lower().replace(' ', '_') + "_choice"
+                if not hasattr(my_tool, prop_name): 
+                    enum_items = [(choice, choice, "") for choice in values]
                     setattr(
                         type(my_tool),
                         prop_name,
-                        bpy.props.EnumProperty(
-                            name=option_key,
-                            items=items_func
-                        )
+                        bpy.props.EnumProperty(items=enum_items, name=option),
                     )
 
         context.area.tag_redraw()
