@@ -1,0 +1,190 @@
+{
+    "COMMENTS": [
+        "ALWAYS LOWERCASE"
+    ],
+    "Hips": [
+        "pelvis",
+        "hips"
+    ],
+    "pelvis": [
+        "pelvis"
+    ],
+    "pelvis.L": [
+        "pelvis.l"
+    ],
+    "pelvis.R": [
+        "pelvis.r"
+    ],
+    "thigh.L": [
+        "upperleg_l",
+        "upperleg.l",
+        "thigh.l"
+    ],
+    "thigh.R": [
+        "thigh.r",
+        "upperleg_r"
+    ],
+    "shin.L": [
+        "shin.l",
+        "lowerleg_l"
+    ],
+    "shin.R": [
+        "shin.r",
+        "lowerleg_r"
+    ],
+    "foot.L": [
+        "foot.l",
+        "foot_l"
+    ],
+    "foot.R": [
+        "foot.r",
+        "foot_r"
+    ],
+    "Spine": [
+        "spine"
+    ],
+    "Chest": [
+        "chest",
+        "spine.003"
+    ],
+    "breast.L": [
+        "breast.l"
+    ],
+    "breast.R": [
+        "breast.r"
+    ],
+    "UpperChest": [],
+    "spine.004": [
+        "neck"
+    ],
+    "spine.006": [
+        "head"
+    ],
+    "shoulder.L": [
+        "shoulder.l"
+    ],
+    "shoulder.R": [
+        "shoulder.r"
+    ],
+    "upper_arm.L": [
+        "upper_arm.l"
+    ],
+    "upper_arm_twist.L": [
+        "upperarm_l_twist"
+    ],
+    "upper_arm.R": [
+        "upperarm_r"
+    ],
+    "upper_arm_twist.R": [
+        "upperarm_r_twist"
+    ],
+    "forearm.L": [
+        "forearm.l"
+    ],
+    "forearm.R": [
+        "forearm.r"    
+    ],
+    "hand.L": [
+        "hand.l"
+    ],
+    "hand.R": [
+        "hand.r"
+    ],
+    "toe.L": [
+        "toe.l"
+    ],
+    "toe.R": [
+        "toe.r"
+    ],
+    "eye.L": [
+        "lefteye"
+    ],
+    "eye.R": [
+        "righteye"
+    ],
+    "Jaw": [
+        "jaw"
+    ],
+    "butt.L": [
+        "butt_l"
+    ],
+    "butt.R": [
+        "butt_r"
+    ],
+    "tail": [
+        "tail"
+    ],
+    "f_index.01.L": [
+        "indexproximal_r"
+    ],
+    "f_index.02.L": [
+        "indexintermediate_r"
+    ],
+    "f_index.03.L": [
+        "indexdistal_r"
+    ],
+    "f_middle.01.L": [
+        "middleproximal_r"
+    ],
+    "f_middle.02.L": [
+        "middleintermediate_r"
+    ],
+    "f_middle.03.L": [
+        "middledistal_r"
+    ],
+    "f_ring.01.L": [
+        "ringproximal_r"
+    ],
+    "f_ring.02.L": [
+        "ringintermediate_r"
+    ],
+    "f_ring.03.L": [
+        "ringdistal_r"
+    ],
+    "f_pinky.01.L": [
+        "littleproximal_r"
+    ],
+    "f_pinky.02.L": [
+        "littleintermediate_r"
+    ],
+    "f_pinky.03.L": [
+        "littledistal_r"
+    ],
+    "f_index.01.R": [
+        "indexproximal_r"
+    ],
+    "f_index.02.R": [
+        "indexintermediate_r"
+    ],
+    "f_index.03.R": [
+        "indexdistal_r"
+    ],
+    "f_middle.01.R": [
+        "middleproximal_r"
+    ],
+    "f_middle.02.R": [
+        "middleintermediate_r"
+    ],
+    "f_middle.03.R": [
+        "middledistal_r"
+    ],
+    "f_ring.01.R": [
+        "ringproximal_r"
+    ],
+    "f_ring.02.R": [
+        "ringintermediate_r"
+    ],
+    "f_ring.03.R": [
+        "ringdistal_r"
+    ],
+    "f_pinky.01.R": [
+        "littleproximal_r"
+    ],
+    "f_pinky.02.R": [
+        "littleintermediate_r"
+    ],
+    "f_pinky.03.R": [
+        "littledistal_r"
+    ],
+    "LastBone": []
+}

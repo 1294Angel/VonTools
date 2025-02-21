@@ -8,11 +8,9 @@ from . import von_createcontrols
 def poll(compstr):
     active_object = bpy.context.mode
     if active_object == compstr:
-        bool = True
-        return bool
+        return True
     if active_object != compstr:
-        bool = False
-        return bool
+        return False
 
 #Functional only when taking in context
 def getselectedbones(context):
@@ -28,13 +26,11 @@ def getselectedbonesforenum(self, context):
 
     addtoenum = tuple(("0","All","Target All Detected Constraints"))
     enumlist.append(addtoenum)
+    
 
     constrainttypestmp = getboneconstraints(getselectedbones(context))
-    
     index = 0
-    for i in constrainttypestmp:
-        toadd = ()
-        
+    for i in constrainttypestmp:        
         index = index + 1
         indexstr = str(index)
         
@@ -54,16 +50,11 @@ def splitstringfromadditionalbones(input_string):
     else:
         return input_string
 
-    """
-    if re.search(r'[LR]\d', input_string):
-        return re.split(r'(?<=\w)(?=[._])|(?<=[._])(?=\d)', input_string)[0]
-    if re.search(r'^[\w]+[._]?[LR]$', input_string):
-        return input_string
-    return re.split(r'(?<=\w)(?=[._])', input_string)[0]
-    """
 
 #Functional
 def colorizerig(context):
+    #target_armature = bpy.context.view_layer.objects.active
+
     if poll("POSE") == True:
         lst_bones = getselectedbones(context)
         lst_bonenames = []
@@ -96,6 +87,7 @@ def colorizerig(context):
             if iendswithR:
                 bpy.context.object.data.bones[i].color.palette = 'THEME03'
                 bpy.context.object.pose.bones[i].color.palette = 'THEME03'
+
 
 
 
@@ -135,10 +127,12 @@ def checkboneconstrainttarget(bonelist):
     for i in selectedbones:
             for con in i.constraints:
                 target = con.target
-                objtarget = target.type
-
-                if target == None:
-                    return "NOTARMATURE"
+                try:
+                    objtarget = target.type
+                except:
+                    objtarget = None
+                if not objtarget:
+                    return None
                 if objtarget == "ARMATURE":
                     return objtarget
                 if objtarget != "ARMATURE":
@@ -164,15 +158,16 @@ def setboneconstraintspace(activearmature, selectedbones, constrainttotarget,tar
 
 
         for con in i.constraints:
-            target = con.target
-            objtarget = target.type
-
-            bpy.context.object.data.bones.active = boneToSelect
-            if constrainttotarget == "all" or "All":
+            print(con.type)
+            print(bonename)
+            print(f"Contraint target = {constrainttotarget} |||| Con Type = {con.type}")
+            if con.type == constrainttotarget:   
+                print("RUNNING TARGETED")            
                 #Adjust each constraint on the selected bone (i) to be in Local space (need to adjust to work off of a menu str or enum later)
                 bpy.context.object.pose.bones[bonename].constraints[con.name].target_space = targetspace
                 bpy.context.object.pose.bones[bonename].constraints[con.name].owner_space = ownerspace
-            elif con.type == constrainttotarget:               
+            if constrainttotarget == "All":
+                print("TARGETING ALL ")
                 #Adjust each constraint on the selected bone (i) to be in Local space (need to adjust to work off of a menu str or enum later)
                 bpy.context.object.pose.bones[bonename].constraints[con.name].target_space = targetspace
                 bpy.context.object.pose.bones[bonename].constraints[con.name].owner_space = ownerspace

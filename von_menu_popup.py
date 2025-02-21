@@ -5,10 +5,7 @@
 
 
 import bpy, sys, os, re, json # type: ignore
-from bpy.types import Operator # type: ignore
-from bpy_extras.object_utils import AddObjectHelper # type: ignore
-from bpy.types import Operator # type: ignore
-from bpy_extras.object_utils import object_data_add # type: ignore
+from bpy_extras.object_utils import (AddObjectHelper, object_data_add) # type: ignore
 from mathutils import Vector # type: ignore
 from math import radians # type: ignore
 from pathlib import Path
@@ -25,8 +22,6 @@ from bpy.types import (Panel, # type: ignore
                        Operator,
                        PropertyGroup,
                        )
-
-
 from . import von_buttoncontrols
 from . import von_createcontrols
 from . import von_vrctools
@@ -60,29 +55,55 @@ def updatejsonkeyoptions(self, context):
 
     return enum_items
 
-def updatebonestandarizationoptions_enum(self):
+def updatebonestandarizationoptions(self, context):
     all_matches = {}
+    my_tool = context.scene.my_tool
+    selected_dict = my_tool.AvalibleNamingConventions
+    targetdict = von_vrctools.gatherspecificjsondictkeys(selected_dict)
     selected_armatures = [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()]
-    all_matches = von_vrctools.filterbonesbyjsondictlist_fordrawcall(selected_armatures,von_vrctools.gatherjsondictkeys(self))
+    all_matches = von_vrctools.filterbonesbyjsondictlist(selected_armatures, von_vrctools.gatherjsondictkeys(self, targetdict), targetdict, self, True)
     return all_matches
 
 
+def updatebonestandarizationoptions_enum(self, context, key):
+    """Update Enum items based on the specific key."""
+    my_tool = context.scene.my_tool
+    selected_dict = my_tool.AvalibleNamingConventions
+    targetdict = von_vrctools.gatherspecificjsondictkeys(selected_dict)
+    all_matches = von_vrctools.filterbonesbyjsondictlist(
+        [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()],
+        von_vrctools.gatherjsondictkeys(self, targetdict),
+        targetdict,
+        self,
+        True
+    )
 
+    enum_items = []
+    if key in all_matches:
+        values = all_matches[key]
+        enum_items = [(value, value, "") for value in values]
+    return enum_items
 
 def updatetargetspaceenumlist(self, context):
+    print("RUNNING UPDATETARGETSPACE??")
     von_createcontrols.spaceconsole(5)
     factor = von_buttoncontrols.checkboneconstrainttarget(von_buttoncontrols.getselectedbones(context))
     enumlist = []
-
-    if factor == None:
-        return[("-1000", "NONEVALUE, REPORT ERROR")]
     if factor == "ARMATURE":
         enumlist = [("1", "LOCAL", "Description"), ("2", "WORLD", "Description"), ("3", "CUSTOM", "Description"), ("4", "POSE", "Description"), ("5", "LOCAL_WITH_PARENT", "Description"), ("6", "LOCAL_OWNER_ORIENT", "Description")]
         return enumlist
-    if factor == "NOTARMATURE":
+    if factor != "ARMATURE":
         enumlist = [("1", "LOCAL", "Description"), ("2", "WORLD", "Description"), ("3", "CUSTOM", "Description")]
-        return enumlist
-    
+        return enumlist        
+
+def updateavaliblenamingconventions(self,context):
+    namingconventions = ([])
+    directory_path = von_vrctools.get_directory() + "/Libraries/BoneNames"
+    for filename in os.listdir(directory_path):
+        filename = str(filename)
+        namingconventions.append((filename,filename,"This is a fileame"))
+    print(f"Naming Conventions {namingconventions}")
+    return namingconventions
 
 # ------------------------------------------------------------------------
 #    Scene Properties
@@ -90,41 +111,7 @@ def updatetargetspaceenumlist(self, context):
 
 class MySettings(bpy.types.PropertyGroup):
 #--------------
-    my_bool : BoolProperty(
-        name="Enable or Disable",
-        description="A bool property",
-        default = False
-        ) # type: ignore
-
-    my_int : IntProperty(
-        name = "Set a value",
-        description="A integer property",
-        default = 23,
-        min = 10,
-        max = 100
-        ) # type: ignore
-
-    my_float : FloatProperty(
-        name = "Set a value",
-        description = "A float property",
-        default = 23.7,
-        min = 0.01,
-        max = 30.0
-        ) # type: ignore
-        
-    bonebeingsearched: StringProperty(
-        name="String",
-        description="",
-        default="",
-        maxlen=1024,
-        ) # type: ignore
-
-    my_enum: EnumProperty(
-        name = "",
-        description = "",   
-        items = [],
-    ) # type: ignore
-#--------------
+  
     ExistingBoneConstraints_enum : bpy.props.EnumProperty(
         name = "",
         description = "",
@@ -158,32 +145,13 @@ class MySettings(bpy.types.PropertyGroup):
         default="{}"
     ) # type: ignore
 
-
 #--------------
-    selected_option: bpy.props.EnumProperty(
-        name="Select Option",
-        description="Choose an option from the list",
-        items=lambda self, context: self.get_option_items(context),
+    AvalibleNamingConventions: bpy.props.EnumProperty(
+        name = "AvalibleNamingConventions",
+        description = "Choose an option from the list to standardize naming conventions",
+        items = updateavaliblenamingconventions,
     ) # type: ignore
-    
-    selected_choice: bpy.props.EnumProperty(
-        name="Select Choice",
-        description="Choose a choice from the selected option",
-        items=lambda self, context: self.get_choice_items(context),
-    ) # type: ignore
-
 #--------------
-    def get_option_items(self, context):
-        """Generate a list of options for the EnumProperty"""
-        options = updatebonestandarizationoptions_enum(self)
-        return [(key, key, "") for key in options.keys()]
-
-    def get_choice_items(self, context):
-        """Generate a list of choices based on the selected option"""
-        options = updatebonestandarizationoptions_enum(self)
-        selected_option = self.selected_option
-        choices = options.get(selected_option, [])
-        return [(choice, choice, "") for choice in choices]
 
     def get_vrc_tool_options(self):
         """Deserialize the JSON string into a dictionary."""
@@ -194,27 +162,6 @@ class MySettings(bpy.types.PropertyGroup):
         self.vrc_tool_options = json.dumps(value)
 #--------------
     pass
-
-def register_dynamic_properties(props,self):
-    """Register dynamic properties based on selected armatures in the scene."""
-    options = updatebonestandarizationoptions_enum(self)
-
-    for option in list(props.keys()):
-        if option in props:
-            del props[option] 
-
-    for option, bones in options.items():
-        prop_name = option.lower().replace(' ', '_') + "_choice"
-        choices = [(bone, bone, "") for bone in bones]
-        setattr(MySettings, prop_name, bpy.props.EnumProperty(
-            name=f"Bones of {option}",
-            items=choices if choices else [("", "No bones available", "")]  
-        ))
-        if choices:
-            props[prop_name] = choices[0][0]
-        else:
-            props[prop_name] = ""  
-
 
 
 
@@ -267,9 +214,10 @@ class VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace(bpy.types.Operato
         ownerspace = spacebruhs[ownerspacechosen]
         targetspace = spacebruhs[targetspacechosen]
         constraint = constraints[constraintchosen][1]
-
-        von_buttoncontrols.setboneconstraintspace(activearmature, selectedbones, constraint, targetspace, ownerspace)
-
+        try:
+            von_buttoncontrols.setboneconstraintspace(activearmature, selectedbones, constraint, targetspace, ownerspace)
+        except:
+            self.report({'ERROR'}, f"NO TARGET OBJECT SELECTED IN CONSTRAINT - OPERATION ABOARTED")
         return {'FINISHED'}
 
 
@@ -411,18 +359,20 @@ class Von_Popout_SaveBoneNameToDict(bpy.types.Operator):
         layout.prop(mytool, "jsondictionaryoptions_enum")
         layout.prop(mytool, "jsondictionarykeyoptions_enum")
 
+
 class Von_InitializeArmaturesOperator(bpy.types.Operator):
     """Operator to initialize armatures and register dynamic properties."""
     bl_idname = "von.initialize_armatures"
     bl_label = "Initialize Armatures"
-    bl_description = "Merge 2 or more selected armatures, the active armature will be the target that all additional bones, armature scales and meshes will be focused on." 
+    bl_description = "Merge 2 or more selected armatures, the active armature will be the target that all additional bones, armature scales, and meshes will be focused on."
 
     def invoke(self, context, event):
         scene = bpy.context.scene
         my_tool = scene.my_tool
-        
 
-        options = updatebonestandarizationoptions_enum(self)
+        # Retrieve the dynamic dictionary of options
+        options = updatebonestandarizationoptions(self, context)
+
         if options:
             my_tool.set_vrc_tool_options(options)
             for option, values in options.items():
@@ -435,29 +385,36 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
                         bpy.props.EnumProperty(items=enum_items, name=option),
                     )
 
+        context.area.tag_redraw()
         return context.window_manager.invoke_props_dialog(self)
+
+
+
 
     def draw(self, context):
         layout = self.layout
         my_tool = context.scene.my_tool
+
+        
+
         if hasattr(my_tool, 'vrc_tool_options'):
             options = my_tool.get_vrc_tool_options()
             if options:
                 for option in options.keys():
                     prop_name = option.lower().replace(' ', '_') + "_choice"
                     if hasattr(my_tool, prop_name):
-                        layout.prop(my_tool, prop_name)
+                        layout.prop(my_tool, prop_name)  # Display the EnumProperty for this key
+                else:
+                    layout.label(text="No options available.")
             else:
                 layout.label(text="No options available.")
-        else:
-            layout.label(text="No options available.")
 
     def execute(self, context):
         scene = bpy.context.scene
         my_tool = scene.my_tool
         selected_armatures = [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()]
-
-        all_matches, undetectedbones, bonestorename = von_vrctools.filterbonesbyjsondictlist(selected_armatures, von_vrctools.gatherjsondictkeys(self), True, self)
+        targetdict = my_tool.AvalibleNamingConventions
+        duplicatematches, undetectedbones, bonestorename = von_vrctools.filterbonesbyjsondictlist(selected_armatures, von_vrctools.gatherjsondictkeys(self, targetdict),targetdict, self, False)
         initiallyselectedarmature = bpy.context.view_layer.objects.active
 
         #Standardizing Bone Names Between Armatures For Easier Modification Later On
@@ -649,11 +606,12 @@ class VONPANEL_PT_VRCTools(VonPanel, bpy.types.Panel):
         my_tool = context.scene.my_tool
         row = layout.row()
         scene = context.scene
-        row.label(text= "VRChat Tools", icon= 'CUBE')
+        layout.label(text= "VRChat Tools", icon= 'CUBE')
         layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator("von.vrcsavebonenametodict")
-        #layout.operator("von.testbutton", text = "Test Button!")
-        layout.operator("von.initialize_armatures", text="Merge Armatures")
+        row = layout.row()
+        row.prop(my_tool, "AvalibleNamingConventions")
+        row.operator("von.initialize_armatures", text="Merge Armatures")
 
 classes = (
     MySettings,
@@ -678,6 +636,7 @@ def von_menupopup_register():
     for cls in classes:
         register_class(cls)
     bpy.types.Scene.my_tool = PointerProperty(type=MySettings)
+
 
 
 
