@@ -75,7 +75,9 @@ def gatherjsondictkeys(self,targetdict):
                         self.report({'ERROR'}, f"Error reading {filename}: {e}")
     return json_data_list
 
+
 def gatherspecificjsondictkeys(targetfilename):
+    #print(f"DEBUG:Targetfilename is - {targetfilename}")
     json_data_list = []
     directory_path = get_directory() + "/Libraries/BoneNames"
     for filename in os.listdir(directory_path):
@@ -87,29 +89,28 @@ def gatherspecificjsondictkeys(targetfilename):
                     if isinstance(data, dict):
                         json_data_list.append(data)  # Store dictionaries
             except json.JSONDecodeError as e:
-                print(f"Error reading {filename}: {e}")
+                self.report({'ERROR'}, f"Error reading {filename}: {e}")
     return json_data_list
 
 #Search If A Bone Is In A Given Dictionarty
 def search_dict(dictionary, bonename):
     matches = [] # Using a list rather than just returning here so that I get a list of all possible names to rename that bone to rather than just the first
     found = False
-    for data in dictionary:
-        for key, value in data.items():
-            if bonename in key:
-                found = True
-                matches.append(key)
-        for key, value in data.items():
-            if bonename in value:
-                found = True
-                matches.append(key)
+    for key, value in dictionary.items():
+        if bonename == key:
+            found = True
+            matches.append(key)
+        if bonename in value:
+            found = True
+            matches.append(key)
 
-    if found == True:
-        return found, matches
-    if found == False:
-        return found, None
+    return found, matches if found else None
            
-def filterbonesbyjsondictlist(selected_armatures,json_data_list,targetdict, self, isdraw):
+def filterbonesbyjsondictlist(selected_armatures,targetdict, self, isdraw):
+    jsondictkeys = gatherjsondictkeys(self,targetdict)
+    prioritydict = gatherspecificjsondictkeys(targetdict)
+    #print(f"DEBUG:prioritydict is - {prioritydict}")
+    von_createcontrols.spaceconsole(3)
     duplicatematches = {}
     bonestorename = {}
     undetectedbones = []
@@ -119,32 +120,35 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list,targetdict, self
                 matches = []
                 bonename = bone.name
                 bonename = bonename.lower()
-                found, names = search_dict(targetdict, bonename) ##
+                found, names = search_dict(prioritydict[0], bonename) #Search PRIORITY dict
                 if found == True:
                     if len(names) > 1:
                         duplicatematches[bone.name] = names
                     if len(names) == 1:
                         matches.append(names)
                     if len(names) <= 0:
-                        print("ERROR - search_dict - Returning TRUE + NONE - Should be TRUE + ListOfKeys or False + None")
                         continue
                 if found == False:
-                    secondaryfound, secondarynames = search_dict(json_data_list, bonename)
-                    if secondaryfound == True:
-                        if len(secondarynames) > 1:
-                            duplicatematches[bone.name] = secondarynames
-                        if len(secondarynames) == 1:
-                            matches.append(secondarynames)
-                        if len(secondarynames) <= 0:
-                            print("ERROR - search_dict - Returning TRUE + NONE - Should be TRUE + ListOfKeys or False + None")
-                            continue
+                    
+                    for dict in jsondictkeys:
+                        secondaryfound, secondarynames = search_dict(dict, bonename) # Search Secondary Dictionaries
+                        if secondaryfound == True:
+                            if len(secondarynames) > 1:
+                                duplicatematches[bone.name] = secondarynames
+                            if len(secondarynames) == 1:
+                                if len(matches) < 1:
+                                    matches.append(secondarynames)
+                            if len(secondarynames) <= 0:#
+                                continue
                     if secondaryfound == False:
                         undetectedbones.append(bone.name)
                 if len(matches) == 1:
-                    bonestorename[bone.name] = matches[0]
-        print(f"DictList_ForDrawcall -- Duplicate Matches = {duplicatematches}")
+                    for i in matches:
+                        bonestorename[bone.name] = i
         if isdraw == False:
-            rename_bones_from_dict(selected_armatures,matches,self)
+            von_createcontrols.spaceconsole(2)
+            von_createcontrols.spaceconsole(2)
+            rename_bones_from_dict(selected_armatures,bonestorename,self)
     if isdraw == True:
         return duplicatematches
     if isdraw == False:
@@ -152,82 +156,24 @@ def filterbonesbyjsondictlist(selected_armatures,json_data_list,targetdict, self
     
 
 
-    
-
-
-"""
-#returns: all_matches (Dict where key is original bone name and the list is the list of options for renaming when there are more than 1) - Undetected Bones (Bones to colour to red and copy paste to the new armature) - bonestorename (Dict where bonename is the key and the list is the name to rename it to)
-def filterbonesbyjsondictlist(selected_armatures,json_data_list,shouldrename,self,targetdict):
-    #Gathering intial context data to allow minimal obstruction to the end user
-    initialcontext = bpy.context.object.mode
-    initalarmature = bpy.context.view_layer.objects.active
-
-    all_duplicatematches = {}
-    undetectedbones = []
-    bonestorename = {}
-    if len(selected_armatures) > 0:
-        for armature in selected_armatures:
-            bpy.context.view_layer.objects.active = armature
-            for bone in armature.pose.bones:
-                bonename = von_buttoncontrols.splitstringfromadditionalbones(bone.name.lower())
-                matches = []
-                #have it check through the target dict and only search ALL dicts when it cannot find it in the target dict
-
-                for data in targetdict:
-                    for key, list_data in data.items():
-                        if bonename == key.lower():
-                            if key not in matches:
-                                bpy.context.object.data.bones[bone.name].color.palette = "THEME03"
-                                matches.append(key)
-                        # Check for partial match in the list data
-                        elif bonename in [item.lower() for item in list_data]:
-                            if key not in matches:
-                                matches.append(key)
-                        else:
-                            for dictionarylist in json_data_list:
-                                for key, list_data in dictionarylist.items():
-                                    if bonename == key.lower():
-                                        if key not in matches:
-                                            bpy.context.object.data.bones[bone.name].color.palette = "THEME03"
-                                            matches.append(key)
-                                    # Check for partial match in the list data
-                                    elif bonename in [item.lower() for item in list_data]:
-                                        if key not in matches:
-                                            matches.append(key)
-                            continue
-                if len(matches) == 0:
-                    if bone.name not in undetectedbones:
-                        undetectedbones.append(bone.name)
-                else:
-                    if len(matches) > 1:
-                        all_duplicatematches[bone.name] = matches  # Store all matches
-                    elif len(matches) == 1:
-                        bonestorename[bone.name] = matches[0]
-        if shouldrename == True:
-            rename_bones_from_dict(selected_armatures,bonestorename,self)
-    #Setting everything back to how it was prior to running the script to minimise inconvinences and cut off edge cases
-    bpy.context.view_layer.objects.active = initalarmature
-    bpy.ops.object.mode_set(mode=initialcontext)
-
-    return all_duplicatematches, undetectedbones, bonestorename
-"""
 
 def rename_bones_from_dict(armaturelist, rename_dict,self):
     for armature in armaturelist:
-        bpy.context.view_layer.objects.active = armature
-        posebones = armature.data.bones
-        for key in rename_dict:
-            if key in posebones:
-                bpy.context.object.data.bones[key].color.palette = "THEME03"
+        #bpy.context.view_layer.objects.active = armature
+        #posebones = armature.data.bones
+        #for key in rename_dict:
+        #    if key in posebones:
+        #        bpy.context.object.data.bones[key].color.palette = "THEME03"
         
         bpy.ops.object.mode_set(mode='EDIT')
         edit_bones = armature.data.edit_bones
         for old_name, new_name in rename_dict.items():
             if old_name in edit_bones:
                 try:
-                    edit_bones[old_name].name = new_name
+                    edit_bones[old_name].name = new_name[0]
                 except Exception as e:
                     self.report({'ERROR'}, f"Error renaming bone '{old_name}': {e}")
+        bpy.ops.object.mode_set(mode='OBJECT')
 
 def setrelativescalemod(sourcearmatures,targetarmature, self):
     targetheight = targetarmature.dimensions.z
@@ -301,7 +247,6 @@ def generateextrabone(source_armatures, target_armature, self):
 
     
     setallarmaturecontext('OBJECT')
-    print(f"Added bones = {addedbones}")
     return(addedbones)
 
 
@@ -321,8 +266,7 @@ def moveskeletalmesh(selectedarmatures, target_armature,self):
                             modifier.object = target_armature
                             obj.location = target_armature.location + relative_offset
                             
-def animretargeter(target_armature,selectedarmatures,self):
-    target_bones = target_armature.data.bones
+
     
 
 """

@@ -61,31 +61,11 @@ def updatebonestandarizationoptions(self, context):
     selected_dict = my_tool.AvalibleNamingConventions
     targetdict = von_vrctools.gatherspecificjsondictkeys(selected_dict)
     selected_armatures = [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()]
-    all_matches = von_vrctools.filterbonesbyjsondictlist(selected_armatures, von_vrctools.gatherjsondictkeys(self, targetdict), targetdict, self, True)
+    all_matches = von_vrctools.filterbonesbyjsondictlist(selected_armatures, selected_dict, self, True)
     return all_matches
 
 
-def updatebonestandarizationoptions_enum(self, context, key):
-    """Update Enum items based on the specific key."""
-    my_tool = context.scene.my_tool
-    selected_dict = my_tool.AvalibleNamingConventions
-    targetdict = von_vrctools.gatherspecificjsondictkeys(selected_dict)
-    all_matches = von_vrctools.filterbonesbyjsondictlist(
-        [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()],
-        von_vrctools.gatherjsondictkeys(self, targetdict),
-        targetdict,
-        self,
-        True
-    )
-
-    enum_items = []
-    if key in all_matches:
-        values = all_matches[key]
-        enum_items = [(value, value, "") for value in values]
-    return enum_items
-
 def updatetargetspaceenumlist(self, context):
-    print("RUNNING UPDATETARGETSPACE??")
     von_createcontrols.spaceconsole(5)
     factor = von_buttoncontrols.checkboneconstrainttarget(von_buttoncontrols.getselectedbones(context))
     enumlist = []
@@ -102,7 +82,6 @@ def updateavaliblenamingconventions(self,context):
     for filename in os.listdir(directory_path):
         filename = str(filename)
         namingconventions.append((filename,filename,"This is a fileame"))
-    print(f"Naming Conventions {namingconventions}")
     return namingconventions
 
 # ------------------------------------------------------------------------
@@ -299,13 +278,7 @@ class Von_Dropdown_AddCustomBoneshape(bpy.types.Operator):
         bpy.context.view_layer.objects.active = bpy.data.objects[temp_activearmature]
         bpy.ops.object.mode_set(mode = 'POSE')
         von_buttoncontrols.searchforbone(temp_activearmature,temp_activebone)
-        von_createcontrols.setcontrol(controltouse)
-
-
-
-
-
-
+        bpy.context.active_pose_bone.custom_shape = bpy.data.objects[str(controltouse)]
         return {'FINISHED'}    
 
 class Von_Popout_SaveBoneNameToDict(bpy.types.Operator):
@@ -414,7 +387,7 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
         my_tool = scene.my_tool
         selected_armatures = [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()]
         targetdict = my_tool.AvalibleNamingConventions
-        duplicatematches, undetectedbones, bonestorename = von_vrctools.filterbonesbyjsondictlist(selected_armatures, von_vrctools.gatherjsondictkeys(self, targetdict),targetdict, self, False)
+        duplicatematches, undetectedbones, bonestorename = von_vrctools.filterbonesbyjsondictlist(selected_armatures,targetdict, self, False)
         initiallyselectedarmature = bpy.context.view_layer.objects.active
 
         #Standardizing Bone Names Between Armatures For Easier Modification Later On
@@ -457,9 +430,6 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
                 if obj.type == 'ARMATURE' and obj != target_armature.name:
                     source_armatures.append(obj)
 
-            # Debug output
-            #print(f"Target Armature: {target_armature.name if target_armature else 'None'}")
-            #print(f"Source Armatures: {[obj.name for obj in source_armatures]}")
         if target_armature:
             #Generating the bones
             von_vrctools.setrelativescalemod(selected_armatures, target_armature, self)
@@ -467,7 +437,6 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
             von_vrctools.moveskeletalmesh(selected_armatures, target_armature,self)
             target_armature_bones = target_armature.data.bones
             for bone in createdbones:
-                print(f"COLOURING - {bone}")
                 bpy.context.object.data.bones[bone].color.palette = "THEME09"
             for bone in target_armature_bones:
                 bone = bone.name
@@ -482,7 +451,23 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
             
 
         return {'FINISHED'}
-        
+
+
+class Von_SetNamingConventionsOperator(bpy.types.Operator):
+    """Operator to initialize armatures and register dynamic properties."""
+    bl_idname = "von.setnamingconvention"
+    bl_label = "Set Naming Convention"
+    bl_description = "Sets the naming convention of the selected armatures to the one desired."
+
+    def execute(self,context):
+        scene = bpy.context.scene
+        my_tool = scene.my_tool
+        selected_armatures = [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()]
+        targetdict = my_tool.AvalibleNamingConventions
+        von_vrctools.filterbonesbyjsondictlist(selected_armatures, targetdict, self, False)
+        return{'FINISHED'}
+
+
 
 # ------------------------------------------------------------------------
 #    Button Setup
@@ -572,63 +557,57 @@ class VONPANEL_PT_rigging_tools(VonPanel, bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        row = layout.row()
-        scene = context.scene
-
-        row.label(text= "Bone Manipulation", icon= 'CUBE')
-        #Colorize Rig
-
-        #Bone Search
         layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator("von.popoutpanelbonesearch")
-        
-
-        row.label(text= "Bone Shapes", icon= 'CUBE')
-        #create object
-        layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator("von.addcustomboneshape")
-        layout.operator("von.savenewcontrol")
+        row = layout.row()
+        row.operator("von.addcustomboneshape")
+        row.operator("von.savenewcontrol")
         layout.operator("von.masssetboneconstraintspace")
         layout.operator("von.colorizerig")
 
+class VONPANEL_PT_skinning_tools(VonPanel, bpy.types.Panel):
+    bl_parent_id = "VONTOOLS_PT_my_panel"
+    bl_label = "Skinning Tools"
+
+    def draw(self, context):
+        layout = self.layout
         layout.operator("von.weighthammer")
         layout.operator("von.clearvertexweights")
 
-
-        row.label(text= "Weight Painting", icon= 'CUBE')
-
-class VONPANEL_PT_VRCTools(VonPanel, bpy.types.Panel):
+class VONPANEL_PT_armaturemerge(VonPanel, bpy.types.Panel):
     bl_parent_id = "VONTOOLS_PT_my_panel"
-    bl_label = "VRChat Tools"
+    bl_label = "Armature Merge Tools"
 
     def draw(self, context):
         layout = self.layout
         my_tool = context.scene.my_tool
         row = layout.row()
         scene = context.scene
-        layout.label(text= "VRChat Tools", icon= 'CUBE')
         layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator("von.vrcsavebonenametodict")
+        layout.prop(my_tool, "AvalibleNamingConventions")
         row = layout.row()
-        row.prop(my_tool, "AvalibleNamingConventions")
         row.operator("von.initialize_armatures", text="Merge Armatures")
+        row.operator("von.setnamingconvention", text="Set Naming Convention")
 
 classes = (
     MySettings,
     VONPANEL_PT_primary_panel,
     VONPANEL_PT_rigging_tools,
+    VONPANEL_PT_skinning_tools,
     VonPanel_RiggingTools__Submenu_BoneSearch,
     VonPanel_RiggingTools__Submenu_CreateControl,
     VonPanel_RiggingTools__Button_SaveNewControl,
     Von_Dropdown_AddCustomBoneshape,
     Von_Popout_SaveBoneNameToDict,
     Von_InitializeArmaturesOperator,
-    VONPANEL_PT_VRCTools,
+    VONPANEL_PT_armaturemerge,
     VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace,
     VonPanel_RiggingTools__Submenu_ColorizeRig,
     VonPanel_RiggingTools__WeightHammer,
     VonPanel_RiggingTools__ClearVertexWeights,
-    VonPanel_TESTButton
+    VonPanel_TESTButton,
+    Von_SetNamingConventionsOperator
     )
 
 def von_menupopup_register():

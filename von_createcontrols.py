@@ -163,13 +163,6 @@ def movetocollection(NameOfCollection,object_name):
         
 
 # ------------------------------------------------------------------------
-#    Create Animation Retargeter Functions 
-# ------------------------------
-
-def retargetanimations(targetarmature, sourcearmatures):
-    print("FUCK")
-
-# ------------------------------------------------------------------------
 #    Create Multiuse Functions #Functional
 # ------------------------------------------------------------------------
 
@@ -350,26 +343,6 @@ def assignvertexweights(vertex_group_name, vertex_weight):
                 vertex_group.add([vert.index], vertex_weight, 'REPLACE')
 
         bpy.ops.object.mode_set(mode='EDIT')
-
-
-def mergejsondicts(dictdirectory,self):
-    merged_dict = defaultdict(list)
-
-    for file_name in os.listdir(dictdirectory):
-        if file_name.endswith('.json'):
-            file_path = os.path.join(dictdirectory, file_name)
-            try:
-                with open(file_path, 'r', encoding='utf-8') as file:
-                    data = json.load(file)
-                    if isinstance(data, dict):
-                        for key, value in data.items():
-                            if isinstance(value, list):
-                                merged_dict[key] = list(set(merged_dict[key] + value))
-                            else:
-                                merged_dict[key] = value
-            except (json.JSONDecodeError, IOError) as e:
-                self.report({'ERROR'}, f"Error processing file {file_name}: {e}")
-    return dict(merged_dict)
 # ------------------------------------------------------------------------
 #    Test Controls
 # -----------------------------------------------------------------------
