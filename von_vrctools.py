@@ -89,7 +89,8 @@ def gatherspecificjsondictkeys(targetfilename):
                     if isinstance(data, dict):
                         json_data_list.append(data)  # Store dictionaries
             except json.JSONDecodeError as e:
-                self.report({'ERROR'}, f"Error reading {filename}: {e}")
+                #self.report({'ERROR'}, f"Error reading {filename}: {e}")
+                print(f"Error reading {filename}: {e}")
     return json_data_list
 
 #Search If A Bone Is In A Given Dictionarty
