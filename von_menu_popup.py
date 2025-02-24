@@ -589,6 +589,9 @@ class VONPANEL_PT_armaturemerge(VonPanel, bpy.types.Panel):
         row = layout.row()
         row.operator("von.initialize_armatures", text="Merge Armatures")
         row.operator("von.setnamingconvention", text="Set Naming Convention")
+        
+
+
 
 classes = (
     MySettings,
