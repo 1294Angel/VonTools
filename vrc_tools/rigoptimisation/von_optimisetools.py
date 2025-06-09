@@ -1,32 +1,50 @@
 import bpy # type: ignore
-
+from ... import von_devtools
 
 # ------------------------------------------------------------------------
 #    
 # ------------------------------------------------------------------------
 
-def checkbones(armaturestocheck, issues):
+def cullorphans(armaturestocheck,definedroot):
+    for armature in armaturestocheck:
+        bpy.ops.object.mode_set(mode='EDIT')
+        edit_bones = armature.data.edit_bones
+        for bone in edit_bones:
+            if bone.parent == None:
+                if bone.name != definedroot:
+                    edit_bones.remove(edit_bones[bone.name])
+        bpy.ops.object.mode_set(mode='OBJECT')
+
+
+def checkbones(armaturestocheck, issues, definedroot, posebonelimit):
     for armature in armaturestocheck:
         bpy.ops.object.mode_set(mode='POSE')
+        num_pose_bones = sum(1 for pbone in armature.pose.bones if pbone.bone.use_deform)
+        if num_pose_bones > posebonelimit:
+            issues[armature.name]["BoneLimitReached"].add(f"Contains {num_pose_bones} bones")
         for bone in armature.pose.bones:
             if bone.parent == None:
-                issues[armature.name]["OrphanBones"] = {bone.name}
-
+                if bone.name != definedroot:
+                    issues[armature.name]["OrphanBones"].add(bone.name)
             elif bone.parent == bone:
-                issues[armature.name]["CyclicDependancy"] = {armature.name},{bone.name}
+                issues[armature.name]["CyclicDependancy"].add(bone.name)
+        bpy.ops.object.mode_set(mode='OBJECT')
     return issues
 
 def checkconstraints(armaturetocheck, issues):
-    bpy.ops.object.mode_set(mode='POSE')
-
-    for bone in armaturetocheck.pose.bones:
-        for constraint in bone.constraints:
-            if constraint.type == 'IK' and len(bone.constraints) > 1:
-                issues["MultipleIkConstraints"] = f"Multiple Constraints: {bone.name} has multiple IK constraints"
-            if constraint.target == None:
-                issues["EmptyConstraint"] = f"Empty Constraints: {bone.name} contains an empty constraint: {constraint.name}"
-            if constraint.target == bone:
-                issues["CyclicConstraint"] = f"Cyclic Constraint: {bone.name} contains a cyclic constraint: {constraint.name}"
+    bpy.ops.object.mode_set(mode='OBJECT')
+    for armature in armaturetocheck:
+        bpy.ops.object.mode_set(mode='POSE')
+        for bone in armature.pose.bones:
+            if bone:
+                for constraint in bone.constraints:
+                    if constraint.type == 'IK' and len(bone.constraints) > 1:
+                        issues[armature.name]["MultipleIkConstraints"].add(bone.name)
+                    if constraint.target == None:
+                        issues[armature.name]["EmptyConstraint"].add(f"{bone.name} contains an empty constraint: {constraint.name}")
+                    if constraint.target == bone:
+                        issues["CyclicConstraint"].add(f"{bone.name} contains a cyclic constraint: {constraint.name}")
+        bpy.ops.object.mode_set(mode='OBJECT')
     return issues
 
 def checkweightinfluences(maxinfluences,issues):
