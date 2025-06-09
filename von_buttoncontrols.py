@@ -102,7 +102,7 @@ def searchforbone(selected_armature, temp_bonetofind):
 #Functional
 def getexistingfilesindirectories(basedirectorytosearch):
     
-    FileDirectory = str(basedirectorytosearch)+"//"+"controls"
+    FileDirectory = basedirectorytosearch / "controls"
     totallist = os.listdir(FileDirectory)
     return totallist
     #[['FUCKYEAH.json', 'Suzanne.json'], ['Curious.json']]

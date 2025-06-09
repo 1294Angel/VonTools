@@ -9,6 +9,7 @@ from bpy_extras.object_utils import (AddObjectHelper, object_data_add) # type: i
 from mathutils import Vector # type: ignore
 from math import radians # type: ignore
 from pathlib import Path
+from collections import defaultdict
 from bpy.props import (StringProperty, # type: ignore
                        BoolProperty,
                        IntProperty,
@@ -24,7 +25,9 @@ from bpy.types import (Panel, # type: ignore
                        )
 from . import von_buttoncontrols
 from . import von_createcontrols
-from . import von_vrctools
+from .vrc_tools import von_vrctools
+from .vrc_tools.rigoptimisation import von_optimisetools
+from . import von_devtools
 
 # ------------------------------------------------------------------------
 #    Dynamic Enum Population
@@ -60,7 +63,7 @@ def updatebonestandarizationoptions(self, context):
     my_tool = context.scene.my_tool
     selected_dict = my_tool.AvalibleNamingConventions
     targetdict = von_vrctools.gatherspecificjsondictkeys(selected_dict)
-    selected_armatures = [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()]
+    selected_armatures = von_devtools.getselectedarmatures(context)
     all_matches = von_vrctools.filterbonesbyjsondictlist(selected_armatures, selected_dict, self, True)
     return all_matches
 
@@ -76,12 +79,19 @@ def updatetargetspaceenumlist(self, context):
         enumlist = [("1", "LOCAL", "Description"), ("2", "WORLD", "Description"), ("3", "CUSTOM", "Description")]
         return enumlist        
 
-def updateavaliblenamingconventions(self,context):
-    namingconventions = ([])
-    directory_path = von_vrctools.get_directory() + "/Libraries/BoneNames"
+def updateavaliblenamingconventions(self, context):
+    namingconventions = []
+    basepath = von_createcontrols.getfolderloc()
+    directory_path = basepath / "Libraries" / "BoneNames"
+
+    if not directory_path.exists():
+        print(f"[ERROR] Path does not exist: {directory_path}")
+        return namingconventions
+
     for filename in os.listdir(directory_path):
         filename = str(filename)
-        namingconventions.append((filename,filename,"This is a fileame"))
+        namingconventions.append((filename, filename, "This is a filename"))
+
     return namingconventions
 
 # ------------------------------------------------------------------------
@@ -385,7 +395,7 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
     def execute(self, context):
         scene = bpy.context.scene
         my_tool = scene.my_tool
-        selected_armatures = [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()]
+        selected_armatures = von_devtools.getselectedarmatures(context)
         targetdict = my_tool.AvalibleNamingConventions
         duplicatematches, undetectedbones, bonestorename = von_vrctools.filterbonesbyjsondictlist(selected_armatures,targetdict, self, False)
         initiallyselectedarmature = bpy.context.view_layer.objects.active
@@ -462,7 +472,7 @@ class Von_SetNamingConventionsOperator(bpy.types.Operator):
     def execute(self,context):
         scene = bpy.context.scene
         my_tool = scene.my_tool
-        selected_armatures = [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()]
+        selected_armatures = von_devtools.getselectedarmatures(context)
         targetdict = my_tool.AvalibleNamingConventions
         von_vrctools.filterbonesbyjsondictlist(selected_armatures, targetdict, self, False)
         return{'FINISHED'}
@@ -519,17 +529,48 @@ class VonPanel_RiggingTools__ClearVertexWeights(bpy.types.Operator):
 class VonPanel_VRCTools__SelectDesiredName():
     bl_idname = "von.selectdesiredname"
     bl_label = "Select Desired Name"
-class VonPanel_TESTButton(bpy.types.Operator):
-    bl_idname = "von.testbutton"
-    bl_label = "Test Button"
+class VonPanel_StressTestSkinning(bpy.types.Operator):
+    bl_idname = "von.stresstestskinning"
+    bl_label = "Test Skinning"
+
+    testaxis: bpy.props.StringProperty(
+        name="Primary Bone Axis",
+        description="Choose which axis the bones are intended to rotate around",
+        default="x"
+    ) # type: ignore
+    
+    def execute(self, context):
+        testaxis = self.testaxis
+        selected_armatures = von_devtools.getselectedarmatures(context)
+        von_optimisetools.stresstestrig(selected_armatures,testaxis)
+    
+    def invoke(self, context, event):
+        return context.window_manager.invoke_props_dialog(self)
+    
+
+class VonPanel_RigChecker(bpy.types.Operator):
+    bl_idname = "von.rigchecker"
+    bl_label = "Rig Checker"
+
+    maxinfluences = bpy.props.IntProperty(
+        name = "Max Bone Influences Per Vertex",
+        description = "Max Bone Influences Per Vertex",
+        default = 6
+     )
 
     def execute(self, context):
-        print("EXECUTING TEST BUTTON")
-        selectedobjects = [obj for obj in bpy.data.objects if obj.type == 'ARMATURE' and obj.select_get()]
-        active_object = selectedobjects[0]
-        selectedobjects.remove(selectedobjects[0])
-        von_vrctools.setrelativescalemod(selectedobjects, active_object, self)
-        return {'FINISHED'}
+        issues = defaultdict(lambda: defaultdict(set))
+        selectedarmatures = von_devtools.getselectedarmatures(context)
+        maxinfluences = self.maxinfluences
+
+        von_optimisetools.checkbones(selectedarmatures, issues)
+        von_optimisetools.checkconstraints(selectedarmatures, issues)
+        von_optimisetools.checkweightinfluences(maxinfluences,issues)
+
+    def invoke(self, context, event):
+        return context.window_manager.invoke_props_dialog(self)
+
+
 
 
 
@@ -571,8 +612,12 @@ class VONPANEL_PT_skinning_tools(VonPanel, bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.operator("von.weighthammer")
-        layout.operator("von.clearvertexweights")
+        row = layout.row()
+        row.operator("von.weighthammer")
+        row.operator("von.clearvertexweights")
+        row = layout.row()
+        row.operator("von.stresstestskinning")
+        row.operator("von.")
 
 class VONPANEL_PT_armaturemerge(VonPanel, bpy.types.Panel):
     bl_parent_id = "VONTOOLS_PT_my_panel"
@@ -609,8 +654,9 @@ classes = (
     VonPanel_RiggingTools__Submenu_ColorizeRig,
     VonPanel_RiggingTools__WeightHammer,
     VonPanel_RiggingTools__ClearVertexWeights,
-    VonPanel_TESTButton,
-    Von_SetNamingConventionsOperator
+    VonPanel_RigChecker,
+    Von_SetNamingConventionsOperator,
+    VonPanel_StressTestSkinning
     )
 
 def von_menupopup_register():

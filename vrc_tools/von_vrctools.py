@@ -7,8 +7,6 @@
 """
 
 import bpy, os, json, mathutils # type: ignore
-from . import von_createcontrols, von_buttoncontrols
-
 
 """
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -22,12 +20,6 @@ def get_directory():
     return addon_directory
 
 def ENUMUPDATE_gatherheirarchydata(self):
-
-    """
-    obj = bpy.context.object
-    for bone in obj.data.bones:
-        bpy.context.object.data.bones[bone.name].color.palette = "THEME03"
-    """
 
     directory_path = get_directory() + "/Libraries/BoneNames"
         #OUTPUT - C:\Users\chris\AppData\Roaming\Blender Foundation\Blender\4.2\scripts\addons\VonTools
@@ -111,7 +103,6 @@ def filterbonesbyjsondictlist(selected_armatures,targetdict, self, isdraw):
     jsondictkeys = gatherjsondictkeys(self,targetdict)
     prioritydict = gatherspecificjsondictkeys(targetdict)
     #print(f"DEBUG:prioritydict is - {prioritydict}")
-    von_createcontrols.spaceconsole(3)
     duplicatematches = {}
     bonestorename = {}
     undetectedbones = []
@@ -147,8 +138,6 @@ def filterbonesbyjsondictlist(selected_armatures,targetdict, self, isdraw):
                     for i in matches:
                         bonestorename[bone.name] = i
         if isdraw == False:
-            von_createcontrols.spaceconsole(2)
-            von_createcontrols.spaceconsole(2)
             rename_bones_from_dict(selected_armatures,bonestorename,self)
     if isdraw == True:
         return duplicatematches
