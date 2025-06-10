@@ -2,7 +2,8 @@
 #    Import Required Controls -- NEEDS CLEANUP
 # ------------------------------------------------------------------------
 
-import bpy, json, pprint, bmesh, os, sys, mathutils, pathlib # type: ignore
+import bpy, json, pprint, bmesh, os, sys, mathutils # type: ignore
+from pathlib import Path # type: ignore
 from bpy.types import Operator # type: ignore 
 from bpy_extras.object_utils import object_data_add # type: ignore
 from mathutils import Vector # type: ignore
@@ -14,11 +15,7 @@ from . import von_buttoncontrols
 #    Create General Functions
 # ------------------------------------------------------------------------
 
-def spaceconsole(temp):
-    xx = temp
-    while xx > 0:
-        xx = xx -1
-        print("")
+
 #for pose mode
 def setcontrol(temp_controlname):
     bpy.ops.object.mode_set(mode = 'POSE')
@@ -36,11 +33,10 @@ def create_json_data_from_mesh():
 
 
 def save_data(data):
-    path_to_file = getfolderloc()+"//"+"controls//"+data["object_name"]+".json"
-    print(path_to_file)
+    base_dir = Path(__file__).parent  
+    path_to_file = base_dir / "controls" / f"{data['object_name']}.json"
     with open(path_to_file, "w") as out_file_obj:
-        text = json.dumps(data, indent=4)
-        out_file_obj.write(text)
+        json.dump(data, out_file_obj, indent=4)
 
 def saveselectedmesh():
     bpy.ops.object.editmode_toggle()
@@ -52,10 +48,11 @@ def saveselectedmesh():
 
 
 def load_data(nameoffile):
-    path_to_file = getfolderloc()+"//"+"controls"+"//"+nameoffile+".json"
+    base_dir = Path(__file__).parent  
+    path_to_file = base_dir / "controls" / f"{nameoffile}.json"
+
     with open(path_to_file, "r") as in_file_obj:
-        text = in_file_obj.read()
-        data = json.loads(text)
+        data = json.load(in_file_obj)  # json.load directly from file
 
     return data
 
@@ -163,13 +160,6 @@ def movetocollection(NameOfCollection,object_name):
         
 
 # ------------------------------------------------------------------------
-#    Create Animation Retargeter Functions 
-# ------------------------------
-
-def retargetanimations(targetarmature, sourcearmatures):
-    print("FUCK")
-
-# ------------------------------------------------------------------------
 #    Create Multiuse Functions #Functional
 # ------------------------------------------------------------------------
 
@@ -177,10 +167,10 @@ def getobjectdata(controldata):
     file = open(controldata+'.txt')
     
 def getfolderloc():
-    dir = os.path.dirname(os.path.abspath(__file__))
-    if not dir in sys.path:
-        sys.path.append(dir)
-    return(dir)
+    dir = Path(__file__).resolve().parent
+    if str(dir) not in sys.path:
+        sys.path.append(str(dir))
+    return dir
 
 def get_path_to_folderloc():
     meshdatafile = str(getfolderloc())
@@ -350,26 +340,6 @@ def assignvertexweights(vertex_group_name, vertex_weight):
                 vertex_group.add([vert.index], vertex_weight, 'REPLACE')
 
         bpy.ops.object.mode_set(mode='EDIT')
-
-
-def mergejsondicts(dictdirectory,self):
-    merged_dict = defaultdict(list)
-
-    for file_name in os.listdir(dictdirectory):
-        if file_name.endswith('.json'):
-            file_path = os.path.join(dictdirectory, file_name)
-            try:
-                with open(file_path, 'r', encoding='utf-8') as file:
-                    data = json.load(file)
-                    if isinstance(data, dict):
-                        for key, value in data.items():
-                            if isinstance(value, list):
-                                merged_dict[key] = list(set(merged_dict[key] + value))
-                            else:
-                                merged_dict[key] = value
-            except (json.JSONDecodeError, IOError) as e:
-                self.report({'ERROR'}, f"Error processing file {file_name}: {e}")
-    return dict(merged_dict)
 # ------------------------------------------------------------------------
 #    Test Controls
 # -----------------------------------------------------------------------

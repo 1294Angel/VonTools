@@ -102,7 +102,7 @@ def searchforbone(selected_armature, temp_bonetofind):
 #Functional
 def getexistingfilesindirectories(basedirectorytosearch):
     
-    FileDirectory = str(basedirectorytosearch)+"//"+"controls"
+    FileDirectory = basedirectorytosearch / "controls"
     totallist = os.listdir(FileDirectory)
     return totallist
     #[['FUCKYEAH.json', 'Suzanne.json'], ['Curious.json']]
@@ -158,16 +158,11 @@ def setboneconstraintspace(activearmature, selectedbones, constrainttotarget,tar
 
 
         for con in i.constraints:
-            print(con.type)
-            print(bonename)
-            print(f"Contraint target = {constrainttotarget} |||| Con Type = {con.type}")
             if con.type == constrainttotarget:   
-                print("RUNNING TARGETED")            
                 #Adjust each constraint on the selected bone (i) to be in Local space (need to adjust to work off of a menu str or enum later)
                 bpy.context.object.pose.bones[bonename].constraints[con.name].target_space = targetspace
                 bpy.context.object.pose.bones[bonename].constraints[con.name].owner_space = ownerspace
             if constrainttotarget == "All":
-                print("TARGETING ALL ")
                 #Adjust each constraint on the selected bone (i) to be in Local space (need to adjust to work off of a menu str or enum later)
                 bpy.context.object.pose.bones[bonename].constraints[con.name].target_space = targetspace
                 bpy.context.object.pose.bones[bonename].constraints[con.name].owner_space = ownerspace
