@@ -7,7 +7,8 @@
 """
 
 import bpy, os, json, mathutils # type: ignore
-
+from .. import von_createcontrols
+from pathlib import Path
 """
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -21,11 +22,10 @@ def get_directory():
 
 def ENUMUPDATE_gatherheirarchydata(self):
 
-    directory_path = get_directory() + "/Libraries/BoneNames"
-        #OUTPUT - C:\Users\chris\AppData\Roaming\Blender Foundation\Blender\4.2\scripts\addons\VonTools
-
     dictionaryoptions = []
     itterations = -1
+    directory_path = von_createcontrols.getfolderloc()
+    directory_path = directory_path / "Libraries" / "BoneNames"
     for filename in os.listdir(directory_path):
 
         if filename.endswith('.json'):
@@ -53,7 +53,10 @@ def ENUMUPDATE_gatherheirarchydata(self):
 """
 def gatherjsondictkeys(self,targetdict):
     json_data_list = []
-    directory_path = get_directory() + "/Libraries/BoneNames"
+
+    
+    directory_path = von_createcontrols.getfolderloc()
+    directory_path = directory_path / "Libraries" / "BoneNames"
     for filename in os.listdir(directory_path):
         if filename.endswith('.json'):
                 if filename != targetdict:
@@ -71,7 +74,8 @@ def gatherjsondictkeys(self,targetdict):
 def gatherspecificjsondictkeys(targetfilename):
     #print(f"DEBUG:Targetfilename is - {targetfilename}")
     json_data_list = []
-    directory_path = get_directory() + "/Libraries/BoneNames"
+    directory_path = von_createcontrols.getfolderloc()
+    directory_path = directory_path / "Libraries" / "BoneNames"
     for filename in os.listdir(directory_path):
         if filename == targetfilename:
             filepath = os.path.join(directory_path, filename)

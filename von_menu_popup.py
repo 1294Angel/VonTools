@@ -40,7 +40,8 @@ def updateexistingjsondictonaries(self, context):
     return von_vrctools.ENUMUPDATE_gatherheirarchydata(self)
 def updatejsonkeyoptions(self, context):
 
-    directory_path = von_vrctools.get_directory() + "/Libraries/BoneNames"
+    directory_path = von_createcontrols.getfolderloc()
+    directory_path = directory_path / "Libraries" / "BoneNames"
     parentenumoption = self.jsondictionaryoptions_enum
     directory_path = os.path.join(directory_path, parentenumoption)
 
@@ -81,8 +82,8 @@ def updatetargetspaceenumlist(self, context):
 
 def updateavaliblenamingconventions(self, context):
     namingconventions = []
-    basepath = von_createcontrols.getfolderloc()
-    directory_path = basepath / "Libraries" / "BoneNames"
+    directory_path = von_createcontrols.getfolderloc()
+    directory_path = directory_path / "Libraries" / "BoneNames"
 
     if not directory_path.exists():
         print(f"[ERROR] Path does not exist: {directory_path}")
@@ -566,7 +567,37 @@ class VonPanel_StressTestSkinning(bpy.types.Operator):
     def invoke(self, context, event):
         return context.window_manager.invoke_props_dialog(self)
     
+class VonPanel_RigChecker_SkeletalMeshCheck(bpy.types.Operator):
+    bl_idname = "von.rigchecker_skeletalmeshcheck"
+    bl_label = "Skeletal Mesh Check"
 
+    def execute(self, context):
+        issues = defaultdict(lambda: defaultdict(set))
+        selectedarmatures = von_devtools.getselectedarmatures(context)
+        
+        for armature in selectedarmatures:
+            skeletalmeshes = von_devtools.get_meshes_using_armature(armature)
+            issues = von_optimisetools.findemptyvertexgroups(skeletalmeshes,issues)
+            issues = von_optimisetools.find_unweighted_vertices(skeletalmeshes, issues)
+            issues = von_optimisetools.find_non_deform_weighted_bones(skeletalmeshes, issues)
+            issues = von_optimisetools.check_multiple_armatures(skeletalmeshes, issues)
+
+        
+        def draw(self, context):
+            if issues:
+                for rig_name, issue in issues.items():
+                    self.layout.label(text=f"{rig_name}")
+                    for issue_type, bones in issue.items():
+                        for bone in bones:
+                            self.layout.label(text=f"  {issue_type}: {bone}")
+            else:
+                self.layout.label(text=f"No Rig Issues Detected")
+        context.window_manager.popup_menu(draw, title="Rig Check Results", icon='INFO')
+
+
+
+        return {'FINISHED'}
+        
 class VonPanel_RigChecker_ArmatureCheck(bpy.types.Operator):
     bl_idname = "von.rigchecker_armaturecheck"
     bl_label = "Armature Check"
@@ -586,6 +617,9 @@ class VonPanel_RigChecker_ArmatureCheck(bpy.types.Operator):
 
         issues = von_optimisetools.checkbones(selectedarmatures, issues, definedroot, posebonelimit)
         issues = von_optimisetools.checkconstraints(selectedarmatures, issues)
+        for armature in selectedarmatures:
+            von_devtools.get_meshes_using_armature(armature)
+
 
         
         
@@ -603,19 +637,6 @@ class VonPanel_RigChecker_ArmatureCheck(bpy.types.Operator):
 
 
         return {'FINISHED'}
-        
-class VonPanel_RigChecker_SkeletalMeshCheck(bpy.types.Operator):
-    bl_idname = "von.rigchecker_skeletalmeshcheck"
-    bl_label = "Skeletal Mesh Check"
-
-    def execute(self, context):
-        issues = defaultdict(lambda: defaultdict(set))
-        selectedarmatures = von_devtools.getselectedarmatures(context)
-
-        self.report({'INFO'}, f"SKM Passed")
-        return {'FINISHED'}
-
-
 
 class VonPanel_RigChecker_CheckBones(bpy.types.Operator):
     bl_idname = "von.rigchecker_checkbones"
@@ -740,6 +761,7 @@ class VONPANEL_PT_skinning_tools(VonPanel, bpy.types.Panel):
         row.operator("von.rigchecker_checkbones")
         row.operator("von.rigchecker_checkconstraints")
         box.operator("von.rigchecker_armaturecheck")
+        box.operator("von.rigchecker_skeletalmeshcheck")
 
         layout.menu("Quickfix Tools", text="Quick Fixes")
 
@@ -802,7 +824,7 @@ classes = (
     VonPanel_RigChecker_CheckConstraints,
     VonPanel_RigChecker_SkeletalMeshCheck,
     VONPANEL_PT_skinning_tools_quickfixes,
-    VonPanel_QuickFixes_CullOrphans
+    VonPanel_QuickFixes_CullOrphans,
     )
 
 def von_menupopup_register():
