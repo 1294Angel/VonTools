@@ -597,17 +597,9 @@ class VonPanel_RigChecker_SkeletalMeshCheck(bpy.types.Operator):
 
 
         return {'FINISHED'}
-        
-class VonPanel_RigChecker_ArmatureCheck(bpy.types.Operator):
-    bl_idname = "von.rigchecker_armaturecheck"
-    bl_label = "Armature Check"
 
 
-
-
-        
-
-    def execute(self, context):
+"""    def execute(self, context):
         scene = bpy.context.scene
         my_tool = scene.my_tool
         issues = defaultdict(lambda: defaultdict(set))
@@ -617,9 +609,6 @@ class VonPanel_RigChecker_ArmatureCheck(bpy.types.Operator):
 
         issues = von_optimisetools.checkbones(selectedarmatures, issues, definedroot, posebonelimit)
         issues = von_optimisetools.checkconstraints(selectedarmatures, issues)
-        for armature in selectedarmatures:
-            von_devtools.get_meshes_using_armature(armature)
-
 
         
         
@@ -636,7 +625,59 @@ class VonPanel_RigChecker_ArmatureCheck(bpy.types.Operator):
 
 
 
+        return {'FINISHED'}"""
+        
+
+
+
+
+class VonPanel_RigChecker_ArmatureCheck(bpy.types.Operator):
+    bl_idname = "von.rigchecker_armaturecheck"
+    bl_label = "Armature Check"
+
+    tolerance: bpy.props.FloatProperty(
+        name="Minimum Bone Size",
+        description="Minimum Acceptable Size Of Bone",
+        default=0.1
+    ) # type: ignore
+
+    def invoke(self, context, event):
+        return context.window_manager.invoke_props_dialog(self)
+
+    def execute(self, context):
+        scene = context.scene
+        my_tool = scene.my_tool
+        issues = defaultdict(lambda: defaultdict(set))
+        selectedarmatures = von_devtools.getselectedarmatures(context)
+        definedroot = my_tool.definedroot
+        posebonelimit = my_tool.posebonelimit
+        tolerance = self.tolerance
+        issues = von_optimisetools.checkbones(selectedarmatures, issues, definedroot, posebonelimit)
+        issues = von_optimisetools.checkconstraints(selectedarmatures, issues)
+        issues = von_optimisetools.check_zero_length_bones(selectedarmatures, issues, tolerance)
+        def draw(self, context):
+            layout = self.layout
+            if issues:
+                von_devtools.spaceconsole(5)
+                row = layout.row()
+                split = row.split(factor=0.3)
+                col_left = split.column()
+                col_right = split.column()
+                for rig_name, issue in issues.items():
+                    col_left.separator()
+                    col_left.label(text=f"{rig_name}")
+                    col_right.label(text=f"")
+
+                    for issue_type, bones in issue.items():                        
+                        col_left.label(text=issue_type)
+                        for bone in bones:
+                            col_right.label(text=bone)
+                von_devtools.spaceconsole(5)
+            else:
+                    layout.label(text="No Rig Issues Detected")
+        context.window_manager.popup_menu(draw, title="Rig Check Results", icon='INFO')
         return {'FINISHED'}
+
 
 class VonPanel_RigChecker_CheckBones(bpy.types.Operator):
     bl_idname = "von.rigchecker_checkbones"

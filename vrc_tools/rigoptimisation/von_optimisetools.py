@@ -1,6 +1,7 @@
 import bpy # type: ignore
 from ... import von_devtools
-
+import re
+from collections import defaultdict
 # ------------------------------------------------------------------------
 #    
 # ------------------------------------------------------------------------
@@ -110,3 +111,40 @@ def check_multiple_armatures(skeletalmesh, issues):
         issues[sk.name]["Armature Modifier Issue"].add("Too many armature modifiers on skeletal mesh")#
     return issues
 
+def check_zero_length_bones(skeltalmeshes, issues, tolerance):
+    for sk in skeltalmeshes:
+        bpy.ops.object.mode_set(mode='EDIT')
+        edit_bones = sk.data.edit_bones
+        for bone in edit_bones:
+            tail = bone.tail.length
+            head = bone.head.length
+            length = abs(tail - head)
+            length = length * 500
+            if length  <= tolerance:
+                issues[sk.name]["Small Length Bone"].add(f"{bone.name} has length {length}")
+            if tail == head:
+                issues[sk.name]["Zero Length Bone"].add(bone.name)
+        bpy.ops.object.mode_set(mode='OBJECT')
+    return issues
+
+
+
+
+def check_duplicate_bone_names(skeletalmeshes, issues):
+    suffix_pattern = re.compile(r"\.\d+$")  # matches a dot followed by digits at the end
+
+    for sk in skeletalmeshes:
+        bones = sk.data.bones
+        name_counts = {}
+
+        for bone in bones:
+            # Strip numeric suffix like ".001" but keep things like ".L" 
+            bonename = suffix_pattern.sub("", bone.name)
+            name_counts[bonename] = name_counts.get(bonename, 0) + 1
+
+        for bonename, count in name_counts.items():
+            if count > 1:
+                for bone in bones:
+                    if suffix_pattern.sub("", bone.name) == bonename:
+                        issues[sk.name]["DuplicateBoneName"].add(bone.name)
+    return issues
