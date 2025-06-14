@@ -177,7 +177,7 @@ class Von_Popout_SaveBoneNameToDict(bpy.types.Operator):
                 string_to_add = string_to_add.name.lower()
                 string_to_add = von_buttoncontrols.splitstringfromadditionalbones(string_to_add)
 
-                directory_path = von_vrctools.get_directory() + "/Libraries/BoneNames"
+                directory_path = getfolderloc() / "Libraries" / "BoneNames"
                 parentenumoption = mytool.jsondictionaryoptions_enum
                 directory_path = os.path.join(directory_path, parentenumoption)
                 key = mytool.jsondictionarykeyoptions_enum
@@ -253,7 +253,7 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
 
 
     def execute(self, context):
-        selectedobjects = bpy.context.selected_objects
+        selectedobjects = getselectedarmatures(context)
         tmp_selectedarmatures = []
 
 
@@ -278,7 +278,7 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
                 seldic = {}
                 for option in options.keys():
                     opt_dict = {}
-                    prop_name = option.lower().replace(' ', '_') + "_choice"
+                    prop_name = option.lower().replace(' ', '_') + "_choice"#
                     if hasattr(my_tool, prop_name):
                         selected_value = getattr(my_tool, prop_name)
                         opt_dict[option] = selected_value
@@ -286,8 +286,8 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
 
         bpy.ops.object.mode_set(mode='OBJECT')
 
-        active_object = selectedobjects[0]
-        #active_object = bpy.context.active_object
+        #active_object = selectedobjects[0]
+        active_object = context.view_layer.objects.active
         target_armature = None
         source_armatures = []
         
@@ -338,11 +338,11 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
                     print(bone)
                     bpy.context.object.data.bones[bone].color.palette = "THEME01"
                     addto_undetectedbones.append(bone)
-
-        bpy.ops.object.mode_set(mode='OBJECT')
-        bpy.ops.object.select_all(action='DESELECT')
-        target_armature.select_set(True)
-        bpy.context.view_layer.objects.active = target_armature
+        if target_armature:
+            bpy.ops.object.mode_set(mode='OBJECT')
+            bpy.ops.object.select_all(action='DESELECT')
+            target_armature.select_set(True)
+            bpy.context.view_layer.objects.active = target_armature
 
         return {'FINISHED'}
 

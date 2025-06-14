@@ -382,7 +382,7 @@ class MySettings(bpy.types.PropertyGroup):
         name = "Avalible Json Dictionaries - ",
         description = "Choose an option",
         items = updateexistingjsondictonaries,
-        update = lambda self, context: context.scene.my_settings.option_enum.update(context)
+        update = lambda self, context: context.scene.my_tool.option_enum.update(context)
     ) # type: ignore
     
     jsondictionarykeyoptions_enum: bpy.props.EnumProperty(

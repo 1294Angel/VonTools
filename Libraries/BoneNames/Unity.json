@@ -8,25 +8,31 @@
     ],
     "LeftUpperLeg": [
         "upperleg_l",
-        "thigh_l"
+        "thigh_l",
+        "left leg"
     ],
     "RightUpperLeg": [
         "thigh_r",
-        "upperleg_r"
+        "upperleg_r",
+        "right leg"
     ],
     "LeftLowerLeg": [
         "shin.l",
-        "lowerleg_l"
+        "lowerleg_l",
+        "left knee"
     ],
     "RightLowerLeg": [
         "shin_r",
-        "lowerleg_r"
+        "lowerleg_r",
+        "right knee"
     ],
     "LeftFoot": [
-        "foot_l"
+        "foot_l",
+        "left ankle"
     ],
     "RightFoot": [
-        "foot_r" 
+        "foot_r",
+        "right ankle"
     ],
     "Spine": [
         "spine",
@@ -62,24 +68,28 @@
         "shoulder_r"
     ],
     "LeftUpperArm": [
-        "upper_arm_l"
+        "upper_arm_l",
+        "left arm"
     ],
     "LeftUpperArmTwist": [
         "upperarm_l_twist"
     ],
     "RightUpperArm": [
-        "upperarm_r"
+        "upperarm_r",
+        "right arm"
     ],
     "RightUpperArmTwist": [
         "upperarm_r_twist"
     ],
     "LeftLowerArm": [
         "forearm_l",
-        "lowerarm_l"
+        "lowerarm_l",
+        "left elbow"
     ],
     "RightLowerArm": [
         "forearm_r",
-        "lowerarm_r"   
+        "lowerarm_r",
+        "right elbow"
     ],
     "LeftHand": [
         "hand_l"
@@ -88,10 +98,12 @@
         "hand_r"
     ],
     "LeftToes": [
-        "toe_l"
+        "toe_l",
+        "left toe"
     ],
     "RightToes": [
-        "toe.r"
+        "toe.r",
+        "right toe"
     ],
     "LeftEye": [
         "lefteye"
@@ -107,7 +119,8 @@
         "butt_r"
     ],
     "Tail": [
-        "tail"
+        "tail",
+        "tail 0"
     ],
     "LeftThumbProximal": [
         "thumbproximal_l"
