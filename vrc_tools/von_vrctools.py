@@ -9,6 +9,8 @@
 import bpy, os, json, mathutils # type: ignore
 from .. import von_createcontrols
 from pathlib import Path
+from .. import von_devtools
+from .. von_common import gatherspecificjsondictkeys, filterbonesbyjsondictlist, MySettings, gatherjsondictkeys, rename_bones_from_dict
 """
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -20,29 +22,6 @@ def get_directory():
     addon_directory = os.path.dirname(__file__)
     return addon_directory
 
-def ENUMUPDATE_gatherheirarchydata(self):
-
-    dictionaryoptions = []
-    itterations = -1
-    directory_path = von_createcontrols.getfolderloc()
-    directory_path = directory_path / "Libraries" / "BoneNames"
-    for filename in os.listdir(directory_path):
-
-        if filename.endswith('.json'):
-            filepath = os.path.join(directory_path, filename)
-            with open(filepath, 'r') as json_file:
-                try:
-                    data = json.load(json_file)
-                    #If it's a dict then do X (Idiot Proofing)
-                    if isinstance(data, dict):
-                        itterations = itterations + 1
-                        #This is setup to update the enum
-                        
-                        dictionaryoptions.append((filename, filename, f"Will Add The Selected Bonename Into Your Chosen Key Within {filename}"))
-                except json.JSONDecodeError as e: # IF ALL FAILS, IDIOT PROOFING NEVER REALLY TRIED THIS BEFORE
-                    self.report({'ERROR'}, f"Error reading {filename}: {e}")
-    return dictionaryoptions
-
 
 """
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -51,114 +30,15 @@ def ENUMUPDATE_gatherheirarchydata(self):
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 """
-def gatherjsondictkeys(self,targetdict):
-    json_data_list = []
-
-    
-    directory_path = von_createcontrols.getfolderloc()
-    directory_path = directory_path / "Libraries" / "BoneNames"
-    for filename in os.listdir(directory_path):
-        if filename.endswith('.json'):
-                if filename != targetdict:
-                    filepath = os.path.join(directory_path, filename)
-                    try:
-                        with open(filepath, 'r') as json_file:
-                            data = json.load(json_file)
-                            if isinstance(data, dict):
-                                json_data_list.append(data)  # Store dictionaries
-                    except json.JSONDecodeError as e:
-                        self.report({'ERROR'}, f"Error reading {filename}: {e}")
-    return json_data_list
 
 
-def gatherspecificjsondictkeys(targetfilename):
-    #print(f"DEBUG:Targetfilename is - {targetfilename}")
-    json_data_list = []
-    directory_path = von_createcontrols.getfolderloc()
-    directory_path = directory_path / "Libraries" / "BoneNames"
-    for filename in os.listdir(directory_path):
-        if filename == targetfilename:
-            filepath = os.path.join(directory_path, filename)
-            try:
-                with open(filepath, 'r') as json_file:
-                    data = json.load(json_file)
-                    if isinstance(data, dict):
-                        json_data_list.append(data)  # Store dictionaries
-            except json.JSONDecodeError as e:
-                #self.report({'ERROR'}, f"Error reading {filename}: {e}")
-                print(f"Error reading {filename}: {e}")
-    return json_data_list
 
-#Search If A Bone Is In A Given Dictionarty
-def search_dict(dictionary, bonename):
-    matches = [] # Using a list rather than just returning here so that I get a list of all possible names to rename that bone to rather than just the first
-    found = False
-    for key, value in dictionary.items():
-        if bonename == key:
-            found = True
-            matches.append(key)
-        if bonename in value:
-            found = True
-            matches.append(key)
-
-    return found, matches if found else None
-           
-def filterbonesbyjsondictlist(selected_armatures,targetdict, self, isdraw):
-    jsondictkeys = gatherjsondictkeys(self,targetdict)
-    prioritydict = gatherspecificjsondictkeys(targetdict)
-    #print(f"DEBUG:prioritydict is - {prioritydict}")
-    duplicatematches = {}
-    bonestorename = {}
-    undetectedbones = []
-    if len(selected_armatures) > 0:
-        for armature in selected_armatures:
-            for bone in armature.pose.bones:
-                matches = []
-                bonename = bone.name
-                bonename = bonename.lower()
-                found, names = search_dict(prioritydict[0], bonename) #Search PRIORITY dict
-                if found == True:
-                    if len(names) > 1:
-                        duplicatematches[bone.name] = names
-                    if len(names) == 1:
-                        matches.append(names)
-                    if len(names) <= 0:
-                        continue
-                if found == False:
-                    
-                    for dict in jsondictkeys:
-                        secondaryfound, secondarynames = search_dict(dict, bonename) # Search Secondary Dictionaries
-                        if secondaryfound == True:
-                            if len(secondarynames) > 1:
-                                duplicatematches[bone.name] = secondarynames
-                            if len(secondarynames) == 1:
-                                if len(matches) < 1:
-                                    matches.append(secondarynames)
-                            if len(secondarynames) <= 0:#
-                                continue
-                    if secondaryfound == False:
-                        undetectedbones.append(bone.name)
-                if len(matches) == 1:
-                    for i in matches:
-                        bonestorename[bone.name] = i
-        if isdraw == False:
-            rename_bones_from_dict(selected_armatures,bonestorename,self)
-    if isdraw == True:
-        return duplicatematches
-    if isdraw == False:
-        return duplicatematches, undetectedbones, bonestorename
     
 
 
 
 def rename_bones_from_dict(armaturelist, rename_dict,self):
     for armature in armaturelist:
-        #bpy.context.view_layer.objects.active = armature
-        #posebones = armature.data.bones
-        #for key in rename_dict:
-        #    if key in posebones:
-        #        bpy.context.object.data.bones[key].color.palette = "THEME03"
-        
         bpy.ops.object.mode_set(mode='EDIT')
         edit_bones = armature.data.edit_bones
         for old_name, new_name in rename_dict.items():

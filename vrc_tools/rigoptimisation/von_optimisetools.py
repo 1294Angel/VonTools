@@ -1,7 +1,7 @@
 import bpy # type: ignore
-from ... import von_devtools
 import re
 from collections import defaultdict
+from ... import von_common
 # ------------------------------------------------------------------------
 #    
 # ------------------------------------------------------------------------
@@ -87,7 +87,7 @@ def find_unweighted_vertices(skeletalmesh, issues):
 
 def find_non_deform_weighted_bones(skeletalmesh, issues):
     for sk in skeletalmesh:
-        armature = von_devtools.get_armature_for_mesh(sk)
+        armature = von_common.get_armature_for_mesh(sk)
         if not armature:
             continue
 
@@ -130,7 +130,7 @@ def check_zero_length_bones(skeltalmeshes, issues, tolerance):
 
 
 
-def check_duplicate_bone_names(skeletalmeshes, issues):
+def check_blender_suffix_bone_names(skeletalmeshes, issues):
     suffix_pattern = re.compile(r"\.\d+$")  # matches a dot followed by digits at the end
 
     for sk in skeletalmeshes:
@@ -139,12 +139,7 @@ def check_duplicate_bone_names(skeletalmeshes, issues):
 
         for bone in bones:
             # Strip numeric suffix like ".001" but keep things like ".L" 
-            bonename = suffix_pattern.sub("", bone.name)
-            name_counts[bonename] = name_counts.get(bonename, 0) + 1
-
-        for bonename, count in name_counts.items():
-            if count > 1:
-                for bone in bones:
-                    if suffix_pattern.sub("", bone.name) == bonename:
-                        issues[sk.name]["DuplicateBoneName"].add(bone.name)
+            bonename = von_common.stripblenderextrachars(bone.name)
+            if bonename != bone.name:
+                issues[sk.name]["Blender Suffix"].add(bone.name)
     return issues

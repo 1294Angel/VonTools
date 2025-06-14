@@ -2,17 +2,14 @@ import bpy # type: ignore
 import os
 import sys
 
-from . import (
-    von_menu_popup,
-)
+from .von_menu_popup import von_menupopup_register, von_menupopup_unregister
 
-ADDON_FOLDER_PATH = os.path.dirname(__file__)
 
 bl_info = {
     "name": "Vona's Blender Tools",
     "author": "Vona",
-    "version": (0, 2, 1),
-    "blender": (4, 3, 1),
+    "version": (0, 3, 2),
+    "blender": (4, 2, 10),
     "location": "Where the user can find it",
     "description": "Gold Version of Vona's addon that adds tools to expand blenders toolset.",
     "warning": "",
@@ -21,12 +18,15 @@ bl_info = {
     "category": ""}
 
 
+print("VonTools Reloaded!")
+print("Python version:", sys.version)
+print("Working dir:", os.getcwd())
+
 
 def register():
-    von_menu_popup.von_menupopup_register()
-    sys.path.append(ADDON_FOLDER_PATH)
+    von_menupopup_register()
 def unregister():
-    von_menu_popup.von_menupopup_unregister()
+    von_menupopup_unregister()
 
 if __name__ == "__main__":
-    von_menu_popup.von_menupopup_register()
+    von_menupopup_register()

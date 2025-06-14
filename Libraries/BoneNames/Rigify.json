@@ -10,34 +10,33 @@
         "pelvis"
     ],
     "pelvis.L": [
-        "pelvis.l"
+        "pelvis_l"
     ],
     "pelvis.R": [
-        "pelvis.r"
+        "pelvis_r"
     ],
     "thigh.L": [
         "upperleg_l",
-        "upperleg.l",
-        "thigh.l"
+        "thigh_l"
     ],
     "thigh.R": [
-        "thigh.r",
+        "thigh_r",
         "upperleg_r"
     ],
     "shin.L": [
-        "shin.l",
+        "shin_l",
         "lowerleg_l"
     ],
     "shin.R": [
-        "shin.r",
+        "shin_r",
         "lowerleg_r"
     ],
     "foot.L": [
-        "foot.l",
+        "foot_l",
         "foot_l"
     ],
     "foot.R": [
-        "foot.r",
+        "foot_r",
         "foot_r"
     ],
     "Spine": [
@@ -45,13 +44,13 @@
     ],
     "Chest": [
         "chest",
-        "spine.003"
+        "spine_003"
     ],
     "breast.L": [
-        "breast.l"
+        "breast_l"
     ],
     "breast.R": [
-        "breast.r"
+        "breast_r"
     ],
     "UpperChest": [],
     "spine.004": [
@@ -61,40 +60,49 @@
         "head"
     ],
     "shoulder.L": [
-        "shoulder.l"
+        "shoulder_l"
     ],
     "shoulder.R": [
-        "shoulder.r"
+        "shoulder_r"
     ],
     "upper_arm.L": [
-        "upper_arm.l"
+        "upper_arm_l"
     ],
     "upper_arm_twist.L": [
         "upperarm_l_twist"
     ],
     "upper_arm.R": [
-        "upperarm_r"
+        "upper_arm_r"
+        
     ],
     "upper_arm_twist.R": [
         "upperarm_r_twist"
     ],
     "forearm.L": [
-        "forearm.l"
+        "forearm_l",
+        "lowerarm_l"
+    ],
+    "lower_arm_twist.L": [
+        "LowerArm_r_twist"
     ],
     "forearm.R": [
-        "forearm.r"    
+        "forearm_r",
+        "lowerarm_l"    
+    ],
+    "lower_arm_twist.R": [
+        "LowerArm_r_twist"
     ],
     "hand.L": [
-        "hand.l"
+        "hand_l"
     ],
     "hand.R": [
-        "hand.r"
+        "hand_r"
     ],
     "toe.L": [
-        "toe.l"
+        "toe_l"
     ],
     "toe.R": [
-        "toe.r"
+        "toe_r"
     ],
     "eye.L": [
         "lefteye"

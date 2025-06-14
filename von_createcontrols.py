@@ -4,12 +4,9 @@
 
 import bpy, json, pprint, bmesh, os, sys, mathutils # type: ignore
 from pathlib import Path # type: ignore
-from bpy.types import Operator # type: ignore 
-from bpy_extras.object_utils import object_data_add # type: ignore
-from mathutils import Vector # type: ignore
 from math import radians
 from collections import defaultdict
-from . import von_buttoncontrols
+from . import von_common
 
 # ------------------------------------------------------------------------
 #    Create General Functions
@@ -166,15 +163,14 @@ def movetocollection(NameOfCollection,object_name):
 def getobjectdata(controldata):
     file = open(controldata+'.txt')
     
-def getfolderloc():
+
+
+def get_path_to_folderloc():
+    meshdatafile = str(von_common.getfolderloc())
     dir = Path(__file__).resolve().parent
     if str(dir) not in sys.path:
         sys.path.append(str(dir))
     return dir
-
-def get_path_to_folderloc():
-    meshdatafile = str(getfolderloc())
-    return meshdatafile
 
 def organisetocontrolscollection(createdobjectname):
     collectiontomoveto = "Controls Collection"

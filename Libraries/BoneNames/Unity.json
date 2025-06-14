@@ -8,50 +8,45 @@
     ],
     "LeftUpperLeg": [
         "upperleg_l",
-        "upperleg.l",
-        "thigh.l"
+        "thigh_l"
     ],
     "RightUpperLeg": [
-        "thigh.r",
+        "thigh_r",
         "upperleg_r"
     ],
     "LeftLowerLeg": [
         "shin.l",
-        "lowerleg_l",
-        "foot.l"
+        "lowerleg_l"
     ],
     "RightLowerLeg": [
-        "shin.r",
-        "lowerleg_r",
-        "foot.l"
+        "shin_r",
+        "lowerleg_r"
     ],
     "LeftFoot": [
-        "foot.l",
         "foot_l"
     ],
     "RightFoot": [
-        "foot.r",
-        "foot_r"
+        "foot_r" 
     ],
     "Spine": [
         "spine",
-        "spine.001",
-        "spine.002",
-        "spine.003",
-        "spine.006",
-        "spine.004",
-        "spine.005",
-        "spine.007"
+        "spine_001",
+        "spine_002",
+        "spine_003",
+        "spine_006",
+        "spine_004",
+        "spine_005",
+        "spine_007"
     ],
     "Chest": [
         "chest",
-        "spine.003"
+        "spine_003"
     ],
     "LeftBreast": [
-        "breast.l"
+        "breast_l"
     ],
     "RightBreast": [
-        "breast.r"
+        "breast_r"
     ],
     "UpperChest": [],
     "Neck": [
@@ -61,13 +56,13 @@
         "head"
     ],
     "LeftShoulder": [
-        "shoulder.l"
+        "shoulder_l"
     ],
     "RightShoulder": [
-        "shoulder.r"
+        "shoulder_r"
     ],
     "LeftUpperArm": [
-        "upper_arm.l"
+        "upper_arm_l"
     ],
     "LeftUpperArmTwist": [
         "upperarm_l_twist"
@@ -79,19 +74,21 @@
         "upperarm_r_twist"
     ],
     "LeftLowerArm": [
-        "forearm.l"
+        "forearm_l",
+        "lowerarm_l"
     ],
     "RightLowerArm": [
-        "forearm.r"    
+        "forearm_r",
+        "lowerarm_r"   
     ],
     "LeftHand": [
-        "hand.l"
+        "hand_l"
     ],
     "RightHand": [
-        "hand.r"
+        "hand_r"
     ],
     "LeftToes": [
-        "toe.l"
+        "toe_l"
     ],
     "RightToes": [
         "toe.r"

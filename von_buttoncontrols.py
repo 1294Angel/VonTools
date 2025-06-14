@@ -1,6 +1,6 @@
 #Import all needed
 import bpy, re, os # type: ignore
-from . import von_createcontrols 
+
 #____________________________________________________________________________________________
 #____________________________________________________________________________________________
 #____________________________________________________________________________________________ 
@@ -12,35 +12,7 @@ def poll(compstr):
     if active_object != compstr:
         return False
 
-#Functional only when taking in context
-def getselectedbones(context):
-    bonelist = []
-    bones = bpy.context.selected_pose_bones_from_active_object
-    for i in bones:
-        bonelist.append(i)
-    return bonelist
 
-def getselectedbonesforenum(self, context):
-    constrainttypestmp = []
-    enumlist = []
-
-    addtoenum = tuple(("0","All","Target All Detected Constraints"))
-    enumlist.append(addtoenum)
-    
-
-    constrainttypestmp = getboneconstraints(getselectedbones(context))
-    index = 0
-    for i in constrainttypestmp:        
-        index = index + 1
-        indexstr = str(index)
-        
-        i = str(i)
-        
-        description = "Click to alter context of these constraints on selected bones"
-        
-        addtoenum = tuple((indexstr, i, description))
-        enumlist.append(addtoenum)
-    return enumlist
 
 def splitstringfromadditionalbones(input_string):
     match = re.search(r'(.+?)([._][lr])$', input_string, re.IGNORECASE)
@@ -54,9 +26,12 @@ def splitstringfromadditionalbones(input_string):
 #Functional
 def colorizerig(context):
     #target_armature = bpy.context.view_layer.objects.active
-
+    bonelist = []
+    bones = bpy.context.selected_pose_bones_from_active_object
+    for i in bones:
+        bonelist.append(i)
     if poll("POSE") == True:
-        lst_bones = getselectedbones(context)
+        lst_bones = bonelist
         lst_bonenames = []
         for i in lst_bones:
             bname = i.name
@@ -105,38 +80,8 @@ def getexistingfilesindirectories(basedirectorytosearch):
     FileDirectory = basedirectorytosearch / "controls"
     totallist = os.listdir(FileDirectory)
     return totallist
-    #[['FUCKYEAH.json', 'Suzanne.json'], ['Curious.json']]
 
-#This will be used to populate the Enum
-def getboneconstraints(selectedbones):
-    constraints = []
-    for i in selectedbones:
 
-        for con in i.constraints:
-            
-            if con.type not in constraints:
-                constrainttoaddtolist = con.type
-                constraints.append(constrainttoaddtolist)
-    if len(constraints) > 0:
-        return constraints
-
-#Mostly Functional -- Needs to be expanded to update enum based on the selection option of another enum
-def checkboneconstrainttarget(bonelist):
-    selectedbones = bonelist
-
-    for i in selectedbones:
-            for con in i.constraints:
-                target = con.target
-                try:
-                    objtarget = target.type
-                except:
-                    objtarget = None
-                if not objtarget:
-                    return None
-                if objtarget == "ARMATURE":
-                    return objtarget
-                if objtarget != "ARMATURE":
-                    return "NOTARMATURE"
 
 
 def setboneconstraintspace(activearmature, selectedbones, constrainttotarget,targetspace,ownerspace):
