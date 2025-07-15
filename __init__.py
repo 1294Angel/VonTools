@@ -18,10 +18,14 @@ bl_info = {
     "category": ""}
 
 
-print("VonTools Reloaded!")
+"""print("VonTools Reloaded!")
 print("Python version:", sys.version)
-print("Working dir:", os.getcwd())
+print("Working dir:", os.getcwd())"""
 
+addon_dir = os.path.dirname(__file__)
+pillow_path = os.path.join(addon_dir, "/pillow/", "pillow_lib")
+if pillow_path not in sys.path:
+    sys.path.append(pillow_path)
 
 def register():
     von_menupopup_register()
