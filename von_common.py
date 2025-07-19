@@ -358,9 +358,34 @@ def updatestringspacersoptions(self,context):
     stringspacers = [("_", "_", "Turns all spaces and .'s into _'s"), (".", ".", "Turns all spaces and _'s into .'s"), (" ", " ", "Turns all underscores and .'s into spaces's")]
     return stringspacers
 
+#----- misc commands
+
+def get_selected_meshes(context):
+    selected_meshes = [obj for obj in context.selected_objects if obj.type == 'MESH']
+    return selected_meshes
 
 
-#-----------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                                    #DATA STORAGE                                    #DATA STORAGE                                    #DATA STORAGE                                    #DATA STORAGE                                    #DATA STORAGE
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 class MySettings(bpy.types.PropertyGroup):
 #--------------
   
@@ -425,6 +450,10 @@ class MySettings(bpy.types.PropertyGroup):
         update = updatestringspacersoptions
     ) # type: ignore
 
+#-------------- TextureAtlasing
+
+    atlas_meshName: bpy.props.StringProperty() # type: ignore
+    atlas_useMesh: bpy.props.BoolProperty(name="Use", default=True) # type: ignore
 
 #--------------
 
@@ -438,3 +467,16 @@ class MySettings(bpy.types.PropertyGroup):
 #--------------
 
     pass
+
+
+
+
+
+
+def von_common_register():
+    bpy.utils.register_class(MySettings)
+    bpy.types.Scene.my_tool = bpy.props.PointerProperty(type=MySettings)
+
+def von_common_unregister():
+    del bpy.types.Scene.my_tool
+    bpy.utils.unregister_class(MySettings)

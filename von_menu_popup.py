@@ -4,6 +4,7 @@
 # ------------------------------------------------------------------------
 
 
+import select
 import bpy, sys, os, re, json # type: ignore
 from pathlib import Path
 from collections import defaultdict
@@ -19,6 +20,7 @@ from .vrc_tools import von_vrctools
 from .vrc_tools.rigoptimisation import von_optimisetools
 from . import von_createcontrols, von_buttoncontrols
 from .von_common import *
+from .von_textureatlasing import *
 
 # ------------------------------------------------------------------------
 #    Popout Submenu's
@@ -581,6 +583,61 @@ class VonPanel_QuickFixes_CullOrphans(bpy.types.Operator):
         von_optimisetools.cullorphans(selectedarmatures, definedroot)
 
 
+#------------
+
+
+class materialItem(bpy.types.PropertyGroup):
+    name: bpy.props.StringProperty() # type: ignore
+    doWork: bpy.props.BoolProperty(name="Include", default=True)  # type: ignore
+
+class meshItem(bpy.types.PropertyGroup):
+    mesh_name: bpy.props.StringProperty()  # type: ignore
+    materials: bpy.props.CollectionProperty(type=materialItem)  # type: ignore
+
+class VonPanel_RigChecker_TextureAtlas(bpy.types.Operator):
+    bl_idname = "von.optimisationtools_textureatlasing"
+    bl_label = "Texture Atlas"
+
+    meshes: bpy.props.CollectionProperty(type=meshItem) # type: ignore
+
+    def invoke(self, context, event):
+        self.meshes.clear()
+        selectedMeshes = get_selected_meshes(context)
+
+        for obj in selectedMeshes:
+            mesh_item = self.meshes.add()
+            mesh_item.mesh_name = obj.name
+
+            for matSlot in obj.material_slots:
+                if matSlot.material:
+                    mat_item = mesh_item.materials.add()
+                    mat_item.name = matSlot.material.name
+
+        return context.window_manager.invoke_props_dialog(self, width=400)
+
+    def draw(self, context):
+        layout = self.layout
+        for meshItem in self.meshes:
+            box = layout.box()
+            box.label(text=f"Mesh: {meshItem.mesh_name}")
+            for matItem in meshItem.materials:
+                row = box.row()
+                row.prop(matItem, "doWork", text="")
+                row.label(text=matItem.name)
+
+    def execute(self, context):
+        for meshItem in self.meshes:
+            print(f"Mesh: {meshItem.mesh_name}")
+            for matItem in meshItem.materials:
+                if matItem.doWork:
+                    print(f"  ✔️ Working with: {matItem.name}")
+                else:
+                    print(f"  ❌ Skipping: {matItem.name}")
+        return {'FINISHED'}
+
+        
+
+
 # ------------------------------------------------------------------------
 #    Menu Setup
 # ------------------------------------------------------------------------
@@ -592,15 +649,23 @@ class VonPanel:
     bl_options = {"DEFAULT_CLOSED"}
 
 class VONPANEL_PT_primary_panel(VonPanel, bpy.types.Panel):
-    bl_idname = "VONTOOLS_PT_primary_panel"
+    bl_idname = "VONPANEL_PT_primary_panel"
     bl_label= "Von Tools"
 
     def draw(self,context):
         layout = self.layout
         layout.label(text= "Vontools For All Your Rigging Needs")
 
+class VONPANEL_PT_optimisation_tools(VonPanel, bpy.types.Panel):
+    bl_parent_id = "VONPANEL_PT_primary_panel"
+    bl_label = "Optimisation Tools"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator("von.optimisationtools_textureatlasing", text="Texture Atlas")
+
 class VONPANEL_PT_rigging_tools(VonPanel, bpy.types.Panel):
-    bl_parent_id = "VONTOOLS_PT_primary_panel"
+    bl_parent_id = "VONPANEL_PT_primary_panel"
     bl_label = "Rigging Tools"
 
     def draw(self, context):
@@ -614,12 +679,13 @@ class VONPANEL_PT_rigging_tools(VonPanel, bpy.types.Panel):
         layout.operator("von.colorizerig")
 
 class VONPANEL_PT_skinning_tools(VonPanel, bpy.types.Panel):
-    bl_parent_id = "VONTOOLS_PT_primary_panel"
+    bl_parent_id = "VONPANEL_PT_primary_panel"
     bl_label = "Skinning Tools"
 
     def draw(self, context):
         layout = self.layout
-        my_tool = context.scene.my_tool
+        scene = bpy.context.scene
+        my_tool = scene.my_tool
 
 
         box = layout.box()
@@ -639,10 +705,10 @@ class VONPANEL_PT_skinning_tools(VonPanel, bpy.types.Panel):
         box.operator("von.rigchecker_armaturecheck")
         box.operator("von.rigchecker_skeletalmeshcheck")
 
-        layout.menu("_MT_quickfix_tools_MT_", text="Quick Fixes")
+        layout.menu("VONTOOLS_MT_quickfix_tools", text="Quick Fixes")
 
-class VONPANEL_PT_skinning_tools_quickfixes(bpy.types.Menu):
-    bl_idname = "_MT_quickfix_tools_MT_"
+class VONTOOLS_MT_quickfix_tools(bpy.types.Menu):
+    bl_idname = "VONTOOLS_MT_quickfix_tools"
     bl_label = "_MT_Quickfix Tools_MT_"
     
 
@@ -659,7 +725,7 @@ class VONPANEL_PT_skinning_tools_quickfixes(bpy.types.Menu):
 
 
 class VONPANEL_PT_armaturemerge(VonPanel, bpy.types.Panel):
-    bl_parent_id = "VONTOOLS_PT_primary_panel"
+    bl_parent_id = "VONPANEL_PT_primary_panel"
     bl_label = "Armature Merge Tools"
 
     def draw(self, context):
@@ -677,17 +743,13 @@ class VONPANEL_PT_armaturemerge(VonPanel, bpy.types.Panel):
         
 
 classes = (
-    MySettings,
-    VONPANEL_PT_primary_panel,
-    VONPANEL_PT_rigging_tools,
-    VONPANEL_PT_skinning_tools,
+    # === Operator Classes ===
+    materialItem,
+    meshItem,
+    VonPanel_RigChecker_TextureAtlas,
     VonPanel_RiggingTools__Submenu_BoneSearch,
     VonPanel_RiggingTools__Submenu_CreateControl,
     VonPanel_RiggingTools__Button_SaveNewControl,
-    Von_Dropdown_AddCustomBoneshape,
-    Von_Popout_SaveBoneNameToDict,
-    Von_InitializeArmaturesOperator,
-    VONPANEL_PT_armaturemerge,
     VonPanel_RiggingTools_Submenu_MassSetBoneConstraintSpace,
     VonPanel_RiggingTools__Submenu_ColorizeRig,
     VonPanel_RiggingTools__WeightHammer,
@@ -698,16 +760,27 @@ classes = (
     VonPanel_RigChecker_CheckBones,
     VonPanel_RigChecker_CheckConstraints,
     VonPanel_RigChecker_SkeletalMeshCheck,
-    VONPANEL_PT_skinning_tools_quickfixes,
     VonPanel_QuickFixes_CullOrphans,
-    )
+    Von_Dropdown_AddCustomBoneshape,
+    Von_Popout_SaveBoneNameToDict,
+    Von_InitializeArmaturesOperator,
+
+    # === Menu Class ===
+    VONTOOLS_MT_quickfix_tools,
+
+    # === Panel Classes (must be last) ===
+    VONPANEL_PT_primary_panel,
+    VONPANEL_PT_optimisation_tools,
+    VONPANEL_PT_rigging_tools,
+    VONPANEL_PT_armaturemerge,
+    VONPANEL_PT_skinning_tools
+)
 
 
 def von_menupopup_register():
     from bpy.utils import register_class # type: ignore
     for cls in classes:
-        register_class(cls)
-    bpy.types.Scene.my_tool = PointerProperty(type=MySettings)
+        register_class(cls)    
 
 
 
@@ -716,5 +789,3 @@ def von_menupopup_unregister():
     from bpy.utils import unregister_class # type: ignore
     for cls in reversed(classes):
         unregister_class(cls)
-
-    del bpy.types.Scene.my_tool

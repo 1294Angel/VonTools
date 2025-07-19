@@ -2,7 +2,8 @@ import bpy # type: ignore
 import os
 import sys
 
-from .von_menu_popup import von_menupopup_register, von_menupopup_unregister
+from . import von_common
+from . import von_menu_popup
 
 
 bl_info = {
@@ -17,20 +18,15 @@ bl_info = {
     "tracker_url": "",
     "category": ""}
 
-
-"""print("VonTools Reloaded!")
-print("Python version:", sys.version)
-print("Working dir:", os.getcwd())"""
-
 addon_dir = os.path.dirname(__file__)
 pillow_path = os.path.join(addon_dir, "/pillow/", "pillow_lib")
 if pillow_path not in sys.path:
     sys.path.append(pillow_path)
 
 def register():
-    von_menupopup_register()
-def unregister():
-    von_menupopup_unregister()
+    von_common.von_common_register()
+    von_menu_popup.von_menupopup_register()
 
-if __name__ == "__main__":
-    von_menupopup_register()
+def unregister():
+    von_menu_popup.von_menupopup_unregister()
+    von_common.von_common_unregister()
