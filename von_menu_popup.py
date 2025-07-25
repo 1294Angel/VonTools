@@ -4,7 +4,9 @@
 # ------------------------------------------------------------------------
 
 
+from email.mime import image
 import select
+from tracemalloc import stop
 import bpy, sys, os, re, json # type: ignore
 from pathlib import Path
 from collections import defaultdict
@@ -586,32 +588,32 @@ class VonPanel_QuickFixes_CullOrphans(bpy.types.Operator):
 #------------
 
 
-class materialItem(bpy.types.PropertyGroup):
-    name: bpy.props.StringProperty() # type: ignore
+class texture_atlas_material_item(bpy.types.PropertyGroup):
+    name: bpy.props.StringProperty()  # type: ignore
     doWork: bpy.props.BoolProperty(name="Include", default=True)  # type: ignore
 
-class meshItem(bpy.types.PropertyGroup):
-    mesh_name: bpy.props.StringProperty()  # type: ignore
-    materials: bpy.props.CollectionProperty(type=materialItem)  # type: ignore
+class texture_atlas_mesh_item(bpy.types.PropertyGroup):
+    meshName: bpy.props.StringProperty()  # type: ignore
+    materials: bpy.props.CollectionProperty(type=texture_atlas_material_item)  # type: ignore
 
-class VonPanel_RigChecker_TextureAtlas(bpy.types.Operator):
+class von_panel_rig_checker_texture_atlas(bpy.types.Operator):
     bl_idname = "von.optimisationtools_textureatlasing"
     bl_label = "Texture Atlas"
 
-    meshes: bpy.props.CollectionProperty(type=meshItem) # type: ignore
+    meshes: bpy.props.CollectionProperty(type=texture_atlas_mesh_item)  # type: ignore
 
     def invoke(self, context, event):
         self.meshes.clear()
         selectedMeshes = get_selected_meshes(context)
 
         for obj in selectedMeshes:
-            mesh_item = self.meshes.add()
-            mesh_item.mesh_name = obj.name
+            meshItem = self.meshes.add()
+            meshItem.meshName = obj.name
 
             for matSlot in obj.material_slots:
                 if matSlot.material:
-                    mat_item = mesh_item.materials.add()
-                    mat_item.name = matSlot.material.name
+                    matItem = meshItem.materials.add()
+                    matItem.name = matSlot.material.name
 
         return context.window_manager.invoke_props_dialog(self, width=400)
 
@@ -619,23 +621,37 @@ class VonPanel_RigChecker_TextureAtlas(bpy.types.Operator):
         layout = self.layout
         for meshItem in self.meshes:
             box = layout.box()
-            box.label(text=f"Mesh: {meshItem.mesh_name}")
+            box.label(text=f"Mesh: {meshItem.meshName}")
             for matItem in meshItem.materials:
                 row = box.row()
                 row.prop(matItem, "doWork", text="")
                 row.label(text=matItem.name)
 
     def execute(self, context):
+        materialImagePathDict = {}
+
+        print("_________________________________________ RUNNING GET IMAGE PATHS REAL QUICK _________________________________________")
         for meshItem in self.meshes:
-            print(f"Mesh: {meshItem.mesh_name}")
+            obj = bpy.data.objects.get(meshItem.meshName)
+            if obj is None:
+                print(f"Object '{meshItem.meshName}' not found.")
+                continue
+            
+            if obj not in materialImagePathDict:
+                materialImagePathDict[obj] = []
+
             for matItem in meshItem.materials:
-                if matItem.doWork:
-                    print(f"  ✔️ Working with: {matItem.name}")
+                matName = matItem.name
+                imagePath = get_image_paths_from_material(obj, matName, self)
+                if imagePath:
+                    materialImagePathDict[obj].append(imagePath)
                 else:
-                    print(f"  ❌ Skipping: {matItem.name}")
+                    break
+                
+
         return {'FINISHED'}
 
-        
+#------------        
 
 
 # ------------------------------------------------------------------------
@@ -744,9 +760,9 @@ class VONPANEL_PT_armaturemerge(VonPanel, bpy.types.Panel):
 
 classes = (
     # === Operator Classes ===
-    materialItem,
-    meshItem,
-    VonPanel_RigChecker_TextureAtlas,
+    texture_atlas_material_item,
+    texture_atlas_mesh_item,
+    von_panel_rig_checker_texture_atlas,
     VonPanel_RiggingTools__Submenu_BoneSearch,
     VonPanel_RiggingTools__Submenu_CreateControl,
     VonPanel_RiggingTools__Button_SaveNewControl,
