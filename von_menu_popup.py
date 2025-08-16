@@ -2,11 +2,6 @@
 # ------------------------------------------------------------------------
 #    Addon Info
 # ------------------------------------------------------------------------
-
-
-from email.mime import image
-import select
-from tracemalloc import stop
 import bpy, sys, os, re, json # type: ignore
 from pathlib import Path
 from collections import defaultdict
@@ -626,71 +621,36 @@ class von_panel_rig_checker_texture_atlas(bpy.types.Operator):
                 row = box.row()
                 row.prop(matItem, "doWork", text="")
                 row.label(text=matItem.name)
+
+
+
+
     def execute(self, context):
-        `1`
-    def execute2(self, context):
-        materialImagePathDict = {}
-        socketsList = []
+        print("-------------------------------------------------------- ATLAS RUNNINGS -------------------------------")
+        matObjDict = {}        
+        matLinkDict = {}
+        texturesBySocket = {}
         settings = context.scene.my_tool
         atlasSize = settings.atlas_size
+        atlasOutputPath = settings.atlas_output_path
 
-        print("_________________________________________ RUNNING GET IMAGE PATHS REAL QUICK _________________________________________")
 
-        for obj in get_selected_meshes(context):
-            store_original(obj, settings)
-            duplicate_for_atlas(obj)  # includes _atlas'd renaming"""
+
         for meshItem in self.meshes:
             obj = bpy.data.objects.get(meshItem.meshName)
-            if obj is None:
-                print(f"Object '{meshItem.meshName}' not found.")
-                continue
-            
-            if obj not in materialImagePathDict:
-                materialImagePathDict[obj] = []
-
             for matItem in meshItem.materials:
-                matName = matItem.name
-                materialDict, sockets = get_image_paths_from_material(obj, matName, self)
-                for socketname in sockets:
-                    if socketname not in socketsList:
-                        socketsList.append(socketname)
-                if materialDict:
-                    materialImagePathDict[obj].append(materialDict)
-                else:
-                    break
-
-            atlasData = pack_materials_into_atlases(self, materialDict, sockets, atlasSize)
-            print(f"In Execute Function: AtlasData ==================== {atlasData}")
-            update_material_uvs(obj, atlasData, atlasSize)
+                if matItem.doWork == True:
+                    matObjDict.setdefault(matItem.name, []).append(obj.name)
             
-                
-        #Now I've got all the data I need, I need to do the hard part... Fuck
+        matLinkDict = get_all_image_textures_from_discovered_materials(matObjDict)
+        texturesBySocket = organise_textures_by_socket(matLinkDict)
+        savedPaths, positions = pack_images(self, matLinkDict, atlasOutputPath, texturesBySocket, atlasSize)
+        uvMapDict = convert_positions_to_uvs(positions, atlasSize)
+        apply_uv_map_to_material_objects(matObjDict, uvMapDict)
 
         return {'FINISHED'}
 
-class ATLAS_OT_restore_selected(bpy.types.Operator):
-    bl_idname = "von.atlas_restore_selected"
-    bl_label = "Restore Selected"
-
-    def execute(self, context):
-        settings = context.scene.my_tool
-        restored_any = False
-
-        for obj in context.selected_objects:
-            if obj.type != 'MESH':
-                continue
-
-            success = restore_original(obj, settings)
-            if success:
-                restored_any = True
-                self.report({'INFO'}, f"Restored {obj.name}")
-            else:
-                self.report({'WARNING'}, f"No stored data for {obj.name}")
-
-        if not restored_any:
-            self.report({'WARNING'}, "No selected meshes had stored original data")
-
-        return {'FINISHED'}
+        
 
 #------------        
 
@@ -721,10 +681,11 @@ class VONPANEL_PT_optimisation_tools(VonPanel, bpy.types.Panel):
         layout = self.layout
         scene = bpy.context.scene
         my_tool = scene.my_tool
-
-        layout.prop(my_tool, "atlas_size")
+        row = layout.row()
+        row.prop(my_tool, "atlas_size")
+        row.prop(my_tool, "atlas_output_path")
+        layout = self.layout
         layout.operator("von.optimisationtools_textureatlasing", text="Texture Atlas")
-        layout.operator("von.atlas_restore_selected")
 class VONPANEL_PT_rigging_tools(VonPanel, bpy.types.Panel):
     bl_parent_id = "VONPANEL_PT_primary_panel"
     bl_label = "Rigging Tools"
@@ -825,7 +786,6 @@ classes = (
     Von_Dropdown_AddCustomBoneshape,
     Von_Popout_SaveBoneNameToDict,
     Von_InitializeArmaturesOperator,
-    ATLAS_OT_restore_selected,
 
     # === Menu Class ===
     VONTOOLS_MT_quickfix_tools,

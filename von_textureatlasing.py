@@ -1,286 +1,161 @@
-from pydoc import ispath
-from venv import create
-import bpy # type: ignore
+import bpy, os, bmesh # type: ignore
 from .Libraries.pythonlibraries.pillow.PIL import Image # type: ignore
 from .von_common import *
-import os, bmesh # type: ignore
+from collections import defaultdict
+from math import ceil
 
-#---------------------------------------------------------------------------------------------------------------#
+# Data Gathering
 
-                                                #Gather Data
+def get_all_selected_object_materials(selectedObjects):
+    materialsFound = {}
+    for obj in selectedObjects:
+        if not obj.data or not hasattr(obj.data, "materials"):
+            continue 
+        for mat in obj.data.materials:
+            if mat:
+                matName = mat.name
+                if matName not in materialsFound:
+                    materialsFound[matName] = []
+                if obj.name not in materialsFound[matName]:
+                    materialsFound[matName].append(obj.name)
+    print(f"Materials Found = {materialsFound}")
+    return materialsFound
 
-#---------------------------------------------------------------------------------------------------------------#
+def organise_textures_by_socket(matLinkDict):
+    texturesBySocket = defaultdict(list)
+    for matName, texList in matLinkDict.items():
+        for texDict in texList:
+            for socketName, imagePath in texDict.items():
+                texturesBySocket[socketName].append((matName, imagePath))
+    return texturesBySocket
 
-def get_mesh_materials(targetMesh):
-    print("Running ---- get_mesh_materials ---- Running")
-    materialsDict = {}
-    for materialIndex in targetMesh.material_slots:
-        material = materialIndex.material
-        if material:
-            materialsDict[targetMesh] = material
-    print("FINISHED")
-    return materialsDict
+def get_all_image_textures_from_discovered_materials(matObjDict):
+    atlasMatLocations = {}
+    for matName in matObjDict.keys():
+        linksDict = {}
+        mat = bpy.data.materials.get(matName)
 
-def get_meshes_materials(targetMeshes):
-    print("Running ---- get_meshes_materials ---- Running")
-    materialsDict = {}
-    for targetmesh in targetMeshes:
-        materialsList = []
-        for materialIndex in targetmesh.material_slots:
-            material = materialIndex.material
-            if material:
-                materialsList = materialsList + material
-        materialsDict[targetmesh] = materialsList
-
-    print("FINISHED")
-    return materialsDict
-
-#materialName needs the **STRING** name input, not the object - If there are errors print out materialName and materialSlot before bug checking anything else
-def get_image_paths_from_material(obj, materialName, self):
-    print("Running ---- get_image_paths_from_material ---- Running")
-    materialDict = {}
-    typesOfSocket = []
-    materialDict[materialName] = {}
-    material = False
-
-    for materialSlot in obj.material_slots:
-        if materialSlot.material.name == materialName:
-            material = materialSlot.material
-            break
-    if not material:
-            reporterror(self, f"{materialName} not found or doesn't use nodes.")
+        if not mat or not mat.use_nodes:
+            continue
+        for node in mat.node_tree.nodes:
+            if node.type == 'TEX_IMAGE' and node.image:
+                for out in node.outputs:
+                    for link in out.links:
+                        linksDict[link.to_socket.name] = node.image.filepath
+        atlasMatLocations[matName] = [linksDict]
     
-    principledNode = None
-    for node in material.node_tree.nodes:
-        if node.type == 'BSDF_PRINCIPLED':
-            principledNode = node
-            break
+    return atlasMatLocations
 
-    if not principledNode:
-        reporterror(self, f"No Principled BSDF node found in {materialName}.")
-        return materialDict, typesOfSocket
+#------------------------------------------------------------------------------
+# Packing Into Atlas Sheets
+#------------------------------------------------------------------------------
 
-    for inputSocket in principledNode.inputs:
-        if inputSocket.is_linked:
-            socketName = inputSocket.name
-            materialDict[materialName][socketName] = []
-            if inputSocket.name  not in typesOfSocket:
-                typesOfSocket = typesOfSocket + [inputSocket.name]
+def pack_images(self, matLinkDict, atlasOutputPath, texturesBySocket, atlasSize=4096):
+    if atlasSize % 2 != 0:
+        atlasSize -= 1
+    atlasesPaths = {}
+    positions = {}
 
-            for link in inputSocket.links:
-                fromNode = link.from_node
-                if fromNode.type == 'TEX_IMAGE':
-                    image = fromNode.image
-                    if image and image.filepath:
-                        absPath = bpy.path.abspath(image.filepath)
-                        if absPath not in materialDict[materialName][socketName]:
-                            materialDict[materialName][socketName].append(absPath)
-    print("FINISHED")
-    return materialDict, typesOfSocket
-"""
-matdict looks like:
-Object
-  -> Material Name
-            -> Socket Name
-                  -> Link To Texture
-"""
+    for socket, tex_list in texturesBySocket.items():
+        loaded_textures = []
+        for matName, path in tex_list:
+            abs_path = bpy.path.abspath(path)
+            try:
+                img = Image.open(abs_path).convert("RGBA")
+                loaded_textures.append((matName,img))
+            except:
+                reporterror(self, f"Failed to load image {abs_path}")
+            
+        atlasIndex = 0
+        x = 0
+        y = 0
+        rowHeight = 0
 
-def get_all_images_of_socket_type(materialsDict, targetSocket):
-    print("Running ---- get_all_images_of_socket_type ---- Running")
-    targetLower = targetSocket.lower().replace(" ", "")
-    if targetLower == "basecolour": # I am english, I will forget at some point
-        targetLower = "basecolor"
-    textures = []
+        atlas = Image.new("RGBA", (atlasSize, atlasSize), (0,0,0,0))
+        atlasesPaths.setdefault(socket, []).append(atlas)
 
-    for obj, materialsList in materialsDict.items():
-        for materialEntry in materialsList:
-            for _, socketDict in materialEntry.items():
-                for socketName, imageList in socketDict.items():
-                    socketLower = socketName.lower().replace(" ", "")
-                    if targetLower == socketLower:
-                        textures.extend(imageList)
-    print("FINISHED")
-    return textures
+        for matName, img in loaded_textures:
+            w, h = img.size
 
-#---------------------------------------------------------------------------------------------------------------#
+            if x + w > atlasSize:
+                x = 0
+                y += rowHeight
+                rowHeight = 0
 
-                                                #Pack Image
+            if y+h > atlasSize:
+                atlasIndex += 1
+                atlas = Image.new("RGBA", (atlasSize, atlasSize), (0,0,0,0))
+                atlasesPaths[socket].append(atlas)
+                x = 0
+                y = 0
+                rowHeight = 0
 
-#---------------------------------------------------------------------------------------------------------------#
+            atlas.paste(img,(x,y))
 
-#JUST BASECOLOUR FOR NOW, EXPAND IN A LOOP ONCE FUNCTIONAL
-def pack_materials_into_atlases(self, materialDict, socketTypes, atlasSize=4096):
-    """
-    Packs multiple maps (BaseColour, Normal, Roughness, etc) for each material
-    into the SAME atlas coordinates.
-    """
-    print("Running ---- pack materials into atlases ---- Running")
+            if matName not in positions:
+                positions[matName] = {}
+            positions[matName]["atlasIndex"] = (atlasIndex)
+            positions[matName]["atlasFileLoc"] = (f"{socket}_atlas_{atlasIndex}.png")
+            positions[matName]["offset"] = (x, y, w, h)
+            
+            x += w
+            rowHeight = max(rowHeight, h)
 
-    atlasData = {}
-    materialsToPack = []
-
-    # Gather material sets
-    for matName, matInfo in materialDict.items():
-        images = {}
-        maxW, maxH = 0, 0
-
-        for socketType in socketTypes:
-            imgPath = matInfo.get(socketType)
-            isPathTrue = Path(imgPath).is_file()
-            print(f"IsPathTrue = {isPathTrue}")
-            if imgPath and isPathTrue:
-                img = Image.open(imgPath)
-                images[socketType] = img
-                maxW = max(maxW, img.width)
-                maxH = max(maxH, img.height)
-
-        if images:
-            materialsToPack.append((matName, images, maxW, maxH))
-
-    # Sort biggest first (optional)
-    materialsToPack.sort(key=lambda x: x[3], reverse=True)
-    print("Checkpoint 1")
-    atlasImages = {stype: Image.new("RGBA", (atlasSize, atlasSize), (0, 0, 0, 0))
-                   for stype in socketTypes}
-    atlasIndex = 1
-    cursorX, cursorY, rowHeight = 0, 0, 0
-
-    for matName, images, blockW, blockH in materialsToPack:
-        # Check if fits current row
-        if cursorX + blockW > atlasSize:
-            cursorX = 0
-            cursorY += rowHeight
-            rowHeight = 0
-
-        # Check if fits in atlas vertically
-        if cursorY + blockH > atlasSize:
-            # Save current atlases, start new ones
-            for stype in socketTypes:
-                yield f"Atlas_{atlasIndex}_{stype}", atlasImages[stype]
-            atlasIndex += 1
-            atlasImages = {stype: Image.new("RGBA", (atlasSize, atlasSize), (0, 0, 0, 0))
-                           for stype in socketTypes}
-            cursorX, cursorY, rowHeight = 0, 0, 0
-
-        # Paste each map at SAME coords
-        for stype in socketTypes:
-            img = images.get(stype)
-            if img:
-                atlasImages[stype].paste(img, (cursorX, cursorY))
-
-        # Record coords once (shared by all sockets)
-        for stype in socketTypes:
-            atlasData.setdefault(matName, {})[stype] = {
-                "atlasName": f"Atlas_{atlasIndex}_{stype}",
-                "x": cursorX, "y": cursorY,
-                "width": blockW, "height": blockH
-            }
-
-        cursorX += blockW
-        rowHeight = max(rowHeight, blockH)
-
-    # Save last batch
-    for stype in socketTypes:
-        yield f"Atlas_{atlasIndex}_{stype}", atlasImages[stype]
-    spaceconsole(5)
-    print("ATLAS DATA IN PACK MATERIALS?????")
-    print(atlasData)
-    spaceconsole(5)
-    return atlasData
+    savedPaths = {}
+    for socket, atlasList in atlasesPaths.items():
+        savedPaths[socket] = []
+        for i, atlas in enumerate(atlasList):
+            atlas.show()
+            outputPath = os.path.join(bpy.path.abspath(atlasOutputPath), f"{socket}_atlas_{i}.png")
+            atlas.save(outputPath)
+            savedPaths[socket].append(outputPath)
+    
+    return savedPaths, positions
 
 
+def convert_positions_to_uvs(positions, atlasSize):
+    uvMap = {}
+    for matName, data in positions.items():
+        atlasIndex = data["atlasIndex"]
+        atlasFileLoc = data["atlasFileLoc"]
+        x, y, w, h = data["offset"]
 
+        u_min = x / atlasSize
+        u_max = (x + w) / atlasSize
 
+        # Flip V coordinates for Blender
+        v_max = 1 - (y / atlasSize)
+        v_min = 1 - ((y + h) / atlasSize)
 
+        uvMap[matName] = {
+            "atlasIndex": atlasIndex,
+            "atlasFileLocation": atlasFileLoc,
+            "uvRect": (u_min, v_min, u_max, v_max)
+        }
+    return uvMap
 
- #Undo System ->
-
-def store_original(obj, settings):
-    print("Running ---- store_original ---- Running")
-    entry = settings.original_data.add()
-    entry.object_name = obj.name
-    entry.mesh_name = obj.data.name
-    for slot in obj.material_slots:
-        mat_entry = entry.materials.add()
-        mat_entry.name = slot.material.name if slot.material else ""
-
-def restore_original(obj, settings):
-    print("Running ---- restore_original ---- Running")
-    entry = next((e for e in settings.original_data if e.object_name == obj.name), None)
-    if not entry:
-        print(f"No stored data for {obj.name}")
-        return None
-    mesh = bpy.data.meshes.get(entry.mesh_name)
-    if mesh:
-        obj.data = mesh
-    for i, mat_entry in enumerate(entry.materials):
-        mat = bpy.data.materials.get(mat_entry.name)
-        if mat and i < len(obj.material_slots):
-            obj.material_slots[i].material = mat
-
-def duplicate_for_atlas(obj):
-    print("Running ---- duplicate_for_atlas ---- Running")
-    obj.data = obj.data.copy()
-    for i, slot in enumerate(obj.material_slots):
-        if slot.material:
-            new_mat = slot.material.copy()
-            new_mat.name = f"{slot.material.name}_atlas"
-            obj.material_slots[i].material = new_mat
-
-def save_atlas_images(atlasImages, outputDir):
-    print("Running --- save atlas images --- RUNNING")
-    Path(outputDir).mkdir(parents=True, exist_ok=True)
-    for name, img in atlasImages.items():
-        filePath = Path(outputDir) / f"{name}.png"
-        img.save(filePath)
-    print("FINISHED")
-#---------------------------------------------------------------------------------------------------------------#
-
-                                                #Move UV's
-
-#---------------------------------------------------------------------------------------------------------------#
-
-def update_material_uvs(obj, atlasData, atlasSize=4096):
-    """
-    Shifts & scales UVs of an object so that they match
-    the atlas coordinates from atlasData.
-    Assumes each material shares one rect across all maps.
-    """
-    print("Running ---- Update_material_UV's ---- Running")
-    me = obj.data
-    bm = bmesh.new()
-    bm.from_mesh(me)
-
-    uv_layer = bm.loops.layers.uv.verify()
-
-    for face in bm.faces:
-        # Get material name
-        matIndex = face.material_index
-        if matIndex >= len(obj.material_slots):
+def apply_uv_map_to_material_objects(matObjDict, uvMap):
+    for matName, objects in matObjDict.items():
+        if matName not in uvMap:
             continue
-        matName = obj.material_slots[matIndex].name
+        u_min, v_min, u_max, v_max = uvMap[matName]["uvRect"]
+        u_scale = u_max - u_min
+        v_scale = v_max - v_min
 
-        # Grab any one socket’s data (all sockets share the same coords now)
-        matAtlasInfo = None
-        if matName in atlasData:
-            # just take the first socket entry
-            matAtlasInfo = next(iter(atlasData[matName].values()))
+        for obj in objects:
+            obj = bpy.data.objects.get(obj)
+            mesh = obj.data
+            if not mesh.uv_layers:
+                continue  # Skip if no UVs
+            uvLayer = mesh.uv_layers.active.data
 
-        if not matAtlasInfo:
-            continue
+            for poly in mesh.polygons:
+                # Only adjust polygons using this material
+                if obj.material_slots[poly.material_index].material.name != matName:
+                    continue
+                for loop_index in poly.loop_indices:
+                    uv = uvLayer[loop_index].uv
+                    uv[0] = u_min + uv[0] * u_scale
+                    uv[1] = v_min + uv[1] * v_scale
 
-        # Compute offset + scale
-        uOffset = matAtlasInfo["x"] / atlasSize
-        vOffset = matAtlasInfo["y"] / atlasSize
-        uScale = matAtlasInfo["width"] / atlasSize
-        vScale = matAtlasInfo["height"] / atlasSize
-
-        # Apply to each loop (face corner)
-        for loop in face.loops:
-            uv = loop[uv_layer].uv
-            uv.x = uOffset + uv.x * uScale
-            uv.y = vOffset + uv.y * vScale
-
-    bm.to_mesh(me)
-    bm.free()
-    print("FINISHED")
+            mesh.update()
