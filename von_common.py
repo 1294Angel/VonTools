@@ -1,6 +1,8 @@
+from pydoc import describe
 import bpy # type: ignore
 import os, json, re, sys
 from pathlib import Path # type: ignore
+from bpy.props import PointerProperty, StringProperty, CollectionProperty # type: ignore
 #-------------------------------------------------------------------------
 
 #------ Button Controls Originally
@@ -385,7 +387,13 @@ def get_selected_meshes(context):
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
                                     #DATA STORAGE                                    #DATA STORAGE                                    #DATA STORAGE                                    #DATA STORAGE                                    #DATA STORAGE
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+class AtlasMaterialName(bpy.types.PropertyGroup):
+    name: StringProperty() # type: ignore
 
+class AtlasOriginalData(bpy.types.PropertyGroup):
+    object_name: StringProperty() # type: ignore
+    mesh_name: StringProperty() # type: ignore
+    materials: CollectionProperty(type=AtlasMaterialName) # type: ignore
 class MySettings(bpy.types.PropertyGroup):
 #--------------
   
@@ -454,7 +462,12 @@ class MySettings(bpy.types.PropertyGroup):
 
     atlas_meshName: bpy.props.StringProperty() # type: ignore
     atlas_useMesh: bpy.props.BoolProperty(name="Use", default=True) # type: ignore
-
+    atlas_size: bpy.props.IntProperty(
+        name="Atlas Size",
+        description="Size of each atlas sheet generated, system will generate multiple if all existing textures don't fit in the given atlas resolution",
+        default = 4096
+        ) # type: ignore
+    original_data: CollectionProperty(type=AtlasOriginalData) # type: ignore
 #--------------
 
     def get_vrc_tool_options(self):
@@ -473,10 +486,28 @@ class MySettings(bpy.types.PropertyGroup):
 
 
 
+
+
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                                    #Class Registration                                    #Class Registration                                    #Class Registration                                    #DATA STORAGE                                    #DATA STORAGE
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+classes = [
+    AtlasMaterialName,
+    AtlasOriginalData
+]
+
+
 def von_common_register():
+    from bpy.utils import register_class # type: ignore
+    for cls in classes:
+        register_class(cls)    
     bpy.utils.register_class(MySettings)
     bpy.types.Scene.my_tool = bpy.props.PointerProperty(type=MySettings)
 
 def von_common_unregister():
+    from bpy.utils import unregister_class # type: ignore
+    for cls in classes:
+        unregister_class(cls)    
     del bpy.types.Scene.my_tool
     bpy.utils.unregister_class(MySettings)
