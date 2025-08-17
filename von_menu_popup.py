@@ -304,7 +304,6 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
             addto_mergedbones = []
             #Generating the bones
             try:
-                print("Checkpoint 1")
                 von_vrctools.setrelativescalemod(selected_armatures, target_armature, self)
                 createdbones = von_vrctools.generateextrabone(source_armatures, target_armature, self)
                 von_vrctools.moveskeletalmesh(selected_armatures, target_armature,self)
@@ -328,13 +327,10 @@ class Von_InitializeArmaturesOperator(bpy.types.Operator):
 
         #Undetected bones
         if target_armature:
-            print(target_armature)
             bpy.context.view_layer.objects.active = target_armature
             armaturebones = target_armature.data.bones
-            print("Checkpoint 2")
             for bone in armaturebones:
                 if bone in undetectedbones:
-                    print(bone)
                     bpy.context.object.data.bones[bone].color.palette = "THEME01"
                     addto_undetectedbones.append(bone)
         if target_armature:
@@ -600,13 +596,13 @@ class von_panel_rig_checker_texture_atlas(bpy.types.Operator):
     def invoke(self, context, event):
         self.meshes.clear()
         selectedMeshes = get_selected_meshes(context)
-
+        seenMaterials = set()
         for obj in selectedMeshes:
             meshItem = self.meshes.add()
             meshItem.meshName = obj.name
-
             for matSlot in obj.material_slots:
-                if matSlot.material:
+                if matSlot.material and matSlot.material.name not in seenMaterials:
+                    seenMaterials.add(matSlot.material.name)
                     matItem = meshItem.materials.add()
                     matItem.name = matSlot.material.name
 
@@ -614,19 +610,23 @@ class von_panel_rig_checker_texture_atlas(bpy.types.Operator):
 
     def draw(self, context):
         layout = self.layout
+        seenMaterials = set()
+        box = layout.box()
+        box.label(text=("Select Materials To Atlas"))
         for meshItem in self.meshes:
-            box = layout.box()
-            box.label(text=f"Mesh: {meshItem.meshName}")
             for matItem in meshItem.materials:
-                row = box.row()
-                row.prop(matItem, "doWork", text="")
-                row.label(text=matItem.name)
+                if matItem.name not in seenMaterials:
+                    seenMaterials.add(matItem.name)
+                    
+                    row = box.row()
+                    row.prop(matItem, "doWork", text="")
+                    row.label(text=matItem.name)
+
 
 
 
 
     def execute(self, context):
-        print("-------------------------------------------------------- ATLAS RUNNINGS -------------------------------")
         matObjDict = {}        
         matLinkDict = {}
         texturesBySocket = {}
@@ -644,7 +644,7 @@ class von_panel_rig_checker_texture_atlas(bpy.types.Operator):
             
         matLinkDict = get_all_image_textures_from_discovered_materials(matObjDict)
         texturesBySocket = organise_textures_by_socket(matLinkDict)
-        savedPaths, positions = pack_images(self, matLinkDict, atlasOutputPath, texturesBySocket, atlasSize)
+        savedPaths, positions = pack_images(self, atlasOutputPath, texturesBySocket, atlasSize)
         uvMapDict = convert_positions_to_uvs(positions, atlasSize)
         apply_uv_map_to_material_objects(matObjDict, uvMapDict)
 

@@ -50,7 +50,7 @@ def get_all_image_textures_from_discovered_materials(matObjDict):
 # Packing Into Atlas Sheets
 #------------------------------------------------------------------------------
 
-def pack_images(self, matLinkDict, atlasOutputPath, texturesBySocket, atlasSize=4096):
+def pack_images(self, atlasOutputPath, texturesBySocket, atlasSize=4096):
     if atlasSize % 2 != 0:
         atlasSize -= 1
     atlasesPaths = {}
@@ -95,7 +95,7 @@ def pack_images(self, matLinkDict, atlasOutputPath, texturesBySocket, atlasSize=
             if matName not in positions:
                 positions[matName] = {}
             positions[matName]["atlasIndex"] = (atlasIndex)
-            positions[matName]["atlasFileLoc"] = (f"{socket}_atlas_{atlasIndex}.png")
+            positions[matName]["atlasFileLoc"] = os.path.join(bpy.path.abspath(atlasOutputPath), f"{socket}_atlas_{atlasIndex}.png")
             positions[matName]["offset"] = (x, y, w, h)
             
             x += w
@@ -115,6 +115,7 @@ def pack_images(self, matLinkDict, atlasOutputPath, texturesBySocket, atlasSize=
 
 def convert_positions_to_uvs(positions, atlasSize):
     uvMap = {}
+    print(positions)
     for matName, data in positions.items():
         atlasIndex = data["atlasIndex"]
         atlasFileLoc = data["atlasFileLoc"]
@@ -123,7 +124,6 @@ def convert_positions_to_uvs(positions, atlasSize):
         u_min = x / atlasSize
         u_max = (x + w) / atlasSize
 
-        # Flip V coordinates for Blender
         v_max = 1 - (y / atlasSize)
         v_min = 1 - ((y + h) / atlasSize)
 
@@ -146,11 +146,10 @@ def apply_uv_map_to_material_objects(matObjDict, uvMap):
             obj = bpy.data.objects.get(obj)
             mesh = obj.data
             if not mesh.uv_layers:
-                continue  # Skip if no UVs
+                continue
             uvLayer = mesh.uv_layers.active.data
 
             for poly in mesh.polygons:
-                # Only adjust polygons using this material
                 if obj.material_slots[poly.material_index].material.name != matName:
                     continue
                 for loop_index in poly.loop_indices:
