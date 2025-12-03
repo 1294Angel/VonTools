@@ -1,0 +1,212 @@
+{
+    "Root": {
+        "UnrealName": "Root",
+        "UnityName": "Pelvis",
+        "RigifyName": "Spine",
+        "PossibleNames": []
+    },
+    "Hips": {
+        "UnrealName": "Hips",
+        "UnityName": "Hips",
+        "RigifyName": "",
+        "PossibleNames": []
+    },
+    "LeftPelvis": {
+        "UnrealName": "",
+        "UnityName": "",
+        "RigifyName": "Pelvis.L",
+        "PossibleNames": []
+    },
+    "RightPelvis": {
+        "UnrealName": "",
+        "UnityName": "",
+        "RigifyName": "Pelvis.R",
+        "PossibleNames": []
+    },
+    "LeftUpperLeg": {
+        "UnrealName": "",
+        "UnityName": "LeftUpperLeg",
+        "RigifyName": "thigh.L",
+        "PossibleNames": []
+    },
+    "RightUpperLeg": {
+        "UnrealName": "",
+        "UnityName": "RightUpperLeg",
+        "RigifyName": "thigh.R",
+        "PossibleNames": []
+    },
+    "LeftLowerLeg": {
+        "UnrealName": "",
+        "UnityName": "LeftLowerLeg",
+        "RigifyName": "shin.L",
+        "PossibleNames": []
+    },
+    "RightLowerLeg": {
+        "UnrealName": "",
+        "UnityName": "RightLowerLeg",
+        "RigifyName": "shin.R",
+        "PossibleNames": []
+    },
+    "LeftFoot": {
+        "UnrealName": "",
+        "UnityName": "LeftFoot",
+        "RigifyName": "foot.L",
+        "PossibleNames": []
+    },
+    "RightFoot": {
+        "UnrealName": "",
+        "UnityName": "RightFoot",
+        "RigifyName": "foot.R",
+        "PossibleNames": []
+    },
+    "Spine": {
+        "UnrealName": "Spine",
+        "UnityName": "Spine",
+        "RigifyName": ["Spine.001", "Spine.002"],
+        "PossibleNames": []
+    },
+    "Chest": {
+        "UnrealName": "",
+        "UnityName": "Chest",
+        "RigifyName": "Spine.003",
+        "PossibleNames": []
+    },
+    "RightBreast": {
+        "UnrealName": "",
+        "UnityName": "",
+        "RigifyName": "breast.R",
+        "PossibleNames": []
+    },
+    "LeftBreast": {
+        "UnrealName": "",
+        "UnityName": "",
+        "RigifyName": "breast.L",
+        "PossibleNames": []
+    },
+    "UpperChest": {
+        "UnrealName": "",
+        "UnityName": "UpperChest",
+        "RigifyName": "",
+        "PossibleNames": []
+    },
+    "Neck": {
+        "UnrealName": "",
+        "UnityName": "Neck",
+        "RigifyName": ["Spine.004", "Spine.005"],
+        "PossibleNames": []
+    },
+    "Head": {
+        "UnrealName": "",
+        "UnityName": "Head",
+        "RigifyName": "spine.006",
+        "PossibleNames": []
+    },
+    "LeftShoulder": {
+        "UnrealName": "",
+        "UnityName": "LeftShoulder",
+        "RigifyName": "shoulder.L",
+        "PossibleNames": []
+    },
+    "RightShoulder": {
+        "UnrealName": "",
+        "UnityName": "RightShoulder",
+        "RigifyName": "shoulder.R",
+        "PossibleNames": []
+    },
+    "LeftUpperArm": {
+        "UnrealName": "",
+        "UnityName": "LeftUpperArm",
+        "RigifyName": "upper_arm.L",
+        "PossibleNames": []
+    },
+    "LeftUpperArmTwist": {
+        "UnrealName": "",
+        "UnityName": "",
+        "RigifyName": "",
+        "PossibleNames": ["upperarm_l_twist"]
+    },
+    "RightUpperArm": {
+        "UnrealName": "",
+        "UnityName": "RightUpperArm",
+        "RigifyName": "upper_arm.R",
+        "PossibleNames": []
+    },
+    "RightUpperArmTwist": {
+        "UnrealName": "",
+        "UnityName": "",
+        "RigifyName": "",
+        "PossibleNames": ["upperarm_r_twist"]
+    },
+    "LeftLowerArm": {
+        "UnrealName": "",
+        "UnityName": "LeftLowerArm",
+        "RigifyName": "forearm.L",
+        "PossibleNames": []
+    },
+    "RightLowerArm": {
+        "UnrealName": "",
+        "UnityName": "RightLowerArm",
+        "RigifyName": "forearm.R",
+        "PossibleNames": []
+    },
+    "LeftHand": {
+        "UnrealName": "",
+        "UnityName": "LeftHand",
+        "RigifyName": "hand.L",
+        "PossibleNames": []
+    },
+    "RightHand": {
+        "UnrealName": "",
+        "UnityName": "RightHand",
+        "RigifyName": "hand.R",
+        "PossibleNames": []
+    },
+    "LeftToes": {
+        "UnrealName": "",
+        "UnityName": "LeftToes",
+        "RigifyName": "toe.L",
+        "PossibleNames": []
+    },
+    "RightToes": {
+        "UnrealName": "",
+        "UnityName": "RightToes",
+        "RigifyName": "toe.R",
+        "PossibleNames": []
+    },
+    "LeftEye": {
+        "UnrealName": "",
+        "UnityName": "LeftEye",
+        "RigifyName": "eye.L",
+        "PossibleNames": []
+    },
+    "RightEye": {
+        "UnrealName": "",
+        "UnityName": "RightEye",
+        "RigifyName": "eye.R",
+        "PossibleNames": []
+    },
+    "Jaw": {
+        "UnrealName": "",
+        "UnityName": "Jaw",
+        "RigifyName": "Jaw",
+        "PossibleNames": []
+    },
+    "LeftButt": {
+        "UnrealName": "",
+        "UnityName": "",
+        "RigifyName": "",
+        "PossibleNames": []
+    },
+    "RightButt": {
+        "UnrealName": "",
+        "UnityName": "",
+        "RigifyName": "",
+        "PossibleNames": []
+    },
+    "Tail": {
+        "UnrealName": "",
+        "UnityName": "",
+        "RigifyName": "",
+        "PossibleNames": []
+    }
+}
